@@ -1,2 +1,0 @@
-hadoop fs -put data/ sourygna/data/datosEmpleadosComposite
-hadoop jar target/hadoop-java-mrdp-*-job.jar sourygna/data/datosEmpleadosComposite/inputEmployee sourygna/data/datosEmpleadosComposite/inputDep sourygna/output/compositeInputMapJoin

@@ -1,4 +1,0 @@
-hadoop fs -put data sourygna/data/songs
-hadoop jar target/hadoop-java-mrdp-*-job.jar sourygna/data/songs sourygna/output/1_indiceInvertido
-
-

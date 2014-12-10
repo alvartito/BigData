@@ -17,7 +17,6 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import writables.HistogramaWritable;
 import writables.HistogramaWritable2;
 import constantes.Constantes;
 import ejercicios.histograma.jobdos.MapJobDos;

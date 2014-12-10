@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import writables.HistogramaWritable;
 import writables.HistogramaWritable2;
 
 public class RedLimitesHistograma extends Reducer<IntWritable, HistogramaWritable2, IntWritable, HistogramaWritable2> {

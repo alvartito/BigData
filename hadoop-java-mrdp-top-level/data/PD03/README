@@ -1,0 +1,2 @@
+hadoop fs -put data sourygna/data/datosEmpleados
+hadoop jar target/hadoop-java-mrdp-*-job.jar sourygna/data/datosEmpleados/load_salaries.dump.clean sourygna/data/datosEmpleados/load_employees.dump.clean sourygna/output/3_reduceJoin

@@ -1,0 +1,1 @@
+hadoop jar target/hadoop-java-mrdp-*-job.jar -files ../3_reduceJoin/data/load_departments.dump.clean,../3_reduceJoin/data/datosEmpleados/load_dept_emp.dump.clean sourygna/data/datosEmpleados/load_salaries.dump.clean sourygna/data/datosEmpleados/load_employees.dump.clean sourygna/output/4_reduceJoinYMapJoin

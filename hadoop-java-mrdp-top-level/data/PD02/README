@@ -1,0 +1,3 @@
+hadoop fs -put data/listadoClientesCanciones sourygna/data/
+hadoop jar target/hadoop-java-mrdp-*-job.jar sourygna/data/listadoClientesCanciones sourygna/output/2_secondarySort
+

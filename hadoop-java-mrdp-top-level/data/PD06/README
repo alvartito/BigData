@@ -1,0 +1,8 @@
+hadoop fs -put data sourygna/data/inputGrafos
+hadoop jar target/hadoop-java-mrdp-*-job.jar sourygna/data/inputGrafos sourygna/output/6_grafos
+
+hadoop fs -put data sourygna/data/datosEmpleados
+
+
+hadoop jar grafos.jar org.sourygna.SolGrafosDrivers 6_grafos/input 6_grafos/output
+

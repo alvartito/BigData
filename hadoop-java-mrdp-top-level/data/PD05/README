@@ -1,0 +1,2 @@
+hadoop fs -put data/matrixList sourygna/data/matrixList
+hadoop jar target/hadoop-java-mrdp-*-job.jar sourygna/data/matrixList sourygna/output/5_nline

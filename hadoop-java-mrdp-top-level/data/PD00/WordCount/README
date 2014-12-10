@@ -1,0 +1,4 @@
+hadoop fs -put data/oliver-twist.txt sourygna/data/oliver-twist.txt
+hadoop jar target/hadoop-java-mrdp-*-job.jar sourygna/data/oliver-twist.txt sourygna/output/wordcount
+
+

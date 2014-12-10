@@ -1,7 +1,7 @@
 package ejercicios;
 
 import aux.ProgramDriver;
-import ejercicios.amigosdeamigos.AmigosJob;
+import ejercicios.amigosdeamigos.solucionCorrecta.AmigosJob;
 
 public class Driver extends ProgramDriver {
 

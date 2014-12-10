@@ -1,4 +1,4 @@
-package ejercicios.amigosdeamigos;
+package ejercicios.amigosdeamigos.solucionCorrecta;
 
 import java.io.IOException;
 

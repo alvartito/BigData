@@ -1,4 +1,4 @@
-package ejemplos.compositeInputMapJoin;
+package ejemplos.pd0.compositeInputMapJoin;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;

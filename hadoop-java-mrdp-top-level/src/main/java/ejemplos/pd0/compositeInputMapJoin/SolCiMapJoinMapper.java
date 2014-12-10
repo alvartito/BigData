@@ -1,4 +1,4 @@
-package ejemplos.compositeInputMapJoin;
+package ejemplos.pd0.compositeInputMapJoin;
 
 import java.io.IOException;
 

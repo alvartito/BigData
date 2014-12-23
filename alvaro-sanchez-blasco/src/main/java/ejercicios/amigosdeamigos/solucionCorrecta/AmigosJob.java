@@ -12,8 +12,8 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import alvaro.sanchez.blasco.util.writables.AmigosWritable;
 import constantes.Constantes;
-import writables.AmigosWritable;
 /** @author Álvaro Sánchez Blasco */
 public class AmigosJob extends Configured implements Tool {
 

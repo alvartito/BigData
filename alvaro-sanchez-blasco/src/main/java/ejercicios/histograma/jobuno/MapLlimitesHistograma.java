@@ -7,7 +7,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-import writables.HistogramaWritable2;
+import alvaro.sanchez.blasco.util.writables.HistogramaWritable2;
 /** @author Álvaro Sánchez Blasco */
 public class MapLlimitesHistograma extends Mapper<LongWritable, Text, IntWritable, HistogramaWritable2> {
 

@@ -1,4 +1,4 @@
-package writables;
+package alvaro.sanchez.blasco.util.writables;
 
 import java.io.DataInput;
 import java.io.DataOutput;

@@ -6,7 +6,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-import writables.AmigosWritable;
+import alvaro.sanchez.blasco.util.writables.AmigosWritable;
 /** @author Álvaro Sánchez Blasco */
 public class AmigosMap extends Mapper<LongWritable, Text, Text, AmigosWritable> {
 

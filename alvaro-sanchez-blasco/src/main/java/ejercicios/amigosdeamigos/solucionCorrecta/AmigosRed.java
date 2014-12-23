@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import writables.AmigosWritable;
+import alvaro.sanchez.blasco.util.writables.AmigosWritable;
 /** @author Álvaro Sánchez Blasco */
 public class AmigosRed extends Reducer<Text, AmigosWritable, Text, Text> {
 

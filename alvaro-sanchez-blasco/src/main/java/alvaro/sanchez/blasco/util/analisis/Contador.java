@@ -1,4 +1,4 @@
-package analisis;
+package alvaro.sanchez.blasco.util.analisis;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

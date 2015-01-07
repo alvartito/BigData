@@ -7,14 +7,14 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 public class SolSecondarySortReducer extends
-		Reducer<CkIdNum, SongNum, IntWritable, Text> {
+		Reducer<CkIdNumWritableComparable, SongNumWritable, IntWritable, Text> {
 	Text outputValue = new Text();
 
 	@Override
-	protected void reduce(CkIdNum key, Iterable<SongNum> values, Context context)
+	protected void reduce(CkIdNumWritableComparable key, Iterable<SongNumWritable> values, Context context)
 			throws IOException, InterruptedException {
 		StringBuilder sb = new StringBuilder("");
-		for (SongNum sn: values){
+		for (SongNumWritable sn: values){
 			sb = sb.append( sn.toString());
 		}
 		outputValue.set( sb.toString());

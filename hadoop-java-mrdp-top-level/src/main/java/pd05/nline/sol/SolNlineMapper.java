@@ -2,8 +2,8 @@ package pd05.nline.sol;
 
 import java.io.IOException;
 
-import org.apache.commons.math.linear.MatrixUtils;
-import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -27,7 +27,8 @@ public class SolNlineMapper extends Mapper<LongWritable, Text, NullWritable, Tex
 		
 		double[][] array2d = { {m11,m12} , {m21,m22} };
 		RealMatrix rm = MatrixUtils.createRealMatrix( array2d);
-		double[][] ai = rm.inverse().getData();
+		///double[][] ai = rm.inverse().getData();
+		double[][] ai = rm.getData();
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append( "[[").append( ai[0][0]).append( " ").append( ai[0][1]).append( "][")

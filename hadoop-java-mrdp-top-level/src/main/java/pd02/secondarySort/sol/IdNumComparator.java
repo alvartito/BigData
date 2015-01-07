@@ -5,13 +5,13 @@ import org.apache.hadoop.io.WritableComparator;
 
 public  class IdNumComparator extends WritableComparator {
 	protected IdNumComparator() {
-		super(CkIdNum.class, true);
+		super(CkIdNumWritableComparable.class, true);
 	}
 
 	@Override
 	public int compare(WritableComparable w1, WritableComparable w2) {
-		CkIdNum cin1 = (CkIdNum) w1;
-		CkIdNum cin2 = (CkIdNum) w2;
+		CkIdNumWritableComparable cin1 = (CkIdNumWritableComparable) w1;
+		CkIdNumWritableComparable cin2 = (CkIdNumWritableComparable) w2;
 		
 		int cmp = cin1.getId().compareTo(cin2.getId());
 		if (cmp != 0) {

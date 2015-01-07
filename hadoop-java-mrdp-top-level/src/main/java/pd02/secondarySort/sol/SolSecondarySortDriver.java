@@ -20,8 +20,8 @@ public class SolSecondarySortDriver {
 		FileInputFormat.setInputPaths(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 		
-		job.setMapOutputKeyClass(CkIdNum.class);
-		job.setMapOutputValueClass(SongNum.class);
+		job.setMapOutputKeyClass(CkIdNumWritableComparable.class);
+		job.setMapOutputValueClass(SongNumWritable.class);
 		job.setOutputKeyClass(IntWritable.class);
 		
 		job.setPartitionerClass(IdPartitioner.class);

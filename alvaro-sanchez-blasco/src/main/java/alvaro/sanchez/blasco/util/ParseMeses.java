@@ -6,7 +6,7 @@ package alvaro.sanchez.blasco.util;
 import java.util.HashMap;
 
 /**
- * @author Alvaro
+ * @author Alvaro Sanchez Blasco
  *
  */
 public final class ParseMeses {
@@ -26,8 +26,8 @@ public final class ParseMeses {
 
 	private final HashMap<String, String> relacionMesesTextoNumero = new HashMap<String, String>();
 
-	public ParseMeses(boolean load) {
-		if (load) {
+	public ParseMeses() {
+		if (relacionMesesTextoNumero.size() == 0) {
 			relacionMesesTextoNumero.put("Jan", sEnero);
 			relacionMesesTextoNumero.put("Ene", sEnero);
 			relacionMesesTextoNumero.put("Feb", sFebrero);
@@ -47,26 +47,22 @@ public final class ParseMeses {
 	}
 
 	public int getMonthFromStringAsInt(String month) {
-		int retorno = 0;
-		if (relacionMesesTextoNumero.containsKey(month)) {
-			retorno = Integer.parseInt(relacionMesesTextoNumero.get(month));
-		}
-		return retorno;
+		return Integer.parseInt(getMonthFromStringAsString(month));
 	}
 
 	public String getMonthFromStringAsString(String month) {
 		String retorno = "";
+		
 		if (relacionMesesTextoNumero.containsKey(month)) {
 			retorno = relacionMesesTextoNumero.get(month);
+		} else {
+			retorno = "0";
 		}
-
+		
 		return retorno;
 	}
 
 	public String getHourFromString(String time) {
 		return "";
-		
-
 	}
-
 }

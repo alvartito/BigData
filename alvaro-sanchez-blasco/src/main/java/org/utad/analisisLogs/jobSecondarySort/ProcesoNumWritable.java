@@ -8,17 +8,17 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
-public class SongNumWritable implements Writable {
-	private Text song;
+public class ProcesoNumWritable implements Writable {
+	private Text proceso;
 	private IntWritable num;
 	
-	public SongNumWritable(){
-		song = new Text();
+	public ProcesoNumWritable(){
+		proceso = new Text();
 		num = new IntWritable();
 	}
 
-	public SongNumWritable(Text song, IntWritable num) {
-		this.song = song;
+	public ProcesoNumWritable(Text song, IntWritable num) {
+		this.proceso = song;
 		this.num = num;
 	}
 
@@ -27,7 +27,7 @@ public class SongNumWritable implements Writable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((num == null) ? 0 : num.hashCode());
-		result = prime * result + ((song == null) ? 0 : song.hashCode());
+		result = prime * result + ((proceso == null) ? 0 : proceso.hashCode());
 		return result;
 	}
 
@@ -39,26 +39,18 @@ public class SongNumWritable implements Writable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SongNumWritable other = (SongNumWritable) obj;
+		ProcesoNumWritable other = (ProcesoNumWritable) obj;
 		if (num == null) {
 			if (other.num != null)
 				return false;
 		} else if (!num.equals(other.num))
 			return false;
-		if (song == null) {
-			if (other.song != null)
+		if (proceso == null) {
+			if (other.proceso != null)
 				return false;
-		} else if (!song.equals(other.song))
+		} else if (!proceso.equals(other.proceso))
 			return false;
 		return true;
-	}
-
-	public Text getSong() {
-		return song;
-	}
-
-	public void setSong(Text song) {
-		this.song = song;
 	}
 
 	public IntWritable getNum() {
@@ -71,19 +63,27 @@ public class SongNumWritable implements Writable {
 
 	@Override
 	public void readFields(DataInput in) throws IOException {
-		song.readFields(in);
+		proceso.readFields(in);
 		num.readFields(in);
 	}
 
 	@Override
 	public void write(DataOutput out) throws IOException {
-		song.write(out);
+		proceso.write(out);
 		num.write(out);
 	}
 
 	@Override
 	public String toString() {
-		return "[" + song + " - " + num + "]";
+		return proceso + " - " + num;
+	}
+
+	public Text getProceso() {
+		return proceso;
+	}
+
+	public void setProceso(Text proceso) {
+		this.proceso = proceso;
 	}
 
 }

@@ -5,19 +5,20 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
-public class CkIdNumWritableComparable implements WritableComparable<CkIdNumWritableComparable> {
-	private IntWritable id;
+public class FechaHoraNumWritableComparable implements WritableComparable<FechaHoraNumWritableComparable> {
+	private Text fechaHora;
 	private IntWritable num;
 
-	public CkIdNumWritableComparable() {
-		id = new IntWritable();
+	public FechaHoraNumWritableComparable() {
+		fechaHora = new Text();
 		num = new IntWritable();
 	}
 
-	public CkIdNumWritableComparable(IntWritable id, IntWritable num) {
-		this.id = id;
+	public FechaHoraNumWritableComparable(Text id, IntWritable num) {
+		this.fechaHora = id;
 		this.num = num;
 	}
 
@@ -25,7 +26,7 @@ public class CkIdNumWritableComparable implements WritableComparable<CkIdNumWrit
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((fechaHora == null) ? 0 : fechaHora.hashCode());
 		result = prime * result + ((num == null) ? 0 : num.hashCode());
 		return result;
 	}
@@ -38,25 +39,17 @@ public class CkIdNumWritableComparable implements WritableComparable<CkIdNumWrit
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CkIdNumWritableComparable other = (CkIdNumWritableComparable) obj;
-		if (id == null) {
-			if (other.id != null)
+		FechaHoraNumWritableComparable other = (FechaHoraNumWritableComparable) obj;
+		if (fechaHora == null) {
+			if (other.fechaHora != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!fechaHora.equals(other.fechaHora))
 			return false;
 		if (num == null) {
 			if (other.num != null)
 				return false;
 		}
 		return num.equals(other.num);
-	}
-
-	public IntWritable getId() {
-		return id;
-	}
-
-	public void setId(IntWritable id) {
-		this.id = id;
 	}
 
 	public IntWritable getNum() {
@@ -69,19 +62,19 @@ public class CkIdNumWritableComparable implements WritableComparable<CkIdNumWrit
 
 	@Override
 	public void readFields(DataInput in) throws IOException {
-		id.readFields(in);
+		fechaHora.readFields(in);
 		num.readFields(in);
 	}
 
 	@Override
 	public void write(DataOutput out) throws IOException {
-		id.write(out);
+		fechaHora.write(out);
 		num.write(out);
 	}
 
 	@Override
-	public int compareTo(CkIdNumWritableComparable o) {
-		int cmp = id.compareTo(o.getId());
+	public int compareTo(FechaHoraNumWritableComparable o) {
+		int cmp = fechaHora.compareTo(o.getFechaHora());
 		if (cmp != 0) {
 			return cmp;
 		} else
@@ -90,7 +83,15 @@ public class CkIdNumWritableComparable implements WritableComparable<CkIdNumWrit
 
 	@Override
 	public String toString() {
-		return "IdSongNum [id=" + id + ", num=" + num + "]";
+		return "IdSongNum [id=" + fechaHora + ", num=" + num + "]";
+	}
+
+	public Text getFechaHora() {
+		return fechaHora;
+	}
+
+	public void setFechaHora(Text fechaHora) {
+		this.fechaHora = fechaHora;
 	}
 
 }

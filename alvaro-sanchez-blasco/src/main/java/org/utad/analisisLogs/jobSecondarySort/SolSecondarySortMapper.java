@@ -8,10 +8,10 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 public class SolSecondarySortMapper extends
-		Mapper<LongWritable, Text, CkIdNumWritableComparable, SongNumWritable> {
+		Mapper<LongWritable, Text, FechaHoraNumWritableComparable, ProcesoNumWritable> {
 
-	private IntWritable id = new IntWritable();
-	private Text song = new Text();
+	private Text id = new Text();
+	private Text proceso = new Text();
 	private IntWritable num = new IntWritable();
 
 	@Override
@@ -26,12 +26,13 @@ public class SolSecondarySortMapper extends
 		if (Integer.parseInt(word[2]) < 5)
 			return;
 
-		id.set(Integer.parseInt(word[0]));
-		song.set(word[1]);
+		id.set(word[0]);
+		proceso.set(word[1]);
 		num.set(Integer.parseInt(word[2]));
 
-		CkIdNumWritableComparable myKey = new CkIdNumWritableComparable(id, num);
-		SongNumWritable val = new SongNumWritable(song, num);
+		FechaHoraNumWritableComparable myKey = new FechaHoraNumWritableComparable(id, num);
+		ProcesoNumWritable val = new ProcesoNumWritable(proceso, num);
+		
 		context.write(myKey, val);
 	}
 }

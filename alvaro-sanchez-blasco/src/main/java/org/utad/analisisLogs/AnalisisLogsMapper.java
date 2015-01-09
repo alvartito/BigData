@@ -8,10 +8,9 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.utad.analisisLogs.util.AnalisisLogsConstantes;
+import org.utad.analisisLogs.util.UtilAnalisisLogs;
 import org.utad.analisisLogs.writables.KeyFechaHoraWritableComparable;
 import org.utad.analisisLogs.writables.ProcesoContadorWritable;
-
-import alvaro.sanchez.blasco.util.ParseMeses;
 
 
 /** 
@@ -57,16 +56,15 @@ public class AnalisisLogsMapper extends
 			}
 			
 			//Ya tengo el proceso. Tengo que montar la fecha.
-			String date = parseaFecha(word[0], word[1]);
+			String date = UtilAnalisisLogs.parseaFecha(word[0], word[1]);
 			fecha.set(date);
 			
 			//Hay que recuperar la hora.
-			String sHora = getSoloHora(word[2]);
+			String sHora = UtilAnalisisLogs.getSoloHora(word[2]);
 			hora.set(sHora);
 			
 			// Ya tengo los datos necesarios para montar la clave.
 			proceso.set(proc);
-			contador.set(1);
 		}
 
 		// La clave
@@ -76,35 +74,6 @@ public class AnalisisLogsMapper extends
 		context.write(myKey, val);
 	}
 	
-	/**
-	 * Metodo que, recibiendo un literal del mes, y un dia, monta la fecha con
-	 * el formato indicado, parseando el literal a numero y añadiendo la
-	 * constante de año 2014.
-	 * 
-	 * @param literal mes
-	 * @param dia
-	 * @return dd-mm-2014
-	 */
-	private String parseaFecha(String mes, String dia) {
-		StringBuilder date = new StringBuilder();
-		
-		ParseMeses pm = new ParseMeses();
-		
-		
-		date.append(dia).append("-").append(pm.getMonthFromStringAsString(mes)).append("-").append(AnalisisLogsConstantes.YEAR_2014);
-
-		return date.toString();
-	}
 	
-	/**
-	 * Metodo que recibe una hora en formato HH:MM:SS y devuelve un entero con
-	 * la hora unicamente.
-	 * @param hora (HH:MM:SS)
-	 * @return hora (HH)
-	 */
-	private String getSoloHora(String hora) {
-		String[] horaDescompuesta = hora.split(":");
-		return horaDescompuesta[0];		
-	}
 	
 }

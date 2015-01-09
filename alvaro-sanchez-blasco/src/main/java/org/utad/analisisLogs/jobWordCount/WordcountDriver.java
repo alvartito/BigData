@@ -16,7 +16,7 @@ import org.utad.analisisLogs.writables.FechaHoraProcesoWritableComparable;
 public class WordcountDriver extends Configured implements Tool {
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
-			System.out.printf("Usage: AnalisisLogsDriver <input dir> <output dir>\n");
+			System.out.printf("Usage: AnalisisLogsDriverWC <input dirs separated by comma> - <output dir>\n");
 			System.exit(-1);
 		}
 
@@ -32,7 +32,7 @@ public class WordcountDriver extends Configured implements Tool {
 		
 		Configuration config = getConf();
 
-		Job job = Job.getInstance(config, "Analisis Logs");
+		Job job = Job.getInstance(config, "Analisis Logs WC");
 		job.setJarByClass(WordcountDriver.class);
 		
 		// Borramos todos los directorios que puedan existir
@@ -45,8 +45,10 @@ public class WordcountDriver extends Configured implements Tool {
 		//TODO Añadir map, reducer, combiner, partitioner, comparator
 		
 		for (FileStatus fileStatus : glob) {
-			FileInputFormat.setInputPaths(job, fileStatus.getPath());	
+			fileStatus.getPath();	
 		}
+		
+		FileInputFormat.setInputPaths(job, ",,");
 
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 

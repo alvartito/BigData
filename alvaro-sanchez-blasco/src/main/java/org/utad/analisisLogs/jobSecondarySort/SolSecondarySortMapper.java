@@ -19,7 +19,7 @@ public class SolSecondarySortMapper extends
 			throws IOException, InterruptedException {
 		// input line is :
 		// 248,"All my loving",13
-		String[] word = value.toString().split(",");
+		String[] word = value.toString().split(" ");
 
 		// first, don't consider the line if the song was written less than 5
 		// time

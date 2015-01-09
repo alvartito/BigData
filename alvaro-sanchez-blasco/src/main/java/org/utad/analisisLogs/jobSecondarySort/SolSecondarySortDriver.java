@@ -17,7 +17,7 @@ public class SolSecondarySortDriver extends Configured implements Tool {
 			System.exit(-1);
 		}
 
-		ToolRunner.run(new WordcountDriver(), args);
+		ToolRunner.run(new SolSecondarySortDriver(), args);
 	}
 
 	@Override

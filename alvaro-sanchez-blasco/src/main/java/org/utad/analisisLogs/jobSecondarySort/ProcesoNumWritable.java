@@ -75,7 +75,7 @@ public class ProcesoNumWritable implements Writable {
 
 	@Override
 	public String toString() {
-		return proceso + " - " + num;
+		return proceso + ":" + num+" ";
 	}
 
 	public Text getProceso() {

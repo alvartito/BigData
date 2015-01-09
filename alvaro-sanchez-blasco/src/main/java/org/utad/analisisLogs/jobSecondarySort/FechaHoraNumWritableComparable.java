@@ -83,7 +83,8 @@ public class FechaHoraNumWritableComparable implements WritableComparable<FechaH
 
 	@Override
 	public String toString() {
-		return "IdSongNum [id=" + fechaHora + ", num=" + num + "]";
+		return "["+fechaHora+"]";
+		//[29/11/2014-08]		gnome-session:1,colord:2
 	}
 
 	public Text getFechaHora() {

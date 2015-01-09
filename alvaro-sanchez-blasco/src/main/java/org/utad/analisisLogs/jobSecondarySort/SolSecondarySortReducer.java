@@ -14,9 +14,9 @@ public class SolSecondarySortReducer extends
 			throws IOException, InterruptedException {
 		StringBuilder sb = new StringBuilder("");
 		for (ProcesoNumWritable sn: values){
-			sb = sb.append( sn.toString());
+			sb = sb.append(sn.toString());
 		}
-		outputValue.set( sb.toString());
+		outputValue.set(sb.toString());
 		context.write(key.getFechaHora(), outputValue);
 	}
 

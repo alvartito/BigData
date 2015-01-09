@@ -10,28 +10,30 @@ import org.apache.hadoop.mapreduce.Mapper;
 public class SolSecondarySortMapper extends
 		Mapper<LongWritable, Text, FechaHoraNumWritableComparable, ProcesoNumWritable> {
 
-	private Text id = new Text();
+	private Text fecha = new Text();
+	private Text hora = new Text();
+	private Text fechaHora = new Text();
 	private Text proceso = new Text();
-	private IntWritable num = new IntWritable();
+	private IntWritable contador = new IntWritable();
 
 	@Override
 	public void map(LongWritable key, Text value, Context context)
 			throws IOException, InterruptedException {
 		// input line is :
 		// 248,"All my loving",13
-		String[] word = value.toString().split(" ");
+		String[] line = value.toString().split("\t");
 
-		// first, don't consider the line if the song was written less than 5
-		// time
-		if (Integer.parseInt(word[2]) < 5)
-			return;
+		String[] fechaHoraProceso = line[0].split(" ");
 
-		id.set(word[0]);
-		proceso.set(word[1]);
-		num.set(Integer.parseInt(word[2]));
+		
+//		fecha.set(fechaHoraProceso[0]);
+//		hora.set(fechaHoraProceso[1]);
+		fechaHora.set(fechaHoraProceso[0]+" "+fechaHoraProceso[1]);
+		proceso.set(fechaHoraProceso[2]);
+		contador.set(Integer.parseInt(line[1]));
 
-		FechaHoraNumWritableComparable myKey = new FechaHoraNumWritableComparable(id, num);
-		ProcesoNumWritable val = new ProcesoNumWritable(proceso, num);
+		FechaHoraNumWritableComparable myKey = new FechaHoraNumWritableComparable(fechaHora, contador);
+		ProcesoNumWritable val = new ProcesoNumWritable(proceso, contador);
 		
 		context.write(myKey, val);
 	}

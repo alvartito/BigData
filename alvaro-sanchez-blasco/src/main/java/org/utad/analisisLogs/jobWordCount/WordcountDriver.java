@@ -2,6 +2,7 @@ package org.utad.analisisLogs.jobWordCount;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -31,15 +32,22 @@ public class WordcountDriver extends Configured implements Tool {
 		
 		Configuration config = getConf();
 
-		Job job = Job.getInstance(config);
+		Job job = Job.getInstance(config, "Analisis Logs");
 		job.setJarByClass(WordcountDriver.class);
-		job.setJobName("Analisis Logs");
 		
 		// Borramos todos los directorios que puedan existir
 		FileSystem.get(outPath.toUri(), config).delete(outPath, true);
 		
+		// Recuperamos los datos del path origen
+		FileStatus[] glob = inPath.getFileSystem(getConf()).globStatus(inPath);
+		
+		
 		//TODO Añadir map, reducer, combiner, partitioner, comparator
-		FileInputFormat.setInputPaths(job, new Path(args[0]));
+		
+		for (FileStatus fileStatus : glob) {
+			FileInputFormat.setInputPaths(job, fileStatus.getPath());	
+		}
+
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
 		/* Se definen la clase Map y la clase Reduce del job
@@ -55,7 +63,7 @@ public class WordcountDriver extends Configured implements Tool {
 		 * Aquí, como ejemplo se han elegido 2 reducers. Si ponemos 0, entonces 
 		 * no se ejecuta la fase Reduce: tendremos un job Map-Only.
 		 */
-		job.setNumReduceTasks(2);
+		//job.setNumReduceTasks(2);
 
 		/* Definición de las clases de las claves y valores.
 		 * En el caso de la clave del Map no es necesario de especificarlo

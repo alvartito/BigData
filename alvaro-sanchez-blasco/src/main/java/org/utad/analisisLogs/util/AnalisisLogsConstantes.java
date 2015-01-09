@@ -25,7 +25,7 @@ public final class AnalisisLogsConstantes {
 	
 	public static final String PROCESO_KERNEL = "kernel";
 	public static final int FLUSH_COUNTER = 1000;
-	public static final String PROCESOS_DESCARTADOS = "vmet";
+	public static final String PROCESOS_DESCARTADOS = "vmnet";
 	public static final String YEAR_2014 = "2014";
 	
 }

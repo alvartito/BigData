@@ -45,6 +45,9 @@ public class WordcountMapper
 			if (proc.contains("[")) {
 				StringTokenizer st = new StringTokenizer(proc, "[");
 				proc = st.nextToken();
+				if(proc.contains("]")){
+					proc = proc.replace("]", "");
+				}
 			}
 
 			if (proc.contains(":")) {

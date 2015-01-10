@@ -6,7 +6,7 @@ package alvaro.sanchez.blasco.util;
 import java.util.HashMap;
 
 /**
- * @author Alvaro Sanchez Blasco
+ * @author Álvaro Sánchez Blasco
  *
  */
 public final class AnalisisLogsParseMeses {

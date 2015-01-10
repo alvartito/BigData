@@ -1,5 +1,10 @@
 package alvaro.sanchez.blasco.util;
 
+/** 
+ * @author Álvaro Sánchez Blasco
+ * 
+ *  Clase de utilidades para la práctica de Análisis de Logs.
+ * */
 public class AnalisisLogsUtil {
 
 	/**

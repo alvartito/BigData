@@ -1,5 +1,11 @@
 package alvaro.sanchez.blasco.util;
-/** @author Álvaro Sánchez Blasco */
+/** 
+ * 
+ * @author Álvaro Sánchez Blasco 
+ * 
+ * Clase de constantes para la práctica de Análisis de logs.
+ * 
+ * */
 public final class AnalisisLogsConstantes {
 
 	public static final String HELP_HISTOGRAMA = "Invalid number of arguments\n\n" +

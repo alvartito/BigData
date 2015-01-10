@@ -7,14 +7,20 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 import alvaro.sanchez.blasco.writables.FechaHoraProcesoWritableComparable;
 
+/**
+ * @author cloudera
+ * 
+ * */
 public class WordcountDriver extends Configured implements Tool {
+	
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
 			System.out.printf("Usage: AnalisisLogsDriverWC <input dir> <output dir>\n");
@@ -47,7 +53,9 @@ public class WordcountDriver extends Configured implements Tool {
 		for (FileStatus fileStatus : glob) {
 			String fs = fileStatus.getPath().getName();
 			String sbFicheros = "data/"+fs;
-			FileInputFormat.setInputPaths(job, new Path(sbFicheros));	
+			MultipleInputs.addInputPath(job, new Path(sbFicheros), TextInputFormat.class);
+			
+			//sFileInputFormat.setInputPaths(job, );	
 		}
 
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));

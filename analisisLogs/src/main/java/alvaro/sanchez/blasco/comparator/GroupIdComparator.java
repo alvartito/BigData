@@ -5,6 +5,12 @@ import org.apache.hadoop.io.WritableComparator;
 
 import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
 
+/**
+ * @author cloudera
+ * 
+ * 
+ * */
+
 public class GroupIdComparator extends WritableComparator {
 
 	public GroupIdComparator() {

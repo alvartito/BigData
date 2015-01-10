@@ -1,56 +1,95 @@
-package org.utad.analisisLogs;
+package alvaro.sanchez.blasco.jobs.job1wordcount;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.utad.analisisLogs.util.AnalisisLogsConstantes;
+
+import alvaro.sanchez.blasco.util.AnalisisLogsConstantes;
+import alvaro.sanchez.blasco.util.AnalisisLogsUtil;
+import alvaro.sanchez.blasco.writables.FechaHoraProcesoWritableComparable;
 
 /**
  * @see http://maps.google.es/gwt/x/e?wsc=wg&source=wax&u=http://www.google.es/url%3Fq%3Dhttps://chandramanitiwary.wordpress.com/2012/08/19/map-reduce-design-patterns-inmapper-combining/%26sa%3DU%26ei%3DwE6qVOC6FciBU6T3gaAL%26ved%3D0CB4QFjAC%26usg%3DAFQjCNFYBwYvcX8G8K4SPZaW9I6Pa_q7jg&ei=yE6qVKXHBoeo8gOb2oCwCw&whp=1direct_link%3B2https://github.com/Chandramani/MR_Design_Patterns/blob/master/wordcount/WordCountInMapperCombining.java
  */
-public class AnalisisLogsInMapperCombiningMapper extends
-		Mapper<LongWritable, Text, Text, IntWritable> {
+public class AnalisisLogsWordCountMapper extends
+		Mapper<LongWritable, Text, FechaHoraProcesoWritableComparable, IntWritable> {
 
-	private static Map<String, Integer> myWordMap;
-
+	private static Map<FechaHoraProcesoWritableComparable, Integer> myWordMap;
+	FechaHoraProcesoWritableComparable keyOut = new FechaHoraProcesoWritableComparable();
+	
 	@Override
 	protected void setup(Context context) throws IOException,
 			InterruptedException {
 		if (myWordMap == null) {
-			myWordMap = new HashMap<String, Integer>();
+			myWordMap = new HashMap<FechaHoraProcesoWritableComparable, Integer>();
 		}
 	}
 
 	@Override
 	public void map(LongWritable key, Text values, Context context)
 			throws IOException, InterruptedException {
-		String linea = values.toString();
-		for (String word : linea.split(" ")) {
-			if (myWordMap.containsKey(word)) {
-				myWordMap.put(word, myWordMap.get(word) + 1);
-			} else {
-				myWordMap.put(word, 1);
+		
+		
+		/*
+		 * Se recibe como valor una lÃ­nea del fichero de entrada
+		 */
+		String[] word = values.toString().split(" ");
+
+		String proc = word[4];
+
+		// Primero, descartar todos los procesos que contengan vmet
+		if (!proc.contains(AnalisisLogsConstantes.PROCESOS_DESCARTADOS)) {
+			// Nos quedamos unicamente con el nombre del proceso.
+			if (proc.contains("[")) {
+				StringTokenizer st = new StringTokenizer(proc, "[");
+				proc = st.nextToken();
+				if(proc.contains("]")){
+					proc = proc.replace("]", "");
+				}
 			}
+
+			if (proc.contains(":")) {
+				StringTokenizer st = new StringTokenizer(proc, ":");
+				proc = st.nextToken();
+			}
+
+			// Ya tengo el proceso. Tengo que montar la fecha.
+			String date = AnalisisLogsUtil.parseaFecha(word[0], word[1]);
+			keyOut.setFecha(new Text(date));
+
+			// Hay que recuperar la hora.
+			String sHora = AnalisisLogsUtil.getSoloHora(word[2]);
+			keyOut.setHora(new Text(sHora));
+
+			// Ya tengo los datos necesarios para montar la clave.
+			keyOut.setProceso(new Text(proc));
+
+			if (myWordMap.containsKey(keyOut)) {
+				myWordMap.put(keyOut, myWordMap.get(keyOut) + 1);
+			} else {
+				myWordMap.put(keyOut, 1);
+			}
+			
+//			flush(context);
 		}
+
 		if (myWordMap.size() >= AnalisisLogsConstantes.FLUSH_COUNTER)
 			flush(context);
 	}
 
 	private void flush(Context context) throws IOException,
 			InterruptedException {
-		Iterator<String> iterator = myWordMap.keySet().iterator();
-		IntWritable cuenta = new IntWritable();
-		Text palabra = new Text();
+		Iterator<FechaHoraProcesoWritableComparable> iterator = myWordMap.keySet().iterator();
 		while (iterator.hasNext()) {
-			palabra.set(iterator.next());
-			cuenta.set(myWordMap.get(palabra.toString()));
-			context.write(palabra, cuenta);
+			FechaHoraProcesoWritableComparable fhpwc = iterator.next();
+			context.write(fhpwc, new IntWritable(myWordMap.get(fhpwc)));
 		}
 		myWordMap.clear();
 	}
@@ -62,33 +101,33 @@ public class AnalisisLogsInMapperCombiningMapper extends
 	}
 
 	/*
-	 * La meta de esta técnica es, como ya he dicho, el reducir el número de
-	 * pares key/value que salen del Mapper y se envían al Reducer.
+	 * La meta de esta tï¿½cnica es, como ya he dicho, el reducir el nï¿½mero de
+	 * pares key/value que salen del Mapper y se envï¿½an al Reducer.
 	 * 
 	 * La ventaja del in-mapper combining sobre el Combiner tradicional que
 	 * vimos en la entrada anterior, es que el primero puede que se ejecute o
 	 * puede que no, no tenemos control sobre ello. Mientras que el in-mapper
 	 * combining podemos hacer que se ejecute siempre. La segunda ventaja de
-	 * este patrón de diseño es controlar cómo se lleva a cabo exactamente.
+	 * este patrï¿½n de diseï¿½o es controlar cï¿½mo se lleva a cabo exactamente.
 	 * 
-	 * Otra ventaja es que con el Combiner se reduce el número de datos que
+	 * Otra ventaja es que con el Combiner se reduce el nï¿½mero de datos que
 	 * llegan al Shuffle and Sort para luego enviarlos al Reducer, pero
-	 * realmente no reduce el número de pares key/value emitidos por el Mapper.
+	 * realmente no reduce el nï¿½mero de pares key/value emitidos por el Mapper.
 	 * 
-	 * Al in-mapper combining más bien se le considera como un patrón de diseño
+	 * Al in-mapper combining mï¿½s bien se le considera como un patrï¿½n de diseï¿½o
 	 * a la hora de desarrollar algoritmos MapReduce en Hadoop, es decir, una
-	 * técnica a la hora de programar ampliando el algoritmo implementado en el
-	 * Mapper para reducir el número de pares key/value que emite.
+	 * tï¿½cnica a la hora de programar ampliando el algoritmo implementado en el
+	 * Mapper para reducir el nï¿½mero de pares key/value que emite.
 	 * 
-	 * Esta técnica se puede dividir en dos formas: una local y una global.
+	 * Esta tï¿½cnica se puede dividir en dos formas: una local y una global.
 	 * 
-	 * Volviendo al ejemplo más básico que tenemos, el WordCount, en el que
-	 * tenemos una clase Mapper y una Reducer, con esta técnica el Reducer va a
+	 * Volviendo al ejemplo mï¿½s bï¿½sico que tenemos, el WordCount, en el que
+	 * tenemos una clase Mapper y una Reducer, con esta tï¿½cnica el Reducer va a
 	 * ser exactamente igual, pero en el Mapper vamos a introducir directamente
-	 * la funcionalidad del Combiner, más bien en lo que se basa. Y esto lo hace
+	 * la funcionalidad del Combiner, mï¿½s bien en lo que se basa. Y esto lo hace
 	 * utilizando un objeto de tipo Map. Este se refiere al algoritmo local, ya
-	 * que es local respecto al método. Con esta técnica hemos reducido desde el
-	 * principio el número de pares key/value que emite el Mapper y que llegan
+	 * que es local respecto al mï¿½todo. Con esta tï¿½cnica hemos reducido desde el
+	 * principio el nï¿½mero de pares key/value que emite el Mapper y que llegan
 	 * al Shuffle and Sort para posteriormente ser enviados al Reducer.
 	 * 
 	 * public class WordCountMapper extends Mapper <LongWritable, Text, Text,
@@ -104,18 +143,18 @@ public class AnalisisLogsInMapperCombiningMapper extends
 	 * cuenta.set(myWordMap.get(palabra.toString())); context.write(palabra,
 	 * cuenta); } } }
 	 * 
-	 * Este método todavía conlleva a que el Mapper cree y destruya múltiples
+	 * Este mï¿½todo todavï¿½a conlleva a que el Mapper cree y destruya mï¿½ltiples
 	 * objetos o realice otras tareas que ocupan memoria de una forma
 	 * considerable, y es por ello que se debe optimizar llegando a la forma
-	 * global, de tal forma que el Mapper sólo emitirá los pares key/value
+	 * global, de tal forma que el Mapper sï¿½lo emitirï¿½ los pares key/value
 	 * necesarios al Shuffle and Sort y al Reducer.
 	 * 
-	 * Esa optimización se hace utilizando los métodos setup() y cleanup(), que
-	 * como ya comenté en la entrada
+	 * Esa optimizaciï¿½n se hace utilizando los mï¿½todos setup() y cleanup(), que
+	 * como ya comentï¿½ en la entrada
 	 * 
-	 * sobre estos métodos, se van a ejecutar sólo una vez, el primero antes de
+	 * sobre estos mï¿½todos, se van a ejecutar sï¿½lo una vez, el primero antes de
 	 * que todas las tareas map comiencen y el segundo justo cuando todas las
-	 * tareas map finalizan y antes de que el Mapper sea destruído.
+	 * tareas map finalizan y antes de que el Mapper sea destruï¿½do.
 	 * 
 	 * public class WordCountMapper extends Mapper <LongWritable, Text, Text,
 	 * IntWritable> { Map<String, Integer> myWordMap; @Override protected void
@@ -134,12 +173,12 @@ public class AnalisisLogsInMapperCombiningMapper extends
 	 * cuenta.set(myWordMap.get(palabra.toString())); context.write(palabra,
 	 * cuenta); } } }
 	 * 
-	 * Desarrollar la clase Mapper de esta forma mejora la opción anterior pero
+	 * Desarrollar la clase Mapper de esta forma mejora la opciï¿½n anterior pero
 	 * sigue teniendo problemas de memoria.
 	 * 
 	 * Recordemos que cuando usamos el Combiner, primero el Mapper va a tratar
 	 * los datos y va a emitir los pares key/value, los va a escribir en el
-	 * disco local y después va a ser el Combiner quien va a actuar.
+	 * disco local y despuï¿½s va a ser el Combiner quien va a actuar.
 	 * 
 	 * Si implementamos el algoritmo anterior nos puede surgir un problema con
 	 * la memoria, ya que si estamos hablando de TB de datos, o no hay
@@ -148,15 +187,15 @@ public class AnalisisLogsInMapperCombiningMapper extends
 	 * hasta que todas las tareas map han finalizado y el objeto HashMap se
 	 * destruya.
 	 * 
-	 * La solución para limitar la memoria es "bloquear" la entrada de pares
+	 * La soluciï¿½n para limitar la memoria es "bloquear" la entrada de pares
 	 * key/value y liberar la estructura HashMap cada cierto tiempo.
 	 * 
-	 * Así que la idea es en vez de emitir los datos intermedios una vez que
+	 * Asï¿½ que la idea es en vez de emitir los datos intermedios una vez que
 	 * todos los pares key/value han sido tratados, emitir los datos intermedios
-	 * después de haber tratado N pares key/value.
+	 * despuï¿½s de haber tratado N pares key/value.
 	 * 
-	 * Esto tendría una fácil solución, que es poner un contador FLUSH_COUNTER,
-	 * y cuando el número de pares key/value tratados llegue a ese contador,
+	 * Esto tendrï¿½a una fï¿½cil soluciï¿½n, que es poner un contador FLUSH_COUNTER,
+	 * y cuando el nï¿½mero de pares key/value tratados llegue a ese contador,
 	 * emitir los datos y vaciar el HashMap.
 	 * 
 	 * public class WordCountMapper extends Mapper <LongWritable, Text, Text,
@@ -179,17 +218,17 @@ public class AnalisisLogsInMapperCombiningMapper extends
 	 * cuenta); } myWordMap.clear(); } @Override protected void cleanup(Context
 	 * context) throws IOException, InterruptedException { flush(context); } }
 	 * 
-	 * Estamos en un punto donde podemos seguir haciéndonos preguntas una tras
-	 * otra para optimizar este algoritmo y aplicar este patrón de diseño
-	 * correctamente, y la siguiente cuestión sería ¿cómo sabemos cuál es el
-	 * número FLUSH_COUNT de pares que hay que tratar antes de que la memoria
+	 * Estamos en un punto donde podemos seguir haciï¿½ndonos preguntas una tras
+	 * otra para optimizar este algoritmo y aplicar este patrï¿½n de diseï¿½o
+	 * correctamente, y la siguiente cuestiï¿½n serï¿½a ï¿½cï¿½mo sabemos cuï¿½l es el
+	 * nï¿½mero FLUSH_COUNT de pares que hay que tratar antes de que la memoria
 	 * falle?.
 	 * 
-	 * El libro de referencia propone que más que crear un contador de pares
-	 * key/value, poner un límite a la memoria que se utiliza y en el momento
-	 * que el HashMap ha llegado a ese límite se liberaría. El problema es que
-	 * en Java no es fácil determinar de forma rápida el tamaño de la memoria
-	 * ocupada por un objeto, por eso, es mejor elegir un FLUSH_COUNT lo más
+	 * El libro de referencia propone que mï¿½s que crear un contador de pares
+	 * key/value, poner un lï¿½mite a la memoria que se utiliza y en el momento
+	 * que el HashMap ha llegado a ese lï¿½mite se liberarï¿½a. El problema es que
+	 * en Java no es fï¿½cil determinar de forma rï¿½pida el tamaï¿½o de la memoria
+	 * ocupada por un objeto, por eso, es mejor elegir un FLUSH_COUNT lo mï¿½s
 	 * alto posible y teniendo cuidado que el HashMap no provoque un Out Of
 	 * Memory.
 	 */

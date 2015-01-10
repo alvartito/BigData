@@ -1,7 +1,9 @@
-package org.utad.analisisLogs.jobSecondarySort;
+package alvaro.sanchez.blasco.comparator;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
+
+import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
 
 public class GroupIdComparator extends WritableComparator {
 

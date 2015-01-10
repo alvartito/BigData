@@ -1,17 +1,21 @@
-package org.utad.analisisLogs.jobSecondarySort;
+package alvaro.sanchez.blasco.jobs.job2secondarysort;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.utad.analisisLogs.AnalisisLogsDriver;
-import org.utad.analisisLogs.jobWordCount.WordcountDriver;
+
+import alvaro.sanchez.blasco.comparator.GroupIdComparator;
+import alvaro.sanchez.blasco.comparator.IdNumComparator;
+import alvaro.sanchez.blasco.partitioner.AnalisisLogsPartitioner;
+import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
+import alvaro.sanchez.blasco.writables.ProcesoNumWritable;
 
 public class SolSecondarySortDriver extends Configured implements Tool {
 	public static void main(String[] args) throws Exception {
@@ -45,12 +49,12 @@ public class SolSecondarySortDriver extends Configured implements Tool {
 		job.setMapOutputValueClass(ProcesoNumWritable.class);
 		job.setOutputKeyClass(IntWritable.class);
 		
-		job.setPartitionerClass(IdPartitioner.class);
+		job.setPartitionerClass(AnalisisLogsPartitioner.class);
 		job.setSortComparatorClass(IdNumComparator.class);
 		job.setGroupingComparatorClass(GroupIdComparator.class);
 		
-		job.setMapperClass(SolSecondarySortMapper.class);
-		job.setReducerClass(SolSecondarySortReducer.class);
+		job.setMapperClass(AnalisisLogsSecondarySortMapper.class);
+		job.setReducerClass(AnalisisLogsSecondarySortReducer.class);
 		
 		job.setNumReduceTasks(2);
 		

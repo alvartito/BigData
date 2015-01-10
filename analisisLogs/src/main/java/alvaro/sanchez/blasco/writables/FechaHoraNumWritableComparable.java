@@ -1,4 +1,4 @@
-package org.utad.analisisLogs.jobSecondarySort;
+package alvaro.sanchez.blasco.writables;
 
 import java.io.DataInput;
 import java.io.DataOutput;

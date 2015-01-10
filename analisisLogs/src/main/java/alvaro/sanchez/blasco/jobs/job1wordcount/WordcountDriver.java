@@ -1,4 +1,4 @@
-package org.utad.analisisLogs.jobWordCount;
+package alvaro.sanchez.blasco.jobs.job1wordcount;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -11,7 +11,8 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.utad.analisisLogs.writables.FechaHoraProcesoWritableComparable;
+
+import alvaro.sanchez.blasco.writables.FechaHoraProcesoWritableComparable;
 
 public class WordcountDriver extends Configured implements Tool {
 	public static void main(String[] args) throws Exception {
@@ -56,8 +57,8 @@ public class WordcountDriver extends Configured implements Tool {
 		 * no existirá, sino más bien que esta fase se ejecutará con la clase
 		 * por defecto (=clase Identidad)
 		 */
-		job.setMapperClass(WordcountMapper.class);
-		job.setReducerClass(WordcountReducer.class);
+		job.setMapperClass(AnalisisLogsWordCountMapper.class);
+		job.setReducerClass(AnalisisLogsWordCountReducer.class);
 		
 		/* No se puede elegir el número de tareas Map que ejecutará el job.
 		 * Sin embargo, sí podemos elegir el número de tareas Reduce.

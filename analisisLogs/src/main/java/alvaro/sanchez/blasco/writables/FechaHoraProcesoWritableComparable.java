@@ -1,4 +1,4 @@
-package org.utad.analisisLogs.writables;
+package alvaro.sanchez.blasco.writables;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -11,19 +11,22 @@ import org.apache.hadoop.io.WritableComparable;
  * @author Álvaro Sánchez Blasco
  * 
  * */
-public class KeyFechaHoraWritableComparable implements WritableComparable<KeyFechaHoraWritableComparable> {
+public class FechaHoraProcesoWritableComparable implements WritableComparable<FechaHoraProcesoWritableComparable> {
 
 	private Text fecha;
 	private Text hora;
+	private Text proceso;
 	
-	public KeyFechaHoraWritableComparable() {
+	public FechaHoraProcesoWritableComparable() {
 		fecha = new Text();
 		hora = new Text();
+		proceso = new Text();
 	}
 
-	public KeyFechaHoraWritableComparable(Text fecha, Text hora) {
+	public FechaHoraProcesoWritableComparable(Text fecha, Text hora, Text proceso) {
 		this.fecha = fecha;
 		this.hora = hora;
+		this.proceso = proceso;
 	}
 
 	@Override
@@ -32,6 +35,7 @@ public class KeyFechaHoraWritableComparable implements WritableComparable<KeyFec
 		int result = 1;
 		result = prime * result + ((fecha == null) ? 0 : fecha.hashCode());
 		result = prime * result + ((hora == null) ? 0 : hora.hashCode());
+		result = prime * result + ((proceso == null) ? 0 : proceso.hashCode());
 		return result;
 	}
 
@@ -43,17 +47,18 @@ public class KeyFechaHoraWritableComparable implements WritableComparable<KeyFec
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		KeyFechaHoraWritableComparable other = (KeyFechaHoraWritableComparable) obj;
+		FechaHoraProcesoWritableComparable other = (FechaHoraProcesoWritableComparable) obj;
 		if (fecha == null) {
-			if (other.fecha != null)
+			if (other.getFecha() != null)
 				return false;
-		} else if (!fecha.equals(other.fecha))
+		} else if (!fecha.equals(other.getFecha()))
 			return false;
 		if (hora == null) {
-			if (other.hora != null)
+			if (other.getHora() != null)
 				return false;
 		}
-		return hora.equals(other.hora);
+		return hora.equals(other.getHora());
+		//TODO hacer lo mismo con el proceso
 	}
 
 
@@ -61,26 +66,34 @@ public class KeyFechaHoraWritableComparable implements WritableComparable<KeyFec
 	public void readFields(DataInput in) throws IOException {
 		fecha.readFields(in);
 		hora.readFields(in);
+		proceso.readFields(in);
 	}
 
 	@Override
 	public void write(DataOutput out) throws IOException {
 		fecha.write(out);
 		hora.write(out);
+		proceso.write(out);
 	}
 
 	@Override
-	public int compareTo(KeyFechaHoraWritableComparable o) {
+	public int compareTo(FechaHoraProcesoWritableComparable o) {
 		int cmp = fecha.compareTo(o.getFecha());
 		if (cmp != 0) {
 			return cmp;
-		} else
-			return hora.compareTo(o.getHora());
+		} else {
+			cmp = hora.compareTo(o.getHora());
+			if(cmp != 0)  {
+				return cmp;
+			} else {
+				return proceso.compareTo(o.getProceso());
+			}
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "["+fecha+" "+hora+"]";
+		return fecha+" "+hora+" "+proceso;
 	}
 
 	public Text getFecha() {
@@ -97,6 +110,14 @@ public class KeyFechaHoraWritableComparable implements WritableComparable<KeyFec
 
 	public void setHora(Text hora) {
 		this.hora = hora;
+	}
+
+	public Text getProceso() {
+		return proceso;
+	}
+
+	public void setProceso(Text proceso) {
+		this.proceso = proceso;
 	}
 
 }

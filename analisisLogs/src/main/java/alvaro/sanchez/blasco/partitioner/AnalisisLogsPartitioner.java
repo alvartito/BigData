@@ -1,9 +1,12 @@
-package org.utad.analisisLogs.jobSecondarySort;
+package alvaro.sanchez.blasco.partitioner;
 
 import org.apache.hadoop.mapreduce.Partitioner;
-import org.utad.analisisLogs.util.AnalisisLogsConstantes;
 
-public class IdPartitioner extends Partitioner<FechaHoraNumWritableComparable, ProcesoNumWritable> {
+import alvaro.sanchez.blasco.util.AnalisisLogsConstantes;
+import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
+import alvaro.sanchez.blasco.writables.ProcesoNumWritable;
+
+public class AnalisisLogsPartitioner extends Partitioner<FechaHoraNumWritableComparable, ProcesoNumWritable> {
 
 	@Override
 	public int getPartition(FechaHoraNumWritableComparable key, ProcesoNumWritable value, int numPartitions) {

@@ -1,6 +1,6 @@
-package org.utad.analisisLogs.util;
+package alvaro.sanchez.blasco.util;
 
-public class UtilAnalisisLogs {
+public class AnalisisLogsUtil {
 
 	/**
 	 * Metodo que, recibiendo un literal del mes, y un dia, monta la fecha con
@@ -9,15 +9,15 @@ public class UtilAnalisisLogs {
 	 * 
 	 * @param literal mes
 	 * @param dia
-	 * @return dd-mm-2014
+	 * @return dd/mm/2014
 	 */
 	public static String parseaFecha(String mes, String dia) {
 		StringBuilder date = new StringBuilder();
 		
-		ParseMeses pm = new ParseMeses();
+		AnalisisLogsParseMeses pm = new AnalisisLogsParseMeses();
 		
 		
-		date.append(dia).append("-").append(pm.getMonthFromStringAsString(mes)).append("-").append(AnalisisLogsConstantes.YEAR_2014);
+		date.append(dia).append("/").append(pm.getMonthFromStringAsString(mes)).append("/").append(AnalisisLogsConstantes.YEAR_2014);
 
 		return date.toString();
 	}

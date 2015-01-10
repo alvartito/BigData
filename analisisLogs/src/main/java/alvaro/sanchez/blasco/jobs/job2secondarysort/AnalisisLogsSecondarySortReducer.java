@@ -1,11 +1,14 @@
-package org.utad.analisisLogs.jobSecondarySort;
+package alvaro.sanchez.blasco.jobs.job2secondarysort;
 
 import java.io.IOException;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class SolSecondarySortReducer extends
+import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
+import alvaro.sanchez.blasco.writables.ProcesoNumWritable;
+
+public class AnalisisLogsSecondarySortReducer extends
 		Reducer<FechaHoraNumWritableComparable, ProcesoNumWritable, Text, Text> {
 	Text outputValue = new Text();
 

@@ -7,6 +7,7 @@ Nov 29 06:24:01 ktalina colord: Profile removed: icc-bbe1a40d69e812e21f3696aaeed
 Nov 29 06:24:01 ktalina gnome-session[3445]: CRITICAL: gsm_manager_set_phase: assertion `GSM_IS_MANAGER (manager)' failed
 Nov 29 06:24:01 ktalina gnome-session[3445]: Gtk-CRITICAL: gtk_main_quit: assertion `main_loops != NULL' failed
 Nov 29 07:54:07 ktalina kernel: imklog 5.8.11, log source = /proc/kmsg started.
+Nov 29 07:54:09 ktalina pollita: imklog 5.8.11, log source = /proc/kmsg started.
 Nov 29 07:54:07 ktalina rsyslogd: [origin software="rsyslogd" swVersion="5.8.11" x-pid="982" x-info="http://www.rsyslog.com"] start
 Nov 29 07:54:07 ktalina rsyslogd: rsyslogd's groupid changed to 103
 Nov 29 07:54:07 ktalina rsyslogd: rsyslogd's userid changed to 101

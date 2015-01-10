@@ -1,10 +1,11 @@
-package org.utad.analisisLogs.jobWordCount;
+package alvaro.sanchez.blasco.jobs.job1wordcount;
 
 import java.io.IOException;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.utad.analisisLogs.writables.FechaHoraProcesoWritableComparable;
+
+import alvaro.sanchez.blasco.writables.FechaHoraProcesoWritableComparable;
 
 /*
  * Esta clase extiende la clase "Reducer". 
@@ -14,7 +15,7 @@ import org.utad.analisisLogs.writables.FechaHoraProcesoWritableComparable;
  * la clave de salida
  * el valor de salida
  */
-public class WordcountReducer extends
+public class AnalisisLogsWordCountReducer extends
 		Reducer<FechaHoraProcesoWritableComparable, IntWritable, FechaHoraProcesoWritableComparable, IntWritable> {
 
 	@Override

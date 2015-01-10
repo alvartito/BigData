@@ -45,7 +45,8 @@ public class WordcountDriver extends Configured implements Tool {
 		//TODO Añadir map, reducer, combiner, partitioner, comparator
 		
 		for (FileStatus fileStatus : glob) {
-			fileStatus.getPath();	
+			String fs = fileStatus.getPath().getName();
+			System.out.println(fs);
 		}
 		
 		FileInputFormat.setInputPaths(job, ",,");

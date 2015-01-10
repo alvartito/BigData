@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.utad.analisisLogs.util;
+package alvaro.sanchez.blasco.util;
 
 import java.util.HashMap;
 
@@ -9,7 +9,7 @@ import java.util.HashMap;
  * @author Alvaro Sanchez Blasco
  *
  */
-public final class ParseMeses {
+public final class AnalisisLogsParseMeses {
 
 	private final String sEnero = "01";
 	private final String sFebrero = "02";
@@ -26,7 +26,7 @@ public final class ParseMeses {
 
 	private final HashMap<String, String> relacionMesesTextoNumero = new HashMap<String, String>();
 
-	public ParseMeses() {
+	public AnalisisLogsParseMeses() {
 		if (relacionMesesTextoNumero.size() == 0) {
 			relacionMesesTextoNumero.put("Jan", sEnero);
 			relacionMesesTextoNumero.put("Ene", sEnero);

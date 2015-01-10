@@ -1,4 +1,4 @@
-package org.utad.analisisLogs.jobSecondarySort;
+package alvaro.sanchez.blasco.jobs.job2secondarysort;
 
 import java.io.IOException;
 
@@ -7,7 +7,10 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-public class SolSecondarySortMapper extends
+import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
+import alvaro.sanchez.blasco.writables.ProcesoNumWritable;
+
+public class AnalisisLogsSecondarySortMapper extends
 		Mapper<LongWritable, Text, FechaHoraNumWritableComparable, ProcesoNumWritable> {
 
 	private Text fecha = new Text();
@@ -28,7 +31,7 @@ public class SolSecondarySortMapper extends
 		
 //		fecha.set(fechaHoraProceso[0]);
 //		hora.set(fechaHoraProceso[1]);
-		fechaHora.set(fechaHoraProceso[0]+" "+fechaHoraProceso[1]);
+		fechaHora.set(fechaHoraProceso[0]+"-"+fechaHoraProceso[1]);
 		proceso.set(fechaHoraProceso[2]);
 		contador.set(Integer.parseInt(line[1]));
 

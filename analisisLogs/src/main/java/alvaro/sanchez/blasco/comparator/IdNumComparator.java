@@ -1,7 +1,9 @@
-package org.utad.analisisLogs.jobSecondarySort;
+package alvaro.sanchez.blasco.comparator;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
+
+import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
 
 public  class IdNumComparator extends WritableComparator {
 	protected IdNumComparator() {
@@ -15,9 +17,10 @@ public  class IdNumComparator extends WritableComparator {
 		
 		int cmp = cin1.getFechaHora().compareTo(cin2.getFechaHora());
 		if (cmp != 0) {
-			return cmp;
+			//Queremos las horas más altas al principio.
+			return -cmp;
 		}
-		// negative because we want most popular songs first
-		return -(cin1.getNum()).compareTo(cin2.getNum());
+		//Queremos los procesos con menos apariciones al principio.
+		return (cin1.getNum()).compareTo(cin2.getNum());
 	}
 }

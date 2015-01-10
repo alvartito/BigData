@@ -19,8 +19,8 @@ import alvaro.sanchez.blasco.writables.ProcesoNumWritable;
 
 public class SolSecondarySortDriver extends Configured implements Tool {
 	public static void main(String[] args) throws Exception {
-		if (args.length != 2) {
-			System.out.printf("Usage: SolSecondarySortDriver <input dir> <output dir>\n");
+		if (args.length != 1) {
+			System.out.printf("Usage: SolSecondarySortDriver <output dir>\n");
 			System.exit(-1);
 		}
 
@@ -29,8 +29,8 @@ public class SolSecondarySortDriver extends Configured implements Tool {
 
 	public int run(String[] args) throws Exception {
 		
-		Path inPath = new Path(args[0]);
-		Path outPath = new Path(args[1]);
+		Path inPath = new Path("out_wc/part-r-00000");
+		Path outPath = new Path(args[0]);
 		
 		Configuration config = getConf();
 

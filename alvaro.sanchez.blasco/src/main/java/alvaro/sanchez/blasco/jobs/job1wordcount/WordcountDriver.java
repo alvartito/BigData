@@ -34,6 +34,7 @@ public class WordcountDriver extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 		
 		Path inPath = new Path(args[0]);
+		
 		Path outPath = new Path(args[1]);
 		
 		Configuration config = getConf();

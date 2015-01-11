@@ -9,7 +9,13 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
 import alvaro.sanchez.blasco.writables.ProcesoNumWritable;
 
-public class AnalisisLogsSecondarySortReducer extends
+/**
+ * @author Álvaro Sánchez Blasco
+ *
+ *         Reducer del Job Secondary Sort del proceso MR para Análisis de Logs.
+ * */
+public class AnalisisLogsSecondarySortReducer
+		extends
 		Reducer<FechaHoraNumWritableComparable, ProcesoNumWritable, FechaHoraNumWritableComparable, Text> {
 	Text outputValue = new Text();
 
@@ -24,7 +30,6 @@ public class AnalisisLogsSecondarySortReducer extends
 			sb = sb.append(sn.toString()).append(",");
 		}
 		outputValue.set(sb.toString());
-//		context.write(key, outputValue);
 		multipleOut.write(key, outputValue, generateFileName(key));
 	}
 
@@ -37,18 +42,14 @@ public class AnalisisLogsSecondarySortReducer extends
 	@Override
 	protected void setup(Context context) throws IOException,
 			InterruptedException {
-		multipleOut = new MultipleOutputs<FechaHoraNumWritableComparable, Text>(context);
+		multipleOut = new MultipleOutputs<FechaHoraNumWritableComparable, Text>(
+				context);
 	}
 
 	private String generateFileName(FechaHoraNumWritableComparable k) {
-		// expect Text k in format "Surname|Forename"
 		String dir = k.getFechaHora().toString();
 		String[] splits = dir.split("/");
-		
-		// example for k = Smith|John
-		// output written to /user/hadoop/path/to/output/Smith/John-r-00000
-		// (etc)
 		return splits[0];
 	}
-	
+
 }

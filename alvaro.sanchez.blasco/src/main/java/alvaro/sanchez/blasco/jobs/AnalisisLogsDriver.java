@@ -3,7 +3,6 @@ package alvaro.sanchez.blasco.jobs;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
@@ -14,7 +13,6 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.CounterGroup;
-import org.apache.hadoop.mapreduce.Counters;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
@@ -22,8 +20,6 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-
-import com.google.common.collect.Lists;
 
 import alvaro.sanchez.blasco.comparator.GroupIdComparator;
 import alvaro.sanchez.blasco.comparator.IdNumComparator;
@@ -37,8 +33,12 @@ import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
 import alvaro.sanchez.blasco.writables.FechaHoraProcesoWritableComparable;
 import alvaro.sanchez.blasco.writables.ProcesoNumWritable;
 
+import com.google.common.collect.Lists;
+
 /**
  * @author Álvaro Sánchez Blasco
+ * 
+ *         Driver para el proceso MR de Análisis de logs.
  * 
  * */
 public class AnalisisLogsDriver extends Configured implements Tool {
@@ -53,7 +53,6 @@ public class AnalisisLogsDriver extends Configured implements Tool {
 
 	}
 
-	@SuppressWarnings("unused")
 	public int run(String[] args) throws Exception {
 
 		Path inPath = new Path(args[0]);
@@ -64,8 +63,6 @@ public class AnalisisLogsDriver extends Configured implements Tool {
 
 		config.setStrings(AnalisisLogsConstantes.GRUPO_PROCESOS,
 				AnalisisLogsConstantes.CONTADORES);
-		String[] grupos = config
-				.getStrings(AnalisisLogsConstantes.GRUPO_PROCESOS);
 
 		Job job1wc = Job.getInstance(config, "Analisis Logs WC");
 		job1wc.setJarByClass(AnalisisLogsDriver.class);
@@ -76,6 +73,7 @@ public class AnalisisLogsDriver extends Configured implements Tool {
 		// Recuperamos los datos del path origen
 		FileStatus[] glob = inPath.getFileSystem(getConf()).globStatus(inPath);
 
+		// Tratamos todos los archivos incluidos en el directorio de orígen.
 		for (FileStatus fileStatus : glob) {
 			String fs = fileStatus.getPath().getName();
 			String sbFicheros = "data/" + fs;
@@ -101,7 +99,6 @@ public class AnalisisLogsDriver extends Configured implements Tool {
 			// Borramos todos los directorios que puedan existir
 			FileSystem.get(outPath.toUri(), config).delete(outPath, true);
 
-			// TODO Añadir map, reducer, combiner, partitioner, comparator
 			FileInputFormat
 					.setInputPaths(job2ss, new Path(
 							AnalisisLogsConstantes.CTE_PATH_TEMPORAL
@@ -133,6 +130,15 @@ public class AnalisisLogsDriver extends Configured implements Tool {
 		return success ? 0 : 1;
 	}
 
+	/**
+	 * Método que muestra en consola el recuento de lineas de log asociado a
+	 * cada componente, ordenado por número de registros leídos de mayor a
+	 * menor.
+	 * 
+	 * @param counterGroup
+	 *            a mostrar por pantalla
+	 * @throws IOException
+	 */
 	private static void printCounters(CounterGroup counterGroup)
 			throws IOException {
 		System.out
@@ -143,12 +149,12 @@ public class AnalisisLogsDriver extends Configured implements Tool {
 			public int compare(Counter o1, Counter o2) {
 				Long l1 = o1.getValue();
 				Long l2 = o2.getValue();
+				// Los que tengan mayor número de apariciones, primero.
 				return -(l1.compareTo(l2));
 			}
 		});
 		for (Counter counter : counters) {
-			System.out.println(counter.getName() + ":"
-					+ counter.getValue());
+			System.out.println(counter.getName() + ":" + counter.getValue());
 		}
 	}
 }

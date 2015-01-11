@@ -8,8 +8,9 @@ import org.apache.hadoop.mapreduce.Reducer;
 import alvaro.sanchez.blasco.writables.FechaHoraProcesoWritableComparable;
 
 /**
- * @author cloudera
- * 
+ * @author Álvaro Sánchez Blasco
+ *
+ *         Reducer del Job Word Count del proceso MR para Análisis de Logs.
  * */
 public class AnalisisLogsWordCountReducer
 		extends

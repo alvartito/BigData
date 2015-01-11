@@ -8,6 +8,9 @@ import java.util.HashMap;
 /**
  * @author Álvaro Sánchez Blasco
  *
+ *         Clase para parsear los meses que encontramos en los logs, de String a
+ *         int.
+ *
  */
 public final class AnalisisLogsParseMeses {
 
@@ -52,17 +55,13 @@ public final class AnalisisLogsParseMeses {
 
 	public String getMonthFromStringAsString(String month) {
 		String retorno = "";
-		
+
 		if (relacionMesesTextoNumero.containsKey(month)) {
 			retorno = relacionMesesTextoNumero.get(month);
 		} else {
 			retorno = "0";
 		}
-		
-		return retorno;
-	}
 
-	public String getHourFromString(String time) {
-		return "";
+		return retorno;
 	}
 }

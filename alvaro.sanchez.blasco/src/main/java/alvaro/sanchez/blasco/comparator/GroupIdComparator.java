@@ -6,11 +6,12 @@ import org.apache.hadoop.io.WritableComparator;
 import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
 
 /**
- * @author cloudera
+ * @author Álvaro Sánchez Blasco
  * 
- * 
+ *         Clase de comparación de Id y contador de coincidencias para la clase
+ *         FechaHoraNumWritableComparable, que ordena las horas de mas a menos,
+ *         y las apariciones de más a menos, como se pide en el enunciado.
  * */
-
 public class GroupIdComparator extends WritableComparator {
 
 	public GroupIdComparator() {
@@ -23,5 +24,4 @@ public class GroupIdComparator extends WritableComparator {
 		FechaHoraNumWritableComparable cin2 = (FechaHoraNumWritableComparable) w2;
 		return (cin1.getFechaHora()).compareTo(cin2.getFechaHora());
 	}
-
 }

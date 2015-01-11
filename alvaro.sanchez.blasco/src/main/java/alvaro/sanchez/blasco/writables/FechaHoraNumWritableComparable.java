@@ -8,7 +8,12 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
-public class FechaHoraNumWritableComparable implements WritableComparable<FechaHoraNumWritableComparable> {
+/**
+ * @author Álvaro Sánchez Blasco.
+ *
+ */
+public class FechaHoraNumWritableComparable implements
+		WritableComparable<FechaHoraNumWritableComparable> {
 	private Text fechaHora;
 	private IntWritable num;
 
@@ -26,7 +31,8 @@ public class FechaHoraNumWritableComparable implements WritableComparable<FechaH
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((fechaHora == null) ? 0 : fechaHora.hashCode());
+		result = prime * result
+				+ ((fechaHora == null) ? 0 : fechaHora.hashCode());
 		result = prime * result + ((num == null) ? 0 : num.hashCode());
 		return result;
 	}
@@ -80,8 +86,7 @@ public class FechaHoraNumWritableComparable implements WritableComparable<FechaH
 
 	@Override
 	public String toString() {
-		return "["+fechaHora+"]";
-		//[29/11/2014-08]		gnome-session:1,colord:2
+		return "[" + fechaHora + "]";
 	}
 
 	public Text getFechaHora() {

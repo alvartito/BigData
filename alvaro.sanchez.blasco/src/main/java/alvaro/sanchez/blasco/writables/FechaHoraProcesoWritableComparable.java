@@ -11,19 +11,21 @@ import org.apache.hadoop.io.WritableComparable;
  * @author Álvaro Sánchez Blasco
  * 
  * */
-public class FechaHoraProcesoWritableComparable implements WritableComparable<FechaHoraProcesoWritableComparable> {
+public class FechaHoraProcesoWritableComparable implements
+		WritableComparable<FechaHoraProcesoWritableComparable> {
 
 	private Text fecha;
 	private Text hora;
 	private Text proceso;
-	
+
 	public FechaHoraProcesoWritableComparable() {
 		fecha = new Text();
 		hora = new Text();
 		proceso = new Text();
 	}
 
-	public FechaHoraProcesoWritableComparable(Text fecha, Text hora, Text proceso) {
+	public FechaHoraProcesoWritableComparable(Text fecha, Text hora,
+			Text proceso) {
 		this.fecha = fecha;
 		this.hora = hora;
 		this.proceso = proceso;
@@ -58,7 +60,7 @@ public class FechaHoraProcesoWritableComparable implements WritableComparable<Fe
 				return false;
 		}
 		return hora.equals(other.getHora());
-		//TODO hacer lo mismo con el proceso
+		// TODO hacer lo mismo con el proceso
 	}
 
 	public void readFields(DataInput in) throws IOException {
@@ -79,7 +81,7 @@ public class FechaHoraProcesoWritableComparable implements WritableComparable<Fe
 			return cmp;
 		} else {
 			cmp = hora.compareTo(o.getHora());
-			if(cmp != 0)  {
+			if (cmp != 0) {
 				return cmp;
 			} else {
 				return proceso.compareTo(o.getProceso());
@@ -89,7 +91,7 @@ public class FechaHoraProcesoWritableComparable implements WritableComparable<Fe
 
 	@Override
 	public String toString() {
-		return fecha+" "+hora+" "+proceso;
+		return fecha + " " + hora + " " + proceso;
 	}
 
 	public Text getFecha() {

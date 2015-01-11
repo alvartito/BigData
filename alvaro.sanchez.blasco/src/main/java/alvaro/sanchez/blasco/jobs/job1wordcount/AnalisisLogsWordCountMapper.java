@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -17,43 +16,44 @@ import alvaro.sanchez.blasco.util.AnalisisLogsUtil;
 import alvaro.sanchez.blasco.writables.FechaHoraProcesoWritableComparable;
 
 /**
- * @see http://maps.google.es/gwt/x/e?wsc=wg&source=wax&u=http://www.google.es/url%3Fq%3Dhttps://chandramanitiwary.wordpress.com/2012/08/19/map-reduce-design-patterns-inmapper-combining/%26sa%3DU%26ei%3DwE6qVOC6FciBU6T3gaAL%26ved%3D0CB4QFjAC%26usg%3DAFQjCNFYBwYvcX8G8K4SPZaW9I6Pa_q7jg&ei=yE6qVKXHBoeo8gOb2oCwCw&whp=1direct_link%3B2https://github.com/Chandramani/MR_Design_Patterns/blob/master/wordcount/WordCountInMapperCombining.java
- */
-public class AnalisisLogsWordCountMapper extends
+ * @author Álvaro Sánchez Blasco
+ *
+ *         Mapper del Job Word Count del proceso MR para Análisis de Logs.
+ * 
+ *         Se ha utilizado el patrón InMapperCombining para reducir el numero de
+ *         pares key/value que salen del Mapper y se envian al Reducer.
+ * 
+ * */
+public class AnalisisLogsWordCountMapper
+		extends
 		Mapper<LongWritable, Text, FechaHoraProcesoWritableComparable, IntWritable> {
 
 	private static Map<FechaHoraProcesoWritableComparable, Integer> myWordMap;
 	FechaHoraProcesoWritableComparable keyOut = new FechaHoraProcesoWritableComparable();
-	private String GRUPO_PROCESOS;
-	
+
 	@Override
 	protected void setup(Context context) throws IOException,
 			InterruptedException {
 		if (myWordMap == null) {
 			myWordMap = new HashMap<FechaHoraProcesoWritableComparable, Integer>();
 		}
-		Configuration conf = context.getConfiguration();
-		GRUPO_PROCESOS = conf.getStrings(AnalisisLogsConstantes.GRUPO_PROCESOS)[0];
 	}
 
 	@Override
 	public void map(LongWritable key, Text values, Context context)
 			throws IOException, InterruptedException {
-		
-		/*
-		 * Se recibe como valor una línea del fichero de entrada
-		 */
+
 		String[] word = values.toString().split(" ");
 
 		String proc = word[4];
 
-		// Primero, descartar todos los procesos que contengan vmet
+		// Primero, descartar todos los procesos que contengan vmnet
 		if (!proc.contains(AnalisisLogsConstantes.PROCESOS_DESCARTADOS)) {
 			// Nos quedamos unicamente con el nombre del proceso.
 			if (proc.contains("[")) {
 				StringTokenizer st = new StringTokenizer(proc, "[");
 				proc = st.nextToken();
-				if(proc.contains("]")){
+				if (proc.contains("]")) {
 					proc = proc.replace("]", "");
 				}
 			}
@@ -74,8 +74,6 @@ public class AnalisisLogsWordCountMapper extends
 			// Ya tengo los datos necesarios para montar la clave.
 			keyOut.setProceso(new Text(proc));
 
-//			context.getCounter(GRUPO_PROCESOS, proc).increment(1);
-			
 			if (myWordMap.containsKey(keyOut)) {
 				myWordMap.put(keyOut, myWordMap.get(keyOut) + 1);
 			} else {
@@ -87,11 +85,11 @@ public class AnalisisLogsWordCountMapper extends
 
 	private void flush(Context context) throws IOException,
 			InterruptedException {
-		Iterator<FechaHoraProcesoWritableComparable> iterator = myWordMap.keySet().iterator();
+		Iterator<FechaHoraProcesoWritableComparable> iterator = myWordMap
+				.keySet().iterator();
 		while (iterator.hasNext()) {
 			FechaHoraProcesoWritableComparable key = iterator.next();
 			context.write(key, new IntWritable(myWordMap.get(key)));
-//			context.getCounter(GRUPO_PROCESOS, key.getProceso().toString()).setValue(myWordMap.get(key));
 		}
 		myWordMap.clear();
 	}

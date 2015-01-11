@@ -8,11 +8,15 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
+/**
+ * @author Álvaro Sánchez Blasco.
+ *
+ */
 public class ProcesoNumWritable implements Writable {
 	private Text proceso;
 	private IntWritable num;
-	
-	public ProcesoNumWritable(){
+
+	public ProcesoNumWritable() {
 		proceso = new Text();
 		num = new IntWritable();
 	}

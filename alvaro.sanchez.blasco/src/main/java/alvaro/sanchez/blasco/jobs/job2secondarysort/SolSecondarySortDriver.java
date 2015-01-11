@@ -14,6 +14,7 @@ import org.apache.hadoop.util.ToolRunner;
 import alvaro.sanchez.blasco.comparator.GroupIdComparator;
 import alvaro.sanchez.blasco.comparator.IdNumComparator;
 import alvaro.sanchez.blasco.partitioner.AnalisisLogsPartitioner;
+import alvaro.sanchez.blasco.util.AnalisisLogsConstantes;
 import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
 import alvaro.sanchez.blasco.writables.ProcesoNumWritable;
 
@@ -58,6 +59,12 @@ public class SolSecondarySortDriver extends Configured implements Tool {
 		job2ss.setNumReduceTasks(2);
 		
 		boolean success = job2ss.waitForCompletion(true);
+		
+		long tipoAna = job2ss.getCounters().findCounter(AnalisisLogsConstantes.GRUPO_PROCESOS, "Ana")
+				.getValue();
+		
+		
+		
 		return success ? 0 : 1;
 	}
 	

@@ -13,6 +13,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import alvaro.sanchez.blasco.util.AnalisisLogsConstantes;
 import alvaro.sanchez.blasco.writables.FechaHoraProcesoWritableComparable;
 
 /**
@@ -39,6 +40,10 @@ public class WordcountDriver extends Configured implements Tool {
 		
 		Configuration config = getConf();
 
+		config.setStrings(AnalisisLogsConstantes.GRUPO_PROCESOS, AnalisisLogsConstantes.CONTADORES);
+		String[] grupos = config.getStrings(AnalisisLogsConstantes.GRUPO_PROCESOS);
+
+		
 		Job job1wc = Job.getInstance(config, "Analisis Logs WC");
 		job1wc.setJarByClass(WordcountDriver.class);
 		

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -23,6 +24,7 @@ public class AnalisisLogsWordCountMapper extends
 
 	private static Map<FechaHoraProcesoWritableComparable, Integer> myWordMap;
 	FechaHoraProcesoWritableComparable keyOut = new FechaHoraProcesoWritableComparable();
+	private String GRUPO_PROCESOS;
 	
 	@Override
 	protected void setup(Context context) throws IOException,
@@ -30,6 +32,8 @@ public class AnalisisLogsWordCountMapper extends
 		if (myWordMap == null) {
 			myWordMap = new HashMap<FechaHoraProcesoWritableComparable, Integer>();
 		}
+		Configuration conf = context.getConfiguration();
+		GRUPO_PROCESOS = conf.getStrings(AnalisisLogsConstantes.GRUPO_PROCESOS)[0];
 	}
 
 	@Override
@@ -70,7 +74,7 @@ public class AnalisisLogsWordCountMapper extends
 			// Ya tengo los datos necesarios para montar la clave.
 			keyOut.setProceso(new Text(proc));
 
-			context.getCounter(AnalisisLogsConstantes.GRUPO_PROCESOS, proc).increment(1);
+//			context.getCounter(GRUPO_PROCESOS, proc).increment(1);
 			
 			if (myWordMap.containsKey(keyOut)) {
 				myWordMap.put(keyOut, myWordMap.get(keyOut) + 1);
@@ -85,8 +89,9 @@ public class AnalisisLogsWordCountMapper extends
 			InterruptedException {
 		Iterator<FechaHoraProcesoWritableComparable> iterator = myWordMap.keySet().iterator();
 		while (iterator.hasNext()) {
-			FechaHoraProcesoWritableComparable fhpwc = iterator.next();
-			context.write(fhpwc, new IntWritable(myWordMap.get(fhpwc)));
+			FechaHoraProcesoWritableComparable key = iterator.next();
+			context.write(key, new IntWritable(myWordMap.get(key)));
+//			context.getCounter(GRUPO_PROCESOS, key.getProceso().toString()).setValue(myWordMap.get(key));
 		}
 		myWordMap.clear();
 	}

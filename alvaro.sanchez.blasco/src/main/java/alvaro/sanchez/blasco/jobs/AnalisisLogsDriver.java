@@ -1,15 +1,11 @@
 package alvaro.sanchez.blasco.jobs;
 
-import java.util.Iterator;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.mapreduce.CounterGroup;
-import org.apache.hadoop.mapreduce.Counters;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
@@ -22,10 +18,8 @@ import alvaro.sanchez.blasco.comparator.GroupIdComparator;
 import alvaro.sanchez.blasco.comparator.IdNumComparator;
 import alvaro.sanchez.blasco.jobs.job1wordcount.AnalisisLogsWordCountMapper;
 import alvaro.sanchez.blasco.jobs.job1wordcount.AnalisisLogsWordCountReducer;
-import alvaro.sanchez.blasco.jobs.job1wordcount.WordcountDriver;
 import alvaro.sanchez.blasco.jobs.job2secondarysort.AnalisisLogsSecondarySortMapper;
 import alvaro.sanchez.blasco.jobs.job2secondarysort.AnalisisLogsSecondarySortReducer;
-import alvaro.sanchez.blasco.jobs.job2secondarysort.SolSecondarySortDriver;
 import alvaro.sanchez.blasco.partitioner.AnalisisLogsPartitioner;
 import alvaro.sanchez.blasco.util.AnalisisLogsConstantes;
 import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
@@ -61,7 +55,7 @@ public class AnalisisLogsDriver extends Configured implements Tool {
 		String[] grupos = config.getStrings(AnalisisLogsConstantes.GRUPO_PROCESOS);
 
 		Job job1wc = Job.getInstance(config, "Analisis Logs WC");
-		job1wc.setJarByClass(WordcountDriver.class);
+		job1wc.setJarByClass(AnalisisLogsDriver.class);
 		
 		// Borramos todos los directorios que puedan existir
 		FileSystem.get(tempPath.toUri(), config).delete(tempPath, true);
@@ -88,7 +82,7 @@ public class AnalisisLogsDriver extends Configured implements Tool {
 		boolean success = job1wc.waitForCompletion(true);
 		if(success){
 			Job job2ss = Job.getInstance(config, "Secondary Sort");
-			job2ss.setJarByClass(SolSecondarySortDriver.class);
+			job2ss.setJarByClass(AnalisisLogsDriver.class);
 			
 			// Borramos todos los directorios que puedan existir
 			FileSystem.get(outPath.toUri(), config).delete(outPath, true);
@@ -112,17 +106,17 @@ public class AnalisisLogsDriver extends Configured implements Tool {
 			
 			success = job2ss.waitForCompletion(true);
 			
-			Counters tmp = job2ss.getCounters();
+			long tmp = job2ss.getCounters().findCounter(AnalisisLogsConstantes.GRUPO_PROCESOS, "kernel").getValue();
 			
-			Iterator<CounterGroup> counters = tmp.iterator();
-			for (CounterGroup counterGroup : tmp) {
-				
-			}
-			
-			
-			long tipoAna = job2ss.getCounters().findCounter(AnalisisLogsConstantes.GRUPO_PROCESOS, "Ana")
-					.getValue();
-			System.out.println(tipoAna);
+//			Iterator<CounterGroup> counters = tmp.iterator();
+//			for (CounterGroup counterGroup : tmp) {
+//				
+//			}
+//			
+//			
+//			long tipoAna = job2ss.getCounters().findCounter(AnalisisLogsConstantes.GRUPO_PROCESOS, "Ana")
+//					.getValue();
+			System.out.println(tmp);
 		}
 		return success ? 0 : 1;
 	}

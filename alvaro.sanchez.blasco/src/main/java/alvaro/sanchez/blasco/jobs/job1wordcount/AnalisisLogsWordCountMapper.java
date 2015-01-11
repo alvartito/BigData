@@ -36,7 +36,6 @@ public class AnalisisLogsWordCountMapper extends
 	public void map(LongWritable key, Text values, Context context)
 			throws IOException, InterruptedException {
 		
-		
 		/*
 		 * Se recibe como valor una línea del fichero de entrada
 		 */
@@ -71,17 +70,15 @@ public class AnalisisLogsWordCountMapper extends
 			// Ya tengo los datos necesarios para montar la clave.
 			keyOut.setProceso(new Text(proc));
 
+			context.getCounter(AnalisisLogsConstantes.GRUPO_PROCESOS, proc).increment(1);
+			
 			if (myWordMap.containsKey(keyOut)) {
 				myWordMap.put(keyOut, myWordMap.get(keyOut) + 1);
 			} else {
 				myWordMap.put(keyOut, 1);
 			}
-			
-//			flush(context);
 		}
-
-//		if (myWordMap.size() >= AnalisisLogsConstantes.FLUSH_COUNTER)
-			flush(context);
+		flush(context);
 	}
 
 	private void flush(Context context) throws IOException,

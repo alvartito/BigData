@@ -10,13 +10,11 @@ package alvaro.sanchez.blasco.util;
 public final class AnalisisLogsConstantes {
 
 	public static final String HELP_ANALISIS_LOGS = "Invalid number of arguments\n\n"
-			+ "Usage: AnalisisLogs <input_path> <output_path>\n\n";
+			+ "Usage: AnalisisLogs <GLOB_input_path> <output_path>\n\n";
 
 	public static final String CONTADORES = "COUNT_PROC";
 	public static final String GRUPO_PROCESOS = "procesos";
 	public static final String GRUPO_PROCESOS_VMNET = "proc_vmnet";
-
-	public static final String FIN = "Procesado de datos finalizado";
 
 	public static final String CTE_PATH_TEMPORAL = "out_wc";
 

@@ -9,8 +9,7 @@ import alvaro.sanchez.blasco.writables.FechaHoraNumWritableComparable;
  * @author Álvaro Sánchez Blasco
  * 
  *         Clase de comparación de Id y contador de coincidencias para la clase
- *         FechaHoraNumWritableComparable, que ordena las horas de mas a menos,
- *         y las apariciones de más a menos, como se pide en el enunciado.
+ *         FechaHoraNumWritableComparable.
  * */
 public class GroupIdComparator extends WritableComparator {
 

@@ -56,7 +56,11 @@ public class AnalisisLogsSecondarySortMapper
 		// Para el control de lineas de log asociadas a cada proceso.
 		long valorProceso = context.getCounter(GRUPO_PROCESOS,
 				proceso.toString()).getValue();
+		
+		// Sumamos, por cada proceso, el numero de veces que ha aparecido.
 		long nuevoValor = contador.get() + valorProceso;
+		
+		// Actualizamos el grupo de contadores de procesos.
 		context.getCounter(GRUPO_PROCESOS, proceso.toString()).setValue(
 				nuevoValor);
 

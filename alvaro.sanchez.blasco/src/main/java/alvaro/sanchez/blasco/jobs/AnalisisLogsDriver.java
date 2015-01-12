@@ -50,7 +50,6 @@ public class AnalisisLogsDriver extends Configured implements Tool {
 		}
 
 		ToolRunner.run(new AnalisisLogsDriver(), args);
-
 	}
 
 	public int run(String[] args) throws Exception {

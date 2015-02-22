@@ -19,4 +19,4 @@ Por ejemplo: generaTests(List(">","3","<","5",">","8","=","10"))devolverá una l
 vallistTest=generaTests(
 List(“>","3","<","5",">","8","=","10"))
 numTests(listTest,10)→ 3
-Nota: Puedes utilizar el método de cadenas toIntpara transformar una cadena a un entero.
+Nota: Puedes utilizar el método de cadenas toInt para transformar una cadena a un entero.

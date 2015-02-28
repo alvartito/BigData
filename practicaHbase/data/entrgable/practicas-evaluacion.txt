@@ -51,6 +51,17 @@ Secuencia de pasos
 	Column Family: price, totals
 	Qualifier: value
 
+	Modelo 5
+	--------
+	Variante propia del modelo, 
+	que pueda ser más eficiente. 
+	Uno que definamos nosotros.
+	
+	Rowkey: <empresa>/<metrica>/<timestamp>
+	Column Family: price, totals
+	Qualifier: value
+	
+
 2. Transformar e importar los datos
 
 Opciones

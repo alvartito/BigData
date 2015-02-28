@@ -35,15 +35,19 @@ public class EstimateMarketDropEntregable {
 
 	// nombre de la tabla
 	public static final String tableName = "MetricaTSEmpresa";
+	
 	// nombre del modelo
-	public static final String columnFamilty1 = "model1";
+	public static final String columnFamily1 = "model1";
+	
 	// nombre de la metrica para ese modelo
 	public static final String model = "open-close";
+	
 	// nombres de los segmentos del modelo estadístico
 	public static final String qualifier1 = "o-c<0";
 	public static final String qualifier2 = "0<=o-c<10";
 	public static final String qualifier3 = "10<=o-c<20";
 	public static final String qualifier4 = "o-c>=20";
+	
 	// formatos de la rowkey
 	public static final String formatRkTimestamp = "%13s";
 	public static final String formatRkEmpresa = "%5s";
@@ -89,6 +93,8 @@ public class EstimateMarketDropEntregable {
 
 		ResultScanner scanner = null;
 
+		//Crear los filtros adecuados, y lanzar el scan, para llegar al resultado deseado
+		
 		/* ***********
 		 * Fin del codigo del alumno ***********
 		 */
@@ -97,7 +103,7 @@ public class EstimateMarketDropEntregable {
 		for (Result result : scanner) {
 			// captura la RK
 			String rk = Bytes.toString(result.getRow());
-			Cell kv = result.getColumnLatestCell(Bytes.toBytes(columnFamilty1),
+			Cell kv = result.getColumnLatestCell(Bytes.toBytes(columnFamily1),
 					Bytes.toBytes(statModel));
 			// captura el value asociado a la celda
 			float metric = Bytes.toFloat(CellUtil.cloneValue(kv));

@@ -164,7 +164,6 @@ public class BasicoEmpresaResuelto {
 	 * PROPUESTO 1 Usar put en batch con los mismos registros que antes
 	 * incrementando timestamp + 60000
 	 */
-
 	private void propuesto1() throws IOException, InterruptedException {
 
 		System.out.println("\n*** propuesto1 ***\n");
@@ -274,7 +273,6 @@ public class BasicoEmpresaResuelto {
 	 * de la row DELL. Si la transaccion propuesto1 ha funcionado, el timestamp
 	 * debe ser 1218006060000
 	 */
-
 	private void propuesto1a() throws IOException {
 
 		System.out.println("\n*** propuesto1a ***\n");
@@ -357,7 +355,6 @@ public class BasicoEmpresaResuelto {
 	 * PROPUESTO 2 Usando sólo filtros hacer un Scan para encontrar la última
 	 * versión del registro con valor price:low=24.81
 	 */
-
 	private void propuesto2() throws IOException {
 
 		System.out.println("\n*** propuesto2 ***\n");
@@ -443,7 +440,6 @@ public class BasicoEmpresaResuelto {
 	 * <p>
 	 * Visualizar los resultados de la fila DELL con timestamp 872578800000
 	 */
-
 	private void propuesto3() throws IOException {
 
 		System.out.println("\n*** propuesto3 ***\n");

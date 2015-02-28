@@ -163,12 +163,14 @@ public class EstimateMarketDropEntregable {
 	}
 
 	/*
-	 * Por ejemplo, usando la query scan 'MetricaTSEmpresa', {LIMIT => 10, STARTROW => 'open-close/
-	 * 953539200000', STOPROW => 'open-close/ 953625600000', VERSIONS => 1, FILTER =>
-	 * "((FamilyFilter (=, 'binary:model1')) AND (QualifierFilter (=, 'binary:10<=o-c<20'))" } ROW
-	 * COLUMN+CELL open-close/ 953539200000/ DITC column=model1:10<=o-c<20, timestamp=953539200000,
-	 * value=A0\x00\x00 Obtenemos el timestamp date -d '@953539200' Mon Mar 20 00:00:00 PST 2000 Es
-	 * decir, 20/03/2000. Si introducimos este timestamp en el programa obtenemos la empresa y la
+	 * Por ejemplo, usando la query 
+	 * scan 'MetricaTSEmpresa', {LIMIT => 10, STARTROW => 'open-close/953539200000', 
+	 * STOPROW => 'open-close/ 953625600000', VERSIONS => 1, 
+	 * FILTER =>"((FamilyFilter (=, 'binary:model1')) AND (QualifierFilter (=, 'binary:10<=o-c<20'))" } 
+	 * ROW COLUMN+CELL open-close/ 953539200000/ DITC column=model1:10<=o-c<20, timestamp=953539200000,
+	 * value=A0\x00\x00 
+	 * Obtenemos el timestamp date -d '@953539200' Mon Mar 20 00:00:00 PST 2000 
+	 * Es decir, 20/03/2000. Si introducimos este timestamp en el programa obtenemos la empresa y la
 	 * probabilidad correspondiente La probabilidad maxima es 0.5 para la empresa DITC
 	 */
 

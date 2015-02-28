@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
@@ -22,6 +24,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 /**
  * El objetivo de esta practica es usar un modelo de datos de tipo SERIE TEMPORAL EMPRESA y paginar en filas y columnas.
+ * Se paginará unicamente sobre 'price'
  * 
  * <p>Para ello se calculara la media de las cotizaciones maximas del mes 2001-01 para cada empresa
  * <p>------------------------------------------
@@ -83,6 +86,71 @@ public class ModeloMetricaTS {
 		 */
 
 		byte[] RowKey = null;
+
+		// instancia la lista de filtros
+		List<Filter> filters = new ArrayList<Filter>();
+
+		// filtro de ColumnFamily
+		Filter filter1 = new FamilyFilter(CompareFilter.CompareOp.EQUAL,
+				new BinaryComparator(Bytes.toBytes(columnFamily1)));
+		filters.add(filter1);
+
+		// filtro para que incluya la stop rowkey
+		Filter filter2 = new InclusiveStopFilter(Bytes.toBytes(STOP_ROW));
+		filters.add(filter2);
+
+		// filtro de paginado por RowKey
+		Filter filter3 = new PageFilter(pageSize);
+		filters.add(filter3);
+
+		// filtro de paginado por columnas
+		Filter filter4 = new ColumnPaginationFilter(pageSize, coff);
+		filters.add(filter4);
+
+		// instancia la lista de filtros con AND
+		FilterList filterList = new FilterList(
+				FilterList.Operator.MUST_PASS_ALL, filters);
+
+		// instancia el scan y asigna los filtros
+		Scan scan = new Scan();
+		scan.setFilter(filterList);
+
+		// sufijo para paginar en base a la RowKey final de la pagina anterior
+		byte[] sufijo = { 0 };
+
+		// asigna la startRowKey
+		scan.setStartRow(Bytes.add(startRowKey, sufijo));
+
+		// asigna la stopRowKey
+		scan.setStopRow(Bytes.toBytes(STOP_ROW));
+
+		// asigna el numero maximo de versiones a 1
+		scan.setMaxVersions(1);
+
+		// instancia el iterador
+		ResultScanner scanner = tabla.getScanner(scan);
+//		for (Result result : scanner) {
+//			System.out.println(result);
+//
+//			RowKey = result.getRow();
+//		}
+		
+		for (Result result : scanner) {
+			// Resultado del scanner (rango de RK)
+			System.out.println(result);
+			// Contenido de cada RK
+			List<Cell> celdas = result.listCells();
+			for (Cell cell : celdas) {
+				System.out.println("Key: " + cell.toString());
+				System.out.println("Value: "
+						+ Bytes.toString(CellUtil.cloneValue(cell)));
+			}
+			RowKey = result.getRow();
+		}
+		
+		
+		
+		scanner.close();
 
 		/* ***********
 		 * Fin del codigo del alumno ***********

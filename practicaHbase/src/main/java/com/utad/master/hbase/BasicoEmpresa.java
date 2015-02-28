@@ -34,6 +34,8 @@ import org.apache.hadoop.hbase.util.Bytes;
  * de HBase
  */
 
+//TODO si conocemos el ColumnFamily, es más eficiente la búsqueda con scan, y se usa el método .addFamily(byte[] family) por cada ColumnFamily que necesitamos
+
 /**
  * Modelo de datos: 
  * Rowkey: <empresa>

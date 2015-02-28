@@ -20,18 +20,16 @@ import org.apache.hadoop.hbase.filter.InclusiveStopFilter;
 import org.apache.hadoop.hbase.filter.PageFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
-import com.utad.master.hbase.ModeloMetricaTS;
-
-/*
- * El objetivo de esta practica es usar un modelo de datos de tipo serie temporal inversa y paginar en filas y columnas.
+/**
+ * El objetivo de esta practica es usar un modelo de datos de tipo SERIE TEMPORAL EMPRESA y paginar en filas y columnas.
  * 
- * Para ello se calculara la media de las cotizaciones maximas del mes 2001-01 para cada empresa
- * ------------------------------------------
- * timestamp de 2001-01-01 => 978336000000
- * timestamp de 2001-01-31 => 980928000000
+ * <p>Para ello se calculara la media de las cotizaciones maximas del mes 2001-01 para cada empresa
+ * <p>------------------------------------------
+ * <p>timestamp de 2001-01-01 => 978336000000
+ * <p>timestamp de 2001-01-31 => 980928000000
  * 
- * timestamp inverso de 2001-01-01 => 9223371058518775807
- * timestamp inverso de 2001-01-31 => 9223371055926775807
+ * <p>timestamp inverso de 2001-01-01 => 9223371058518775807
+ * <p>timestamp inverso de 2001-01-31 => 9223371055926775807
  */
 
 /*
@@ -47,8 +45,7 @@ public class ModeloMetricaTSResuelto {
 //	public static final String fileName = "file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
 	public static final String fileName = "data/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
 	public static final String columnFamily1 = "price";
-	public static final String columnFamily2 = "totals";
-
+	
 	public static final String START_ROW = "high  /9223371055926775807";
 	public static final String STOP_ROW = "high  /9223371058518775807";
 
@@ -87,16 +84,19 @@ public class ModeloMetricaTSResuelto {
 		// instancia la lista de filtros
 		List<Filter> filters = new ArrayList<Filter>();
 
-		// filtro de CF
+		// filtro de ColumnFamily
 		Filter filter1 = new FamilyFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
 				Bytes.toBytes(columnFamily1)));
 		filters.add(filter1);
+		
 		// filtro para que incluya la stop rowkey
 		Filter filter2 = new InclusiveStopFilter(Bytes.toBytes(STOP_ROW));
 		filters.add(filter2);
+		
 		// filtro de paginado por RowKey
 		Filter filter3 = new PageFilter(pageSize);
 		filters.add(filter3);
+		
 		// filtro de paginado por columnas
 		Filter filter4 = new ColumnPaginationFilter(pageSize, coff);
 		filters.add(filter4);
@@ -107,12 +107,16 @@ public class ModeloMetricaTSResuelto {
 		// instancia el scan y asigna los filtros
 		Scan scan = new Scan();
 		scan.setFilter(filterList);
+		
 		// sufijo para paginar en base a la RowKey final de la pagina anterior
 		byte[] sufijo = { 0 };
+		
 		// asigna la startRowKey
 		scan.setStartRow(Bytes.add(startRowKey, sufijo));
+		
 		// asigna la stopRowKey
 		scan.setStopRow(Bytes.toBytes(STOP_ROW));
+		
 		// asigna el numero maximo de versiones a 1
 		scan.setMaxVersions(1);
 

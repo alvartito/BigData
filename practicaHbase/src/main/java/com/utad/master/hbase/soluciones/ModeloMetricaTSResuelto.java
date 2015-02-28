@@ -40,130 +40,129 @@ import org.apache.hadoop.hbase.util.Bytes;
 */
 
 public class ModeloMetricaTSResuelto {
-	
-    public static final String tableName="MetricaTS";
-    public static final String fileName="file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
-    public static final String columnFamilty1="price";
-    public static final String columnFamilty2="totals";
 
-    public static final String START_ROW="high  /9223371055926775807";
-    public static final String STOP_ROW="high  /9223371058518775807";
+	public static final String tableName = "MetricaTS";
+	public static final String fileName = "file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
+	public static final String columnFamilty1 = "price";
+	public static final String columnFamilty2 = "totals";
 
-    private Configuration conf = null;
+	public static final String START_ROW = "high  /9223371055926775807";
+	public static final String STOP_ROW = "high  /9223371058518775807";
+
+	private Configuration conf = null;
 
 	/*
 	 * Crea los objetos de configuracion y admin para acceso a HBase
 	 */
-    public ModeloMetricaTSResuelto() throws IOException {
-	    this.conf = HBaseConfiguration.create();
-    }
-        
-    /**
-     * @param tabla tabla sobre la que se hace la query
-     * @param startrk RK de comienzo
-     * @param coff columna de comienzo
-     * @param pageSize tamaño de pagina para las consultas
-     * @return rk RK final 
-     * @throws IOException
-     */
-    public byte[] query(HTable tabla, byte[] startrk, int coff, int pageSize) throws IOException {
-    	
-	    System.out.println("*** RK= "+Bytes.toString(startrk)+" coff="+coff+" ***");
+	public ModeloMetricaTSResuelto() throws IOException {
+		this.conf = HBaseConfiguration.create();
+	}
 
-    	/* ***********
-    	 * 
-    	 * Inicio del codigo del alumno 
-    	 * 
-    	 * devuelve el ultimo rk leido despues de iterar sobre los resultados
-    	 * 
-    	 * ***********
-    	 */
+	/**
+	 * @param tabla
+	 *            tabla sobre la que se hace la query
+	 * @param startrk
+	 *            RK de comienzo
+	 * @param coff
+	 *            columna de comienzo
+	 * @param pageSize
+	 *            tamaño de pagina para las consultas
+	 * @return rk RK final
+	 * @throws IOException
+	 */
+	public byte[] query(HTable tabla, byte[] startrk, int coff, int pageSize) throws IOException {
 
-	    byte[] rk=null;
+		System.out.println("*** RK= " + Bytes.toString(startrk) + " coff=" + coff + " ***");
 
-	    // instancia la lista de filtros
-	    List<Filter> filters = new ArrayList<Filter>();
+		/* ***********
+		 * Inicio del codigo del alumno devuelve el ultimo rk leido despues de iterar sobre los
+		 * resultados ***********
+		 */
 
-	    // filtro de CF
-        Filter filter1 = new FamilyFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(Bytes.toBytes(columnFamilty1)));
-        filters.add(filter1);
-        // filtro para que incluya la stop rowkey
-        Filter filter2 = new InclusiveStopFilter(Bytes.toBytes(STOP_ROW));
-        filters.add(filter2);
-        // filtro de paginado por RK
-        Filter filter3 = new PageFilter(pageSize);
-        filters.add(filter3);
-        // filtro de paginado por columnas
-        Filter filter4 = new ColumnPaginationFilter(pageSize, coff);
-        filters.add(filter4);
+		byte[] rk = null;
 
-        // instancia la lista de filtros con AND
-        FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters);
+		// instancia la lista de filtros
+		List<Filter> filters = new ArrayList<Filter>();
 
-        // instancia el scan y asigna los filtros
-	    Scan scan = new Scan();
-	    scan.setFilter(filterList);
-	    // sufijo para paginar en base a la RK final de la pagina anterior
-	    byte[] sufijo={0};
-	    // asigna la startRK
-	    scan.setStartRow(Bytes.add(startrk, sufijo)); 
-	    // asigna la stopRK
-	    scan.setStopRow(Bytes.toBytes(STOP_ROW)); 
-	    // asigna el numero maximo de versiones a 1
-	    scan.setMaxVersions(1);
-	    
-	    // instancia el iterador
-	    ResultScanner scanner = tabla.getScanner(scan);
-	    for (Result result : scanner) {
-	      System.out.println(result);
-	      
-	      rk=result.getRow();
-	    }
-	    scanner.close();
-	    
-    	/* ***********
-    	 * 
-    	 * Fin del codigo del alumno 
-    	 * 
-    	 * ***********
-    	 */
+		// filtro de CF
+		Filter filter1 = new FamilyFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
+				Bytes.toBytes(columnFamilty1)));
+		filters.add(filter1);
+		// filtro para que incluya la stop rowkey
+		Filter filter2 = new InclusiveStopFilter(Bytes.toBytes(STOP_ROW));
+		filters.add(filter2);
+		// filtro de paginado por RK
+		Filter filter3 = new PageFilter(pageSize);
+		filters.add(filter3);
+		// filtro de paginado por columnas
+		Filter filter4 = new ColumnPaginationFilter(pageSize, coff);
+		filters.add(filter4);
 
-	    return rk;
-    }
-    
-    public static void main(String[] args) throws IOException {
-				
-		ModeloMetricaTSResuelto modelo=new ModeloMetricaTSResuelto();
-		
+		// instancia la lista de filtros con AND
+		FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters);
+
+		// instancia el scan y asigna los filtros
+		Scan scan = new Scan();
+		scan.setFilter(filterList);
+		// sufijo para paginar en base a la RK final de la pagina anterior
+		byte[] sufijo = { 0 };
+		// asigna la startRK
+		scan.setStartRow(Bytes.add(startrk, sufijo));
+		// asigna la stopRK
+		scan.setStopRow(Bytes.toBytes(STOP_ROW));
+		// asigna el numero maximo de versiones a 1
+		scan.setMaxVersions(1);
+
+		// instancia el iterador
+		ResultScanner scanner = tabla.getScanner(scan);
+		for (Result result : scanner) {
+			System.out.println(result);
+
+			rk = result.getRow();
+		}
+		scanner.close();
+
+		/* ***********
+		 * Fin del codigo del alumno ***********
+		 */
+
+		return rk;
+	}
+
+	public static void main(String[] args) throws IOException {
+
+		ModeloMetricaTSResuelto modelo = new ModeloMetricaTSResuelto();
+
 		// instancia HTable para la tabla tablename
-		HTable tabla=new HTable(modelo.conf, tableName);
-		
-	    // RK inicial
-	    byte[] rkStart=Bytes.toBytes(START_ROW);
-	    // tamaño de pagina
-		int pageSize=5;
+		HTable tabla = new HTable(modelo.conf, tableName);
+
+		// RK inicial
+		byte[] rkStart = Bytes.toBytes(START_ROW);
+		// tamaño de pagina
+		int pageSize = 5;
 		// rkstart contiene la clave inicial para cada pagina
 		// itera para paginar por filas
 		while (rkStart != null) {
-			byte[] rkStart1=rkStart;
-			byte[] rkStart2=rkStart;
-			int coff=0;
+			byte[] rkStart1 = rkStart;
+			byte[] rkStart2 = rkStart;
+			int coff = 0;
 			// rkstart2 será null cuando haya terminado de paginar por columnas
 			// itera para paginar por columnas
 			while (rkStart2 != null) {
-				rkStart2=modelo.query(tabla, rkStart, coff,  pageSize);	
+				rkStart2 = modelo.query(tabla, rkStart, coff, pageSize);
 				if (rkStart2 != null) {
-					rkStart1=rkStart2;
+					rkStart1 = rkStart2;
 				}
-				coff+=pageSize;
+				coff += pageSize;
 			}
-			
-			// la condicion de salida es que la clave inicial sea igual a la ultima clave de salida por columnas
+
+			// la condicion de salida es que la clave inicial sea igual a la ultima clave de salida
+			// por columnas
 			// esto solo pasara cuando se hayan agotado las paginas tanto en filas como en columnas
 			if (rkStart == rkStart1) {
 				break;
 			}
-			rkStart=rkStart1;
+			rkStart = rkStart1;
 		}
 	}
 	

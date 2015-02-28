@@ -58,7 +58,7 @@ public class BasicoEmpresaResuelto {
 	}
 
 	/*
-	 * Crea la tabla tableName con dos CF: price, totals Asigna maxVersions a 300
+	 * Crea la tabla tableName con dos ColumnFamily: price, totals Asigna maxVersions a 300
 	 */
 	private void creaTabla() throws IOException {
 
@@ -71,13 +71,13 @@ public class BasicoEmpresaResuelto {
 
 		// instancia el descriptor de la tabla
 		HTableDescriptor desc = new HTableDescriptor(TableName.valueOf(tableName));
-		// instancia el descriptor de la CF1
+		// instancia el descriptor de la ColumnFamily1
 		HColumnDescriptor coldef1 = new HColumnDescriptor(columnFamilty1);
 		coldef1.setMaxVersions(300);
-		// instancia el descriptor de la CF2
+		// instancia el descriptor de la ColumnFamily2
 		HColumnDescriptor coldef2 = new HColumnDescriptor(columnFamilty2);
 		coldef2.setMaxVersions(300);
-		// añade los descriptores de las CF al general de la tabla
+		// añade los descriptores de las ColumnFamily al general de la tabla
 		desc.addFamily(coldef1);
 		desc.addFamily(coldef2);
 		// crea la tabla
@@ -85,8 +85,10 @@ public class BasicoEmpresaResuelto {
 	}
 
 	/*
-	 * Crea 3 registros empresa open high low close volume adj timestamp DELL 83.87 84.75 82.50
-	 * 82.81 48736000 10.35 872578800000 DELL 25.25 25.36 24.81 25.25 26264700 25.25 1218006000000
+	 * Crea 3 registros 
+	 * empresa open high low close volume adj timestamp 
+	 * DELL 83.87 84.75 82.50 82.81 48736000 10.35 872578800000 
+	 * DELL 25.25 25.36 24.81 25.25 26264700 25.25 1218006000000
 	 * DITC 1.56 1.69 1.53 1.60 133600 1.60 1035442800000
 	 */
 	private void creaRegistro() throws IOException {
@@ -100,7 +102,7 @@ public class BasicoEmpresaResuelto {
 		String rowKey = "DELL";
 		String timestamp = "872578800000";
 
-		// Creamos el objeto para persistir registro1
+		// Creamos el objeto para persistir registro1. Para eso usamos el put
 		Put put1 = new Put(Bytes.toBytes(rowKey), Long.valueOf(timestamp));
 		put1.add(Bytes.toBytes("price"), Bytes.toBytes("open"), Bytes.toBytes("83.87"));
 		put1.add(Bytes.toBytes("price"), Bytes.toBytes("high"), Bytes.toBytes("84.75"));
@@ -147,6 +149,7 @@ public class BasicoEmpresaResuelto {
 		// persistimos registro3
 		tabla.put(put3);
 
+		//Cerrar las tablas, cursores, iteradores, etc.
 		tabla.close();
 	}
 
@@ -233,10 +236,10 @@ public class BasicoEmpresaResuelto {
 		// Creamos la instancia para acceder por RPC a HBase
 		HTable tabla = new HTable(conf, tableName);
 
-		// Creamos objeto para consultar una fila con RK = DELL
+		// Creamos objeto para consultar una fila con RowKey = DELL
 		Get get = new Get(Bytes.toBytes("DELL"));
 
-		// asociamos la CF price y el qualifier high
+		// asociamos la ColumnFamily price y el qualifier high
 		String qualifier = "high";
 		get.addColumn(Bytes.toBytes(columnFamilty1), Bytes.toBytes(qualifier));
 
@@ -291,7 +294,7 @@ public class BasicoEmpresaResuelto {
 
 	/*
 	 * Usando filtros hace un scan de la ultima versión de la columna totals:volume del registo con
-	 * RK=DITC
+	 * RowKey=DITC
 	 */
 	private void scanRegistros() throws IOException {
 
@@ -303,7 +306,7 @@ public class BasicoEmpresaResuelto {
 		// crea al array de filtros
 		List<Filter> filters = new ArrayList<Filter>();
 
-		// crea el filtro para CF
+		// crea el filtro para ColumnFamily
 		Filter filter1 = new FamilyFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
 				Bytes.toBytes(columnFamilty2)));
 		filters.add(filter1);
@@ -311,7 +314,7 @@ public class BasicoEmpresaResuelto {
 		Filter filter2 = new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
 				Bytes.toBytes("volume")));
 		filters.add(filter2);
-		// crea el filtro para RK
+		// crea el filtro para RowKey
 		Filter filter3 = new RowFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
 				Bytes.toBytes("DITC")));
 		filters.add(filter3);
@@ -351,14 +354,16 @@ public class BasicoEmpresaResuelto {
 		// crea al array de filtros
 		List<Filter> filters = new ArrayList<Filter>();
 
-		// crea el filtro para CF
+		// crea el filtro para ColumnFamily
 		Filter filter1 = new FamilyFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
 				Bytes.toBytes(columnFamilty1)));
 		filters.add(filter1);
+		
 		// crea el filtro para qualifier
 		Filter filter2 = new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
 				Bytes.toBytes("low")));
 		filters.add(filter2);
+		
 		// crea el filtro para el value que nos han pedido
 		Filter filter3 = new ValueFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
 				Bytes.toBytes("24.81")));
@@ -384,7 +389,7 @@ public class BasicoEmpresaResuelto {
 	}
 
 	/*
-	 * Borra las columnas price:high y price:low del registro rk=DELL con TS=872578800000
+	 * Borra las columnas price:high y price:low del registro RowKey=DELL con TS=872578800000
 	 */
 	private void borraRegistro() throws IOException {
 
@@ -393,7 +398,7 @@ public class BasicoEmpresaResuelto {
 		// Creamos la instancia para acceder por RPC a HBase
 		HTable tabla = new HTable(conf, tableName);
 
-		// Creamos la instancia del objeto delete para la RK=DELL
+		// Creamos la instancia del objeto delete para la RowKey=DELL
 		Delete delete = new Delete(Bytes.toBytes("DELL"));
 		// añadimos la columna price:high
 		delete.deleteColumn(Bytes.toBytes("price"), Bytes.toBytes("high"),
@@ -419,7 +424,7 @@ public class BasicoEmpresaResuelto {
 		// Creamos la instancia para acceder por RPC a HBase
 		HTable tabla = new HTable(conf, tableName);
 
-		// Creamos objeto para consultar una fila con RK = DELL
+		// Creamos objeto para consultar una fila con RowKey = DELL
 		Get get = new Get(Bytes.toBytes("DELL"));
 
 		// Exigimos que el timestamp sea

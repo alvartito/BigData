@@ -43,8 +43,8 @@ public class ModeloMetricaTS {
 
 	public static final String tableName = "MetricaTS";
 	public static final String fileName = "file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
-	public static final String columnFamilty1 = "price";
-	public static final String columnFamilty2 = "totals";
+	public static final String columnFamily1 = "price";
+	public static final String columnFamily2 = "totals";
 
 	public static final String START_ROW = "high  /9223371055926775807";
 	public static final String STOP_ROW = "high  /9223371058518775807";

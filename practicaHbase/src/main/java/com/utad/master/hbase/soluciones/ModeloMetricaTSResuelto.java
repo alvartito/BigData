@@ -42,9 +42,9 @@ import org.apache.hadoop.hbase.util.Bytes;
 public class ModeloMetricaTSResuelto {
 
 	public static final String tableName = "MetricaTS";
-	public static final String fileName = "file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
-	public static final String columnFamilty1 = "price";
-	public static final String columnFamilty2 = "totals";
+	public static final String fileName = "file:/tmp/NASDAQ_daily_prices_subset_RowKey-metrica-TS.tsv";
+	public static final String columnFamily1 = "price";
+	public static final String columnFamily2 = "totals";
 
 	public static final String START_ROW = "high  /9223371055926775807";
 	public static final String STOP_ROW = "high  /9223371058518775807";
@@ -61,37 +61,37 @@ public class ModeloMetricaTSResuelto {
 	/**
 	 * @param tabla
 	 *            tabla sobre la que se hace la query
-	 * @param startrk
-	 *            RK de comienzo
+	 * @param startRowKey
+	 *            RowKey de comienzo
 	 * @param coff
 	 *            columna de comienzo
 	 * @param pageSize
 	 *            tamaño de pagina para las consultas
-	 * @return rk RK final
+	 * @return RowKey RowKey final
 	 * @throws IOException
 	 */
-	public byte[] query(HTable tabla, byte[] startrk, int coff, int pageSize) throws IOException {
+	public byte[] query(HTable tabla, byte[] startRowKey, int coff, int pageSize) throws IOException {
 
-		System.out.println("*** RK= " + Bytes.toString(startrk) + " coff=" + coff + " ***");
+		System.out.println("*** RowKey= " + Bytes.toString(startRowKey) + " coff=" + coff + " ***");
 
 		/* ***********
-		 * Inicio del codigo del alumno devuelve el ultimo rk leido despues de iterar sobre los
+		 * Inicio del codigo del alumno devuelve el ultimo RowKey leido despues de iterar sobre los
 		 * resultados ***********
 		 */
 
-		byte[] rk = null;
+		byte[] RowKey = null;
 
 		// instancia la lista de filtros
 		List<Filter> filters = new ArrayList<Filter>();
 
 		// filtro de CF
 		Filter filter1 = new FamilyFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
-				Bytes.toBytes(columnFamilty1)));
+				Bytes.toBytes(columnFamily1)));
 		filters.add(filter1);
 		// filtro para que incluya la stop rowkey
 		Filter filter2 = new InclusiveStopFilter(Bytes.toBytes(STOP_ROW));
 		filters.add(filter2);
-		// filtro de paginado por RK
+		// filtro de paginado por RowKey
 		Filter filter3 = new PageFilter(pageSize);
 		filters.add(filter3);
 		// filtro de paginado por columnas
@@ -104,11 +104,11 @@ public class ModeloMetricaTSResuelto {
 		// instancia el scan y asigna los filtros
 		Scan scan = new Scan();
 		scan.setFilter(filterList);
-		// sufijo para paginar en base a la RK final de la pagina anterior
+		// sufijo para paginar en base a la RowKey final de la pagina anterior
 		byte[] sufijo = { 0 };
-		// asigna la startRK
-		scan.setStartRow(Bytes.add(startrk, sufijo));
-		// asigna la stopRK
+		// asigna la startRowKey
+		scan.setStartRow(Bytes.add(startRowKey, sufijo));
+		// asigna la stopRowKey
 		scan.setStopRow(Bytes.toBytes(STOP_ROW));
 		// asigna el numero maximo de versiones a 1
 		scan.setMaxVersions(1);
@@ -118,7 +118,7 @@ public class ModeloMetricaTSResuelto {
 		for (Result result : scanner) {
 			System.out.println(result);
 
-			rk = result.getRow();
+			RowKey = result.getRow();
 		}
 		scanner.close();
 
@@ -126,7 +126,7 @@ public class ModeloMetricaTSResuelto {
 		 * Fin del codigo del alumno ***********
 		 */
 
-		return rk;
+		return RowKey;
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -136,22 +136,22 @@ public class ModeloMetricaTSResuelto {
 		// instancia HTable para la tabla tablename
 		HTable tabla = new HTable(modelo.conf, tableName);
 
-		// RK inicial
-		byte[] rkStart = Bytes.toBytes(START_ROW);
+		// RowKey inicial
+		byte[] RowKeyStart = Bytes.toBytes(START_ROW);
 		// tamaño de pagina
 		int pageSize = 5;
-		// rkstart contiene la clave inicial para cada pagina
+		// RowKeystart contiene la clave inicial para cada pagina
 		// itera para paginar por filas
-		while (rkStart != null) {
-			byte[] rkStart1 = rkStart;
-			byte[] rkStart2 = rkStart;
+		while (RowKeyStart != null) {
+			byte[] RowKeyStart1 = RowKeyStart;
+			byte[] RowKeyStart2 = RowKeyStart;
 			int coff = 0;
-			// rkstart2 será null cuando haya terminado de paginar por columnas
+			// RowKeystart2 será null cuando haya terminado de paginar por columnas
 			// itera para paginar por columnas
-			while (rkStart2 != null) {
-				rkStart2 = modelo.query(tabla, rkStart, coff, pageSize);
-				if (rkStart2 != null) {
-					rkStart1 = rkStart2;
+			while (RowKeyStart2 != null) {
+				RowKeyStart2 = modelo.query(tabla, RowKeyStart, coff, pageSize);
+				if (RowKeyStart2 != null) {
+					RowKeyStart1 = RowKeyStart2;
 				}
 				coff += pageSize;
 			}
@@ -159,10 +159,10 @@ public class ModeloMetricaTSResuelto {
 			// la condicion de salida es que la clave inicial sea igual a la ultima clave de salida
 			// por columnas
 			// esto solo pasara cuando se hayan agotado las paginas tanto en filas como en columnas
-			if (rkStart == rkStart1) {
+			if (RowKeyStart == RowKeyStart1) {
 				break;
 			}
-			rkStart = rkStart1;
+			RowKeyStart = RowKeyStart1;
 		}
 	}
 	

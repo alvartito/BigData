@@ -184,7 +184,7 @@ public class EstimateMarketDropEntregable {
 			metric = Float.valueOf(metricList.get(1));
 		}
 
-		// imprime los resultados si los hay
+		// imprime los resultados, si los hay
 		if (!empresa.isEmpty()) {
 			float probability = EstimateMarketDropEntregable.getProbability(metric);
 			System.out.println("La probabilidad maxima es " + probability + " para la empresa "

@@ -20,6 +20,8 @@ import org.apache.hadoop.hbase.filter.InclusiveStopFilter;
 import org.apache.hadoop.hbase.filter.PageFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
+import com.utad.master.hbase.ModeloMetricaTS;
+
 /*
  * El objetivo de esta practica es usar un modelo de datos de tipo serie temporal inversa y paginar en filas y columnas.
  * 
@@ -42,7 +44,8 @@ import org.apache.hadoop.hbase.util.Bytes;
 public class ModeloMetricaTSResuelto {
 
 	public static final String tableName = "MetricaTS";
-	public static final String fileName = "file:/tmp/NASDAQ_daily_prices_subset_RowKey-metrica-TS.tsv";
+//	public static final String fileName = "file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
+	public static final String fileName = "data/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
 	public static final String columnFamily1 = "price";
 	public static final String columnFamily2 = "totals";
 
@@ -133,26 +136,31 @@ public class ModeloMetricaTSResuelto {
 
 		ModeloMetricaTSResuelto modelo = new ModeloMetricaTSResuelto();
 
-		// instancia HTable para la tabla tablename
+		// Instancia HTable para la tabla tablename
 		HTable tabla = new HTable(modelo.conf, tableName);
 
-		// RowKey inicial
+		// RK inicial
 		byte[] RowKeyStart = Bytes.toBytes(START_ROW);
+		
 		// tamaño de pagina
 		int pageSize = 5;
+		
 		// RowKeystart contiene la clave inicial para cada pagina
 		// itera para paginar por filas
 		while (RowKeyStart != null) {
 			byte[] RowKeyStart1 = RowKeyStart;
 			byte[] RowKeyStart2 = RowKeyStart;
 			int coff = 0;
+			
 			// RowKeystart2 será null cuando haya terminado de paginar por columnas
 			// itera para paginar por columnas
 			while (RowKeyStart2 != null) {
 				RowKeyStart2 = modelo.query(tabla, RowKeyStart, coff, pageSize);
+				
 				if (RowKeyStart2 != null) {
 					RowKeyStart1 = RowKeyStart2;
 				}
+				
 				coff += pageSize;
 			}
 
@@ -162,6 +170,7 @@ public class ModeloMetricaTSResuelto {
 			if (RowKeyStart == RowKeyStart1) {
 				break;
 			}
+			
 			RowKeyStart = RowKeyStart1;
 		}
 	}

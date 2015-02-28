@@ -20,16 +20,16 @@ import org.apache.hadoop.hbase.filter.InclusiveStopFilter;
 import org.apache.hadoop.hbase.filter.PageFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
-/*
- * El objetivo de esta practica es usar un modelo de datos de tipo serie temporal inversa y paginar en filas y columnas.
+/**
+ * El objetivo de esta practica es usar un modelo de datos de tipo SERIE TEMPORAL EMPRESA y paginar en filas y columnas.
  * 
- * Para ello se calculara la media de las cotizaciones maximas del mes 2001-01 para cada empresa
- * ------------------------------------------
- * timestamp de 2001-01-01 => 978336000000
- * timestamp de 2001-01-31 => 980928000000
+ * <p>Para ello se calculara la media de las cotizaciones maximas del mes 2001-01 para cada empresa
+ * <p>------------------------------------------
+ * <p>timestamp de 2001-01-01 => 978336000000
+ * <p>timestamp de 2001-01-31 => 980928000000
  * 
- * timestamp inverso de 2001-01-01 => 9223371058518775807
- * timestamp inverso de 2001-01-31 => 9223371055926775807
+ * <p>timestamp inverso de 2001-01-01 => 9223371058518775807
+ * <p>timestamp inverso de 2001-01-31 => 9223371055926775807
  */
 
 /*
@@ -42,11 +42,14 @@ import org.apache.hadoop.hbase.util.Bytes;
 public class ModeloMetricaTS {
 
 	public static final String tableName = "MetricaTS";
-	public static final String fileName = "file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
+//	public static final String fileName = "file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
+	public static final String fileName = "data/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
 	public static final String columnFamily1 = "price";
 	public static final String columnFamily2 = "totals";
 
 	public static final String START_ROW = "high  /9223371055926775807";
+	
+	//Siempre es el mismo, el que se defina en los requisitos.
 	public static final String STOP_ROW = "high  /9223371058518775807";
 
 	private Configuration conf = null;
@@ -61,67 +64,78 @@ public class ModeloMetricaTS {
 	/**
 	 * @param tabla
 	 *            tabla sobre la que se hace la query
-	 * @param startrk
+	 * @param startRowKey
 	 *            RK de comienzo
 	 * @param coff
 	 *            columna de comienzo
 	 * @param pageSize
 	 *            tamaño de pagina para las consultas
-	 * @return rk RK final
+	 * @return RowKey RK final
 	 * @throws IOException
 	 */
-	public byte[] query(HTable tabla, byte[] startrk, int coff, int pageSize) throws IOException {
+	public byte[] query(HTable tabla, byte[] startRowKey, int coff, int pageSize) throws IOException {
 
-		System.out.println("*** RK= " + Bytes.toString(startrk) + " coff=" + coff + " ***");
+		System.out.println("*** RK= " + Bytes.toString(startRowKey) + " coff=" + coff + " ***");
 
 		/* ***********
-		 * Inicio del codigo del alumno devuelve el ultimo rk leido despues de iterar sobre los
+		 * Inicio del codigo del alumno devuelve el ultimo RowKey leido despues de iterar sobre los
 		 * resultados ***********
 		 */
 
-		byte[] rk = null;
+		byte[] RowKey = null;
 
 		/* ***********
 		 * Fin del codigo del alumno ***********
 		 */
 
-		return rk;
+		return RowKey;
 	}
 
 	public static void main(String[] args) throws IOException {
 
 		ModeloMetricaTS modelo = new ModeloMetricaTS();
 
-		// instancia HTable para la tabla tablename
+		// Instancia HTable para la tabla tablename
 		HTable tabla = new HTable(modelo.conf, tableName);
 
 		// RK inicial
-		byte[] rkStart = Bytes.toBytes(START_ROW);
+		byte[] RowKeyStart = Bytes.toBytes(START_ROW);
+		
 		// tamaño de pagina
 		int pageSize = 5;
-		// rkstart contiene la clave inicial para cada pagina
+
+		/*
+		 * ESCANEAMOS PRIMERO POR FILAS, Y LUEGO POR COLUMNAS, 
+		 * EN PEQUEÑOS BLOQUES DE TAMAÑÓ 5X5
+		 * DE IZQUIERDA A DERECHA, DE ARRIBA HACIA ABAJO
+		 */
+		// RowKeystart contiene la clave inicial para cada pagina
 		// itera para paginar por filas
-		while (rkStart != null) {
-			byte[] rkStart1 = rkStart;
-			byte[] rkStart2 = rkStart;
+		while (RowKeyStart != null) {
+			byte[] RowKeyStart1 = RowKeyStart;
+			byte[] RowKeyStart2 = RowKeyStart;
 			int coff = 0;
-			// rkstart2 será null cuando haya terminado de paginar por columnas
+
+			// RowKeystart2 será null cuando haya terminado de paginar por columnas
 			// itera para paginar por columnas
-			while (rkStart2 != null) {
-				rkStart2 = modelo.query(tabla, rkStart, coff, pageSize);
-				if (rkStart2 != null) {
-					rkStart1 = rkStart2;
+			while (RowKeyStart2 != null) {
+				RowKeyStart2 = modelo.query(tabla, RowKeyStart, coff, pageSize);
+				
+				if (RowKeyStart2 != null) {
+					RowKeyStart1 = RowKeyStart2;
 				}
+				
 				coff += pageSize;
 			}
 
 			// la condicion de salida es que la clave inicial sea igual a la ultima clave de salida
 			// por columnas
 			// esto solo pasara cuando se hayan agotado las paginas tanto en filas como en columnas
-			if (rkStart == rkStart1) {
+			if (RowKeyStart == RowKeyStart1) {
 				break;
 			}
-			rkStart = rkStart1;
+			
+			RowKeyStart = RowKeyStart1;
 		}
 	}
 	

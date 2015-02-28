@@ -1,4 +1,4 @@
-package soluciones;
+package entregable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import org.apache.hadoop.hbase.util.Bytes;
  * dado un modelo de probabilidades basado en la diferencia open-close
  */
 
-public class EstimateMarketDropResuelto {
+public class EstimateMarketDropEntregable {
 
 	// nombre de la tabla
 	public static final String tableName = "MetricaTSEmpresa";
@@ -56,7 +56,7 @@ public class EstimateMarketDropResuelto {
 
 	// instanciamos las clases necesarias para acceder a HBase en el constructor
 	// dado que son threadsafe
-	public EstimateMarketDropResuelto() throws IOException {
+	public EstimateMarketDropEntregable() throws IOException {
 		this.conf = HBaseConfiguration.create();
 	}
 
@@ -172,7 +172,7 @@ public class EstimateMarketDropResuelto {
 	 * probabilidad correspondiente La probabilidad maxima es 0.5 para la empresa DITC
 	 */
 
-	public static boolean printProbability(EstimateMarketDropResuelto model, Date date, String segment)
+	public static boolean printProbability(EstimateMarketDropEntregable model, Date date, String segment)
 			throws IOException {
 
 		String empresa = "";
@@ -186,7 +186,7 @@ public class EstimateMarketDropResuelto {
 
 		// imprime los resultados si los hay
 		if (!empresa.isEmpty()) {
-			float probability = EstimateMarketDropResuelto.getProbability(metric);
+			float probability = EstimateMarketDropEntregable.getProbability(metric);
 			System.out.println("La probabilidad maxima es " + probability + " para la empresa "
 					+ empresa);
 
@@ -198,27 +198,27 @@ public class EstimateMarketDropResuelto {
 
 	public static void main(String[] args) throws Exception {
 
-		EstimateMarketDropResuelto model = new EstimateMarketDropResuelto();
+		EstimateMarketDropEntregable model = new EstimateMarketDropEntregable();
 
-		Date date = EstimateMarketDropResuelto.getDate();
+		Date date = EstimateMarketDropEntregable.getDate();
 
 		// prueba con el segmento de mas alta probabilidad
-		if (EstimateMarketDropResuelto.printProbability(model, date, qualifier4)) {
+		if (EstimateMarketDropEntregable.printProbability(model, date, qualifier4)) {
 			return;
 		}
 
 		// prueba con el segmento de mas alta probabilidad
-		if (EstimateMarketDropResuelto.printProbability(model, date, qualifier3)) {
+		if (EstimateMarketDropEntregable.printProbability(model, date, qualifier3)) {
 			return;
 		}
 
 		// prueba con el segmento de mas alta probabilidad
-		if (EstimateMarketDropResuelto.printProbability(model, date, qualifier2)) {
+		if (EstimateMarketDropEntregable.printProbability(model, date, qualifier2)) {
 			return;
 		}
 
 		// prueba con el segmento de mas alta probabilidad
-		if (EstimateMarketDropResuelto.printProbability(model, date, qualifier1)) {
+		if (EstimateMarketDropEntregable.printProbability(model, date, qualifier1)) {
 			return;
 		}
 

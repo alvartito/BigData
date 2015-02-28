@@ -1,4 +1,4 @@
-package soluciones.util;
+package entregable.util;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
  * Qualifier: <empresa>
 */
 
-public class ImportMetricaTSEmpresa {
+public class ImportMetricaTSEntregable {
 
 	int i = 0;
 	
@@ -90,7 +90,7 @@ public class ImportMetricaTSEmpresa {
 	/*
 	 * Crea los objetos de configuracion y admin para acceso a HBase
 	 */
-    private ImportMetricaTSEmpresa() throws IOException {
+    private ImportMetricaTSEntregable() throws IOException {
 	    this.conf = HBaseConfiguration.create();
         this.admin = new HBaseAdmin(conf);
     }
@@ -130,7 +130,7 @@ public class ImportMetricaTSEmpresa {
 		
 		Job job = Job.getInstance();
 		job.setJobName(this.getClass().getSimpleName());
-		job.setJarByClass(ImportMetricaTSEmpresa.class);
+		job.setJarByClass(ImportMetricaTSEntregable.class);
 //		job.setOutputKeyClass(Text.class);
 //		job.setOutputValueClass(Text.class);
 		job.setMapOutputKeyClass(Text.class);
@@ -169,7 +169,7 @@ public class ImportMetricaTSEmpresa {
 
 	public static void main(String[] args) throws Exception {
 		
-		ImportMetricaTSEmpresa modelo=new ImportMetricaTSEmpresa();
+		ImportMetricaTSEntregable modelo=new ImportMetricaTSEntregable();
 		
 		modelo.creaTabla();
 		modelo.execute();		

@@ -1,4 +1,4 @@
-package soluciones;
+package soluciones.util;
 
 import java.io.IOException;
 
@@ -34,10 +34,14 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 
 public class ImportMetricaTSEmpresa {
 
-    public static final String tableName="MetricaTS";
-    public static final String fileName="file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
-    public static final String columnFamilty1="price";
-    public static final String columnFamilty2="totals";
+	int i = 0;
+	
+    public static final String tableName="MetricaTSEmpresa";
+    //public static final String fileName="file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
+    public static final String fileName="data/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
+    
+    public static final String columnFamily1="price";
+    public static final String columnFamily2="totals";
 	
     private Configuration conf = null;
     private HBaseAdmin admin = null;
@@ -68,11 +72,11 @@ public class ImportMetricaTSEmpresa {
 				// crea el objeto put
 				Put put = new Put(Bytes.toBytes(rowKey), Long.valueOf(timestamp));
 				
-				// determina a que CF pertenece la celda
+				// determina a que ColumnFamily pertenece la celda
 				if (rowKey.startsWith("volume") || rowKey.startsWith("adj")) {
-					put.add(Bytes.toBytes(columnFamilty2), Bytes.toBytes(empresa), Bytes.toBytes(valor));
+					put.add(Bytes.toBytes(columnFamily2), Bytes.toBytes(empresa), Bytes.toBytes(valor));
 				} else {
-					put.add(Bytes.toBytes(columnFamilty1), Bytes.toBytes(empresa), Bytes.toBytes(valor));					
+					put.add(Bytes.toBytes(columnFamily1), Bytes.toBytes(empresa), Bytes.toBytes(valor));					
 				}
 				
 				// escribe el dato en el conexto
@@ -103,13 +107,13 @@ public class ImportMetricaTSEmpresa {
     	
     	// crea el descriptor de la tabla
 	    HTableDescriptor desc = new HTableDescriptor(TableName.valueOf(tableName));
-	    // crea el descriptor de la CF1
-	    HColumnDescriptor coldef1 = new HColumnDescriptor(columnFamilty1);
-	    // set maxversions a 1 para CF1
+	    // crea el descriptor de la ColumnFamily1
+	    HColumnDescriptor coldef1 = new HColumnDescriptor(columnFamily1);
+	    // set maxversions a 1 para ColumnFamily1
 	    coldef1.setMaxVersions(1);
-	    // crea el descriptor de la CF2
-	    HColumnDescriptor coldef2 = new HColumnDescriptor(columnFamilty2);
-	    // set maxversions a 1 para CF2
+	    // crea el descriptor de la ColumnFamily2
+	    HColumnDescriptor coldef2 = new HColumnDescriptor(columnFamily2);
+	    // set maxversions a 1 para ColumnFamily2
 	    coldef2.setMaxVersions(1);
 	    // actualiza el descriptor de la tabla
 	    desc.addFamily(coldef1);

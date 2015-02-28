@@ -40,7 +40,7 @@ public class EstimateMarketDropEntregable {
 	public static final String columnFamily1 = "model1";
 	
 	// nombre de la metrica para ese modelo
-	public static final String model = "open-close";
+	public static final String metrica = "open-close";
 	
 	// nombres de los segmentos del modelo estadístico
 	public static final String qualifier1 = "o-c<0";
@@ -49,8 +49,8 @@ public class EstimateMarketDropEntregable {
 	public static final String qualifier4 = "o-c>=20";
 	
 	// formatos de la rowkey
-	public static final String formatRkTimestamp = "%13s";
-	public static final String formatRkEmpresa = "%5s";
+	public static final String formatRowKeyTimestamp = "%13s";
+	public static final String formatRowKeyEmpresa = "%5s";
 
 	// formato de entrada de la fecha
 	private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");

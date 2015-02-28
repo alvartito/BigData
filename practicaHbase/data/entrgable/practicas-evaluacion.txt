@@ -58,7 +58,7 @@ Secuencia de pasos
 	Uno que definamos nosotros.
 	
 	Rowkey: <empresa>/<metrica>/<timestamp>
-	Column Family: price, totals
+	Column Family: model1
 	Qualifier: value
 	
 

@@ -7,7 +7,6 @@ import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
 import com.netflix.astyanax.model.Column;
 import com.netflix.astyanax.model.ColumnFamily;
 import com.netflix.astyanax.serializers.StringSerializer;
-import com.utad.cassandra.util.Constantes;
 import com.utad.cassandra.util.Utils;
 
 public class WriteWithMutationBatch2 {
@@ -27,15 +26,19 @@ public class WriteWithMutationBatch2 {
 
 		// Conectamos y usamos un keyspace. Normalmente se usará un keyspace por
 		// aplicación
-		Keyspace ksUsers = Utils.getKeyspace(Constantes.keyspaceName);
+		String keyspaceName = "utad";
+		String columnFamilyName = "users";
+		String rowKeyUsersById = "usersById";
+		
+		Keyspace ksUsers = Utils.getKeyspace(keyspaceName);
 
-		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(Constantes.columnFamilyName, StringSerializer.get(), StringSerializer.get());
+		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(columnFamilyName, StringSerializer.get(), StringSerializer.get());
 
 		// escribimos de uno en uno
 		System.out.println("empezando a escribir ... " + new Date());
 		for (int i = 0; i <= 100000; i++) {
 			// Escribir un valor en Cassandra
-			ksUsers.prepareColumnMutation(cfUsers, Constantes.rowKey, i + "").putValue("user" + i + "@void.com", null).execute();
+			ksUsers.prepareColumnMutation(cfUsers, rowKeyUsersById, i + "").putValue("user" + i + "@void.com", null).execute();
 		}
 		System.out.println("terminado!" + new Date());
 
@@ -43,7 +46,7 @@ public class WriteWithMutationBatch2 {
 		System.out.println("empezando a leer ..." + new Date());
 
 		for (int i = 0; i <= 100000; i++) {
-			Column<String> result = ksUsers.prepareQuery(cfUsers).getKey(Constantes.rowKey).getColumn(i + "").execute().getResult();
+			Column<String> result = ksUsers.prepareQuery(cfUsers).getKey(rowKeyUsersById).getColumn(i + "").execute().getResult();
 			String value = result.getStringValue();
 			if (i % 100 == 0) {
 				System.out.println("email for user " + i + " is: " + value);

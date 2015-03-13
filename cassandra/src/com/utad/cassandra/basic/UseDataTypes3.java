@@ -4,21 +4,25 @@ import com.netflix.astyanax.Keyspace;
 import com.netflix.astyanax.model.ColumnFamily;
 import com.netflix.astyanax.model.ColumnList;
 import com.netflix.astyanax.serializers.StringSerializer;
-import com.utad.cassandra.util.Constantes;
 import com.utad.cassandra.util.Utils;
 
 
 public class UseDataTypes3 {
 
+	// Leemos los datos del column family users2, que tiene como key un entero, y los representamos como String.
 	public static void main(String args[]) throws Exception {
-		Keyspace ksUsers = Utils.getKeyspace(Constantes.keyspaceName);
+		String keyspaceName = "utad";
+		String columnFamilyName = "users2";
+		String rowKeyUsersById = "usersById";
+		
+		Keyspace ksUsers = Utils.getKeyspace(keyspaceName);
 
 		// tipos para el
 		// 1. row key
 		// 2. column key
-		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(Constantes.columnFamilyName2, StringSerializer.get(), StringSerializer.get());
+		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(columnFamilyName, StringSerializer.get(), StringSerializer.get());
 
-		ColumnList<String> result = ksUsers.prepareQuery(cfUsers).getKey(Constantes.rowKey).execute().getResult();
+		ColumnList<String> result = ksUsers.prepareQuery(cfUsers).getKey(rowKeyUsersById).execute().getResult();
 		
 		if (!result.isEmpty()) {
 			for (int i = 0; i < result.size(); i++) {

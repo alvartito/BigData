@@ -14,33 +14,33 @@ import com.utad.cassandra.util.Utils;
 public class Pagination {
 	public static void main(String args[]) throws ConnectionException {
 
-		Keyspace ksUsers = Utils.getKeyspace("utad");
+		String keyspaceName = "utad";
+		String columnFamilyName = "users";
+		String rowKeyUsersById = "usersById";
+		
+		Keyspace ksUsers = Utils.getKeyspace(keyspaceName);
 
-		ksUsers.dropColumnFamily("users");
+		ksUsers.dropColumnFamily(columnFamilyName);
 
-		ColumnFamily<String, Integer> cfUsers = new ColumnFamily<String, Integer>(
-				"users", StringSerializer.get(), IntegerSerializer.get());
+		ColumnFamily<String, Integer> cfUsers = new ColumnFamily<String, Integer>(columnFamilyName, StringSerializer.get(), IntegerSerializer.get());
 
-		ksUsers.createColumnFamily(
-				cfUsers,
-				ImmutableMap.<String, Object> builder()
-						.put("key_validation_class", "IntegerType")
-						.put("comparator_type", "IntegerType").build());
+		ksUsers.createColumnFamily(cfUsers, ImmutableMap.<String, Object> builder().put("key_validation_class", "IntegerType").put("comparator_type", "IntegerType").build());
 
 		MutationBatch m = ksUsers.prepareMutationBatch();
-		String rowKey = "usersById";
 
-		ColumnListMutation<Integer> clm = m.withRow(cfUsers, rowKey);
-		for (int i = 1; i <= 1000; i++) {
+		ColumnListMutation<Integer> clm = m.withRow(cfUsers, rowKeyUsersById);
+		for (int i = 1; i <= 300000; i++) {
+			//m.withRow(cfUsers, rowKeyUsersById);
 			clm.putColumn(i, "user" + i + "@void.com");
+			//contador%tamaño_pag==0 -> execute
+			
 		}
 
 		m.execute();
 
 		System.out.println("finished writing");
 
-		ColumnList<Integer> result = ksUsers.prepareQuery(cfUsers)
-				.getKey(rowKey).execute().getResult();
+		ColumnList<Integer> result = ksUsers.prepareQuery(cfUsers).getKey(rowKeyUsersById).execute().getResult();
 		if (!result.isEmpty()) {
 			for (int i = 0; i < result.size(); i++) {
 				String value = result.getColumnByIndex(i).getStringValue();

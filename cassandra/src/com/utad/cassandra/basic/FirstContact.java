@@ -19,6 +19,7 @@ public class FirstContact {
 
 		String clusterName = "utad";
 		String keyspaceName = "utad";
+		
 		String columnFamilyName = "users";
 
 		AstyanaxContext<Keyspace> context = new AstyanaxContext.Builder()

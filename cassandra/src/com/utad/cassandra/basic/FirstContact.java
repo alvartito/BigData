@@ -51,9 +51,11 @@ public class FirstContact {
 		} catch (Exception e) {
 			System.out.println("Ya existe el column family: " + columnFamilyName);
 		}
+		
+		String rowKey = "usersById";
 
 		// Escribir un valor en Cassandra
-		ksUsers.prepareColumnMutation(cfUsers, "usersById", "1").putValue("user1@void.com", null).execute();
+		ksUsers.prepareColumnMutation(cfUsers, rowKey, "1").putValue("user1@void.com", null).execute();
 
 		// leer un valor
 		Column<String> result = ksUsers.prepareQuery(cfUsers).getKey("usersById").getColumn("1").execute().getResult();

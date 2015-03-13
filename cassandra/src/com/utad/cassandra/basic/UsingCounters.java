@@ -7,7 +7,10 @@ import com.netflix.astyanax.ColumnListMutation;
 import com.netflix.astyanax.Keyspace;
 import com.netflix.astyanax.MutationBatch;
 import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
+import com.netflix.astyanax.model.Column;
 import com.netflix.astyanax.model.ColumnFamily;
+import com.netflix.astyanax.model.ColumnList;
+import com.netflix.astyanax.query.RowQuery;
 import com.netflix.astyanax.serializers.StringSerializer;
 import com.utad.cassandra.util.Utils;
 
@@ -28,7 +31,7 @@ public class UsingCounters {
 		String[][] userVisitsProduct = { products1, products2, products3, products4, products5 };
 
 		String keyspaceName = "utad";
-		String columnFamilyName = "users";
+		String columnFamilyName = "users_visits_product";
 		//Para consultas
 		String rowKeyUsersById = "usersById";
 
@@ -57,5 +60,21 @@ public class UsingCounters {
 			m.execute();
 		}
 		System.out.println("Fin de la ejecucion " + new Date());
+		
+		//Leemos los datos
+		ColumnList<String> columns;
+
+		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKeyUsersById).autoPaginate(true);
+
+		columns = query.execute().getResult();
+		for (Column<String> column : columns) {
+			String key = column.getName();
+			String value = column.getStringValue();
+			
+//			String user = key.split(":")[0];
+//			String product = key.split(":")[1];
+			
+			System.out.println("user "+key+" visited product "+key+" "+value+" times");
+		}
 	}
 }

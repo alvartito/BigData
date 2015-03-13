@@ -12,7 +12,7 @@ public class FirstContact2 {
 	public static void main(String args[]) throws ConnectionException {
 
 		String keyspaceName = "utad";
-		String columnFamilyName = "usersVisitsProducts";
+		String columnFamilyName = "users";
 		
 		// Normalmente usaremos un keyspace para toda la app
 		Keyspace ksUsers = Utils.getKeyspace(keyspaceName);

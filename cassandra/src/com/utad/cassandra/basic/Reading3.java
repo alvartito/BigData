@@ -22,12 +22,12 @@ public class Reading3 {
 		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(columnFamilyName, StringSerializer.get(), StringSerializer.get());
 
 		// Si necesitamos borrar el column family
-		// ksUsers.dropColumnFamily(Constantes.columnFamilyUsers);
+		// ksUsers.dropColumnFamily(columnFamilyName);
 
 		/*
 		 * Buscar a partir del usuario con id 50
 		 */
-		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKeyUsersById).withColumnRange(new RangeBuilder().setStart(10).setLimit(50).build());
+		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKeyUsersById).withColumnRange(new RangeBuilder().setEnd("50").build());
 
 		ColumnList<String> columns = query.execute().getResult();
 		int i=1;

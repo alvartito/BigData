@@ -19,18 +19,23 @@ public class UsingJDriver {
 		Session session;
 		session = cluster.connect();
 
-//		try {
-			session.execute("drop keyspace utad_cql");
-			
-			// ejecutamos una query directamente, en este caso, para crear el keyspace
-			session.execute("CREATE KEYSPACE utad_cql WITH replication "
-					+ "= {'class':'SimpleStrategy', 'replication_factor':1};");
+		// Eliminar el keyspace para evitar excepciones en ejecución si este
+		// existe ya.
+		// Otra solución sería rodear las sentencias de create con un try catch
+		// y controlar la excepción, si llega a saltar.
+		session.execute("drop keyspace utad_cql");
+		// try {
+		// ejecutamos una query directamente, en este caso, para crear el
+		// keyspace
+		session.execute("CREATE KEYSPACE utad_cql WITH replication "
+				+ "= {'class':'SimpleStrategy', 'replication_factor':1};");
 
-			session.execute("CREATE TABLE utad_cql.users (" + "id int,"
-					+ "email text, nombre text, apellido text, " + "PRIMARY KEY (id, email, nombre));");
-//		} catch (Exception e) {
-//			System.out.println("ya existen keyspace y table");
-//		}
+		session.execute("CREATE TABLE utad_cql.users (" + "id int,"
+				+ "email text, nombre text, apellido text, "
+				+ "PRIMARY KEY (id, email, nombre));");
+		// } catch (Exception e) {
+		// System.out.println("ya existen keyspace y table");
+		// }
 
 		// podemos usar prepared statements
 		PreparedStatement ps1 = session
@@ -40,7 +45,8 @@ public class UsingJDriver {
 		BatchStatement batch = new BatchStatement();
 
 		for (int i = 0; i < 1000; i++) {
-			batch.add(ps1.bind(i, "user" + i + "@void.com", "nombre_" + i, "apellido_" + i));
+			batch.add(ps1.bind(i, "user" + i + "@void.com", "nombre_" + i,
+					"apellido_" + i));
 		}
 
 		session.execute(batch);
@@ -52,7 +58,7 @@ public class UsingJDriver {
 			System.out.println("email : " + row.getString("email"));
 			System.out.println("nombre : " + row.getString("nombre"));
 			System.out.println("apellido : " + row.getString("apellido"));
-			
+
 		}
 		System.out.println();
 

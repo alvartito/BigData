@@ -23,7 +23,7 @@ public class Reading1 {
 		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(columnFamilyName, StringSerializer.get(), StringSerializer.get());
 
 		// Si necesitamos borrar el column family
-		// ksUsers.dropColumnFamily(Constantes.columnFamilyUsers);
+		// ksUsers.dropColumnFamily(columnFamilyName);
 
 		/*
 		 * A una RowQuery se le puede dar un inicio, un nº de elementos a buscar, un final, y un conjunto de claves. Se pueden combinar. Realizamos una consulta sobre la rowKey, y le decimos que sólo

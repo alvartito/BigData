@@ -32,7 +32,7 @@ public class UsingCounters {
 
 		String keyspaceName = "utad";
 		String columnFamilyName = "users_visits_product";
-		//Para consultas
+		// Para consultas
 		String rowKeyUsersById = "usersById";
 
 		// conectar
@@ -40,12 +40,21 @@ public class UsingCounters {
 
 		ksUsers.dropColumnFamily(columnFamilyName);
 
-		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(columnFamilyName, StringSerializer.get(), StringSerializer.get());
+		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(columnFamilyName,
+				StringSerializer.get(), StringSerializer.get());
+		try {
+			// Rodeamos con un try catch para evitar errores si el columnFamily
+			// ya existe.
+			ksUsers.createColumnFamily(
+					cfUsers,
+					ImmutableMap.<String, Object> builder().put("default_validation_class", "CounterColumnType")
+							.put("replicate_on_write", true).build());
+		} catch (Exception e) {
+			System.out.println("El column family " + columnFamilyName + " ya existe");
+		}
 
-		ksUsers.createColumnFamily(cfUsers, ImmutableMap.<String, Object> builder().put("default_validation_class", "CounterColumnType").put("replicate_on_write", true).build());
-
-		
 		MutationBatch m = ksUsers.prepareMutationBatch();
+
 		// escribimos de uno en uno
 		System.out.println("empezando a escribir ... " + new Date());
 
@@ -53,28 +62,28 @@ public class UsingCounters {
 			String user = (i + 1) + "";
 			String rowKey = user;
 			ColumnListMutation<String> clm = m.withRow(cfUsers, rowKey);
-			for(String product : userVisitsProduct[i]) {
+			for (String product : userVisitsProduct[i]) {
 				String key = product;
 				clm.incrementCounterColumn(key, 1);
 			}
 			m.execute();
 		}
-		System.out.println("Fin de la ejecucion " + new Date());
-		
-		//Leemos los datos
-		ColumnList<String> columns;
 
+		// Leemos los datos
+		// Definimos la consulta
 		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKeyUsersById).autoPaginate(true);
-
-		columns = query.execute().getResult();
+		// Obtenemos el resultado de la consulta
+		ColumnList<String> columns = query.execute().getResult();
 		for (Column<String> column : columns) {
 			String key = column.getName();
 			String value = column.getStringValue();
-			
-//			String user = key.split(":")[0];
-//			String product = key.split(":")[1];
-			
-			System.out.println("user "+key+" visited product "+key+" "+value+" times");
+
+			// String user = key.split(":")[0];
+			// String product = key.split(":")[1];
+
+			System.out.println("user " + key + " visited product " + key + " " + value + " times");
 		}
+
+		System.out.println("Fin de la ejecucion ... " + new Date());
 	}
 }

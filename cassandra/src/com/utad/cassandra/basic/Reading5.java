@@ -22,7 +22,7 @@ public class Reading5 {
 		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(columnFamilyName, StringSerializer.get(), StringSerializer.get());
 
 		// Si necesitamos borrar el column family
-		// ksUsers.dropColumnFamily(Constantes.columnFamilyUsers);
+		// ksUsers.dropColumnFamily(columnFamilyName);
 
 		/*
 		 * Buscar a partir del usuario con id 50
@@ -32,7 +32,7 @@ public class Reading5 {
 		ColumnList<String> columns = query.execute().getResult();
 
 		for (Column<String> column : columns) {
-			System.out.println("email for user " + column.getName() + "is: " + column.getByteValue());
+			System.out.println("email for user " + column.getName() + " is: " + column.getStringValue());
 		}
 	}
 }

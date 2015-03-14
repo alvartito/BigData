@@ -11,17 +11,6 @@ import com.utad.cassandra.util.Utils;
 
 public class WriteWithMutationBatch2 {
 
-	/**
-	 * <p>
-	 * empezando a escribir ... Fri Mar 13 09:22:03 PDT 2015
-	 * <p>
-	 * terminado!Fri Mar 13 09:22:12 PDT 2015
-	 * <p>
-	 * empezando a leer ...Fri Mar 13 09:22:12 PDT 2015
-	 * <p>
-	 * terminado!Fri Mar 13 09:22:20 PDT 2015
-	 * 
-	 * */
 	public static void main(String args[]) throws ConnectionException {
 
 		// Conectamos y usamos un keyspace. Normalmente se usará un keyspace por
@@ -54,5 +43,19 @@ public class WriteWithMutationBatch2 {
 		}
 
 		System.out.println("terminado!" + new Date());
+		
+		/**
+		 * Resultado de la ejecución
+		 * <p>
+		 * empezando a escribir ... Fri Mar 13 09:22:03 PDT 2015
+		 * <p>
+		 * terminado!Fri Mar 13 09:22:12 PDT 2015
+		 * <p>
+		 * empezando a leer ...Fri Mar 13 09:22:12 PDT 2015
+		 * <p>
+		 * terminado!Fri Mar 13 09:22:20 PDT 2015
+		 * 
+		 * */
+
 	}
 }

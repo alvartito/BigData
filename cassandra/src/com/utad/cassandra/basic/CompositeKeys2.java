@@ -36,7 +36,7 @@ public class CompositeKeys2 {
 		ColumnList<String> columns;
 
 		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKeyUsersById).autoPaginate(true).withColumnRange(new RangeBuilder().setStart("3:\u00000").setEnd("3:\uffff").build());
-		//Esta solución de límites es más correcta que la propuesta en la consulta anterior
+		//Esta solución de límites es más correcta que la propuesta en la consulta anterior, que es la que propusimos inicialmente
 		RowQuery<String, String> query2 = ksUsers.prepareQuery(cfUsers).getKey(rowKeyUsersById).autoPaginate(true).withColumnRange(new RangeBuilder().setStart("3:").setEnd("3:~").build());
 
 		columns = query.execute().getResult();

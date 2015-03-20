@@ -1,0 +1,37 @@
+Explicación de la resolución de la práctica del dia 2-sesión 2
+--------------------------------------------------------------
+
+1. El modelo elegido es el siguiente
+
+Rowkey: <nombre metrica>/<timestamp>/<empresa>
+Column family: modelo1
+Qualifier: <segmento>
+Value: <valor metrica>
+
+Se va a crear una tabla independiente para los cálculos estadísticos. Cada modelo tendrá una CF con un nombre distinto. La RK contendrá el nombre de la métrica. En este ejemplo damos por hecho que los modelos estadísticos dependen de una única métrica. En nuestro caso el modelo viene descrito por las condiciones indicadas en el enunciado
+
+	open-close < 0 => probabilidad = 0
+	open-close 0 - 10 => probabilidad = 0.2
+	open-close 10 - 20 => probabilidad = 0.5
+	open-close > 20 => probabilidad = 0.9
+
+El modelo de datos permite escalar en número de empresas y evolucionar los modelos estadísticos fácilmente sin tener que migrar los datos. La RK está diseñada en primer lugar para permitir las querys orientadas a métricas/modelos y seguidamente a periodos de tiempo para cada metrica/modelo. Por ejemplo, con esta query podemos analizar, en el "modelo1", las empresas con una metrica open-close en el rango 10-20
+
+scan 'MetricaTSEmpresa', {LIMIT => 10, VERSIONS => 1, FILTER => "((FamilyFilter (=, 'binary:model1')) AND (QualifierFilter (=, 'binary:10<=o-c<20'))"}
+
+Si queremos restringir el tiempo al dia 20 de Marzo de 2000
+
+scan 'MetricaTSEmpresa', {LIMIT => 10, STARTROW => 'open-close/ 953539200000', STOPROW => 'open-close/ 953625600000', VERSIONS => 1, FILTER => "((FamilyFilter (=, 'binary:model1')) AND (QualifierFilter (=, 'binary:10<=o-c<20'))"}
+
+2. Otra opción de modelo sería:
+
+Rowkey: <nombre metrica>/<segmento>/<empresa>
+Column family: modelo1
+Qualifier: <YYYY-MM-dd>
+Value: <valor metrica>
+
+Este modelo escala peor puesto que los elementos diferenciadores son de baja cardinalidad. La expansión se produce mayormente en columnas
+
+3. Comparación de 1 y 2
+
+Tendríamos que elegir el modelo 2 si las querys principales estuvieran centradas en el modelo estadístico mas que en el tiempo

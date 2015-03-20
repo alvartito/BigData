@@ -51,18 +51,6 @@ Secuencia de pasos
 	Column Family: price, totals
 	Qualifier: value
 
-	Modelo 5
-	--------
-	Variante propia del modelo, 
-	que pueda ser más eficiente. 
-	Uno que definamos nosotros.
-	
-	Rowkey: <nombre metrica>/<timestamp>/<empresa>
-	Column Family: modelo1
-	Qualifier: <segmento>
-	Value: <valor metrica>
-	
-
 2. Transformar e importar los datos
 
 Opciones
@@ -76,25 +64,3 @@ Opciones
 4. Implementar el programa
 
 5. Probar
-
-
-
-Se va a crear una tabla independiente para los calculos estadisticos. 
-Cada modelo tendra un CF con un nombnre distinto. 
-La RK contendra el nombre de la metrica. 
-En este ejemplo, damos por hecho que los modelos estadisticos dependen de una sola metrica. 
-En nuestro caso el modelo viene descrito por las condiciones indicadas en el enunciado.
-
-open-close < 0 => probabilidad = 0
-open-close 0 - 10 => probabilidad = 0.2
-open-close 10 - 20 => probabilidad = 0.5
-open-close > 20 => probabilidad = 0.9
-		
-el modelo de datos permite escalar en numero de empresas y evolucionar los modelos estadisticos facilmente sin tener que migrar los datos.
-
-scan 'metrica', {LIMIT=>10, VERSIONS=>1, FILTER=>"((FamilyFilter(=, 'binary:model1')) AND (QualifierFilter (=, 'binary:10<=o-c<20'))"}
-
-si queremos restringir el tiempo al 20 de Marzo de 2000
-
-scan 'metrica', {LIMIT=>10, STARTROW=> 'open-close/ 953539200000', STOPROW=> 'open-close/ 953625600000', VERSIONS=> 1, FILTER=>"((FamilyFilter(=, 'binary:model1')) AND (QualifierFilter (=, 'binary:10<=o-c<20'))"}
-

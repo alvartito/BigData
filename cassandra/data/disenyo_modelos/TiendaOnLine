@@ -1,0 +1,67 @@
+
+MODELO
+======
+usuario 				-> identifica id_usuario. contiene dir_envio, listados de: carrito e historico.
+productos 				-> id_producto, referencia, imagen, precio_unitario, nombre, descripcion, categoria,
+carrito 				-> id_usuario, id_carrito, fecha, listado de productos, cantidad de cada producto, precio total, precio unitario
+compras 				->
+categorias 				-> identifica id_categoria, id_producto. Ordenar por nombre, precio, contiene listado de productos
+
+PANTALLAS
+=========
+
+1. HOME - Mas menos, a falta de añadir el idProducto a todas las tablas.
+=======
+
+DESTACADOS 			VENDIDOS		AÑADIDOS		COMPRADOS		
+(8 PRODUCTOS)		(8 PRODUCTOS)	(8 PRODUCTOS)	(TODOS LOS DE LA ULTIMA COMPRA)
+A mostrar en cada bloque de arriba la imagen del producto, nombre, precio.
+
+
+2. CATEGORIA
+============
+
+CATEGORIA PRODUCTOS - hecho.
+(40 por pagina, ordenados por nombre y/o precio)
+
+Query:
+
+select 
+
+3. PRODUCTOS
+============
+
+MOSTRAR código de referencia, imagen, nombre, precio, descripción - Hecho
+MOSTRAR RECOMENDACION COOCURRIDOS PRODUCTOS QUE SE MUESTRA - Hecho
+
+4. CARRITO - hecho
+==========
+
+Los nombres de los productos, la cantidad, el precio por unidad, el precio total de los productos agrupados (precio * cantidad) y el precio total de la COMPRA. - Hecho
+
+5. COMPRAS - Hecho
+==========
+
+Todos los productos de la compra y el número de factura.
+
+6. LISTADO DE COMPRAS - Hecho
+=====================
+
+Historico de compras, se mostrara número de factura, la fecha de la compra e importe total. Si se
+hace click en una compra, se mostrara la relacion de productos con la referencia, imagen de producto, nombre y precio unitario y cantidad de producto.
+
+
+create table a (
+b int,
+c text,
+d text,
+primary key(b,c)
+)
+
+with clustering order by (c ASC);
+
+insert into a(b,c,d) values (1, 'c=1', 'd=1');
+insert into a(b,c,d) values (1, 'c=2', 'd=2');
+insert into a(b,c,d) values (1, 'c=3', 'd=3');
+
+select * from a where b=1 order by c desc;

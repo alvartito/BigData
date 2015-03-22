@@ -4,7 +4,6 @@ import com.netflix.astyanax.Keyspace;
 import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
 import com.netflix.astyanax.model.Column;
 import com.netflix.astyanax.model.ColumnFamily;
-import com.netflix.astyanax.model.ColumnList;
 import com.netflix.astyanax.query.RowQuery;
 import com.netflix.astyanax.serializers.StringSerializer;
 import com.netflix.astyanax.util.RangeBuilder;
@@ -24,15 +23,11 @@ public class Reading5 {
 		// Si necesitamos borrar el column family
 		// ksUsers.dropColumnFamily(columnFamilyName);
 
-		/*
-		 * Buscar a partir del usuario con id 50
-		 */
-		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKeyUsersById).withColumnRange(new RangeBuilder().setStart(10).setLimit(50).build());
-
-		ColumnList<String> columns = query.execute().getResult();
-
-		for (Column<String> column : columns) {
-			System.out.println("email for user " + column.getName() + " is: " + column.getStringValue());
+		RowQuery<String,String> query = ksUsers.prepareQuery(cfUsers)
+				.getKey(rowKeyUsersById).withColumnRange(new RangeBuilder().setStart("50").setEnd("60").setLimit(8) .build());
+		
+		for(Column<String> c: query.execute().getResult()){
+			System.out.println("Email for user " + c.getName() + " is " + c.getStringValue());
 		}
 	}
 }

@@ -50,6 +50,23 @@ public class CompositeKeys3 {
 		}
 		
 		// conectar y crear column family
+		Keyspace ksUsers = Utils.getKeyspace("utad");
+		
+		//ksUsers.dropColumnFamily("UserVisitsProduct2");
+		
+		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(
+				"UserVisitsProduct3", StringSerializer.get(), StringSerializer.get());
+				
+		ksUsers.createColumnFamily(
+				cfUsers,
+				ImmutableMap.<String, Object> builder()
+						.put("default_validation_class", "CounterColumnType")
+						.put("replicate_on_write",true).build());
+		
+		MutationBatch m = ksUsers.prepareMutationBatch();
+		String rowKey = "usersByCPAddress";
+		
+		ColumnListMutation<String> clm = m.withRow(cfUsers, rowKey);
 		
 		for (User user : users) {
 			String id = user.id;
@@ -59,6 +76,8 @@ public class CompositeKeys3 {
 			String calle = user.calle;
 			
 			//escribir
+			
+			
 		}
 		
 		// leer el resultado

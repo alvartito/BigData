@@ -11,9 +11,13 @@ import com.netflix.astyanax.thrift.ThriftFamilyFactory;
 public class Utils {
 
 	public static String clusterName = "utad";
+	
+	public static Keyspace keyspace = null;
+	
 
 	public static Keyspace getKeyspace(String name) {
 
+		try{
 		// Crear la conexión con la BD
 		AstyanaxContext<Keyspace> context = new AstyanaxContext.Builder().forCluster(clusterName).forKeyspace(name)
 				.withAstyanaxConfiguration(new AstyanaxConfigurationImpl().setDiscoveryType(NodeDiscoveryType.RING_DESCRIBE))
@@ -22,9 +26,13 @@ public class Utils {
 
 		context.start();
 		// Crear la conexión con la BD
-
 		// Devolvemos el Keyspace que vamos a utilizar. 
 		// Tenemos que haberlo creado previamente.
-		return context.getClient();
+		keyspace = context.getClient();
+		}catch(Exception e){
+			System.err.println("El Keyspace ya existe o no se puede recuperar");
+		}
+		return keyspace;
+		
 	}
 }

@@ -24,15 +24,12 @@ public class Reading3 {
 		// Si necesitamos borrar el column family
 		// ksUsers.dropColumnFamily(columnFamilyName);
 
-		/*
-		 * Buscar a partir del usuario con id 50
-		 */
 		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKeyUsersById).withColumnRange(new RangeBuilder().setEnd("50").build());
 
 		ColumnList<String> columns = query.execute().getResult();
 		int i=1;
 		for (Column<String> column : columns) {
-			System.out.println(i+" email for user " + column.getName() + " is: " + column.getStringValue());
+			System.out.println(i+" Email for user " + column.getName() + " is: " + column.getStringValue());
 			i++;
 		}
 	}

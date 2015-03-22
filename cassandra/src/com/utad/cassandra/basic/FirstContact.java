@@ -40,6 +40,7 @@ public class FirstContact {
 		Keyspace ksUsers = context.getClient();
 
 		try {
+			// Se crea el KeySpace con la definición en java obtenida
 			ksUsers.createKeyspace(ImmutableMap
 					.<String, Object> builder()
 					.put("strategy_options",

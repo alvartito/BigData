@@ -1,0 +1,265 @@
+-- Enviar el trabajo a alejandro.cuevas@brainsins.com
+
+
+
+-- TODO a cada modelo que hemos creado, para la página HOME, hay que añadir el idProducto para que se pueda referenciar el producto de forma univoca.
+-- Para los carritos, usar colecciones, o usar un json
+
+
+-- CREATE KEYSPACE cql_utad1
+-- WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+
+-- Para el conjunto de productos destacados, nuestro modelo no contempla una tabla para ello. Será el dpto. de Marketing quien decida qué se muestra.
+
+DROP TABLE "contador_ventas";
+-- Creamos la tabla contador_ventas para mantener actualizado el número de veces que se compra un producto. 
+-- De alguna forma se tendrá que actualizar el valor de num_ventas cada vez que se compre un producto.
+create table "contador_ventas" (
+  num_ventas int,
+  cte_pk int,
+  imagen text, 
+  precio_unitario int, 
+  nombre text, 
+  PRIMARY KEY (cte_pk, num_ventas)) with clustering order by (num_ventas desc);
+
+-- Como necesitamos una PK para hacer la consulta, determinamos un valor constante en la tabla, 
+-- para poder recuperar la lista de elementos que nos interesa mostrar. 
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (1,1,'',12,'');
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (2,1,'',12,'');  
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (3,1,'',12,'');
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (4,1,'',12,'');  
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (5,1,'',12,'');
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (6,1,'',12,'');  
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (7,1,'',12,'');
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (8,1,'',12,'');  
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (9,1,'',12,'');
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (10,1,'',12,'');  
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (22,1,'',12,'');
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (23,1,'',12,'');  
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (14,1,'',12,'');
+insert into "contador_ventas" (num_ventas, cte_pk, imagen, precio_unitario, nombre) values (26,1,'',12,'');  
+
+-- Para confirmar que estamos realizando la consulta correctamente y recuperando los datos que tienen más ventas, añadimos el campo num_ventas a la consulta, pero en realidad, no es necesario recuperarlo.
+select num_ventas, imagen, precio_unitario, nombre from "contador_ventas" limit 8;
+
+-- Al igual que para recuperar los más vendidos, usamos la misma idea, y creamos una tabla para recuperar los últimos añadidos al catálogo.
+-- El mantenimiento de esta tabla tiene que hacerse al mismo tiempo que se da de alta un producto.
+drop table "ultimos_anyadidos";
+
+create table "ultimos_anyadidos" (
+  anyadido timestamp,
+  cte_pk int,
+  imagen text, 
+  precio_unitario int, 
+  nombre text, 
+  PRIMARY KEY (cte_pk, anyadido)) with clustering order by (anyadido desc);
+
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+insert into "ultimos_anyadidos" (anyadido, cte_pk, imagen, precio_unitario, nombre) values (dateof(now()), 1, '', 1, '');
+
+-- Para confirmar que estamos realizando la consulta correctamente y recuperando los datos que han sido añadidos más recientemente, 
+-- añadimos el campo anyadido a la consulta, pero en realidad, no es necesario recuperarlo.
+select anyadido, imagen, precio_unitario, nombre from "ultimos_anyadidos" limit 8;
+
+drop table "compras_cliente";
+-- Ultima compra del cliente (si existe)
+-- Serializaremos en el campo compra el texto en un json, con los datos correspondientes a las compras de cada cliente
+create table "compras_cliente" (
+  anyadido timestamp,
+  idusuario int,
+  compra text,
+  PRIMARY KEY (idusuario, anyadido)) with clustering order by (anyadido desc);
+
+insert into "compras_cliente" (anyadido, idusuario, compra) values (dateof(now()), 1, 'json serializado de la compra');
+insert into "compras_cliente" (anyadido, idusuario, compra) values (dateof(now()), 2, 'json serializado de la compra');
+insert into "compras_cliente" (anyadido, idusuario, compra) values (dateof(now()), 1, 'json serializado de la compra');
+insert into "compras_cliente" (anyadido, idusuario, compra) values (dateof(now()), 3, 'json serializado de la compra');
+insert into "compras_cliente" (anyadido, idusuario, compra) values (4985000001, 1, 'json serializado de la compra');
+
+--Queremos la última compra, por eso limitamos a 1
+select anyadido, idusuario, compra from "compras_cliente" where idusuario = 1 limit 1;
+
+--Queremos el historico de compras del usuario, quitamos el limit a la anterior consulta.
+select anyadido, idusuario, compra from "compras_cliente" where idusuario = 1;
+
+-- Para las categorias, nutrimos nuestra tabla inicial, y preparamos las consultas.
+
+DROP TABLE "categoria_por_nombre";
+-- Creamos la tabla de categorias donde tendremos también toda la información que 
+-- podemos necesitar sobre el producto asociado a una categoria.
+CREATE TABLE "categoria_por_nombre" (
+  idcategoria text,
+  imagen text, 
+  precio_unitario int, 
+  nombre text, 
+  primary key (idcategoria, nombre)) with clustering order by (nombre asc);
+
+insert into "categoria_por_nombre" (idcategoria, imagen, precio_unitario, nombre) values ('DESTACADOS', 'IMAG0001.jpg', 10, 'nombre');
+insert into "categoria_por_nombre" (idcategoria, imagen, precio_unitario, nombre) values ('DESTACADOS', 'IMAG0001.jpg', 1, 'nombre2');
+insert into "categoria_por_nombre" (idcategoria, imagen, precio_unitario, nombre) values ('DESTACADOS', 'IMAG0001.jpg', 5, 'nombre3');
+insert into "categoria_por_nombre" (idcategoria, imagen, precio_unitario, nombre) values ('DESTACADOS', 'IMAG0001.jpg', 40, 'nombr4e');
+insert into "categoria_por_nombre" (idcategoria, imagen, precio_unitario, nombre) values ('DESTACADOS', 'IMAG0001.jpg', 1, 'nombre5');
+
+insert into "categoria_por_nombre" (idcategoria, imagen, precio_unitario, nombre) values ('INFORMATICA', 'IMAG0001.jpg', 10, 'nombre6');
+insert into "categoria_por_nombre" (idcategoria, imagen, precio_unitario, nombre) values ('INFORMATICA', 'IMAG0001.jpg', 1, 'nombre7');
+insert into "categoria_por_nombre" (idcategoria, imagen, precio_unitario, nombre) values ('INFORMATICA', 'IMAG0001.jpg', 5, 'nombre8');
+insert into "categoria_por_nombre" (idcategoria, imagen, precio_unitario, nombre) values ('INFORMATICA', 'IMAG0001.jpg', 40, 'nombre9');
+insert into "categoria_por_nombre" (idcategoria, imagen, precio_unitario, nombre) values ('INFORMATICA', 'IMAG0001.jpg', 1, 'nombre10');
+
+-- Ponemos limit a 3 para nuestras pruebas, pero habría que usar limit 40
+-- El paginado asumimos que vendrá notificado desde la aplicación, por eso añadimos el where nombre > 'lo que venga'
+select imagen, precio_unitario, nombre from "categoria_por_nombre" WHERE idcategoria = 'DESTACADOS' and nombre>'nombre2' limit 3;
+-- Si queremos hacer la ordenación contraria a lo definido en la creación de la tabla, usamos esta consulta. 
+select imagen, precio_unitario, nombre from "categoria_por_nombre" WHERE idcategoria = 'DESTACADOS' and nombre>'nombre2' order by nombre desc limit 3;
+
+DROP TABLE "categoria_por_precio";
+-- Creamos la tabla de categorias donde tendremos también toda la información que 
+-- podemos necesitar sobre el producto asociado a una categoria.
+CREATE TABLE "categoria_por_precio" (
+  idcategoria text,
+  idproducto int, 
+  imagen text, 
+  precio_unitario int, 
+  nombre text, 
+  primary key (idcategoria, precio_unitario, idproducto)) with clustering order by (precio_unitario asc);
+
+insert into "categoria_por_precio" (idcategoria, imagen, precio_unitario, nombre) values ('DESTACADOS', 'IMAG0001.jpg', 10, 'nombre');
+insert into "categoria_por_precio" (idcategoria, imagen, precio_unitario, nombre) values ('DESTACADOS', 'IMAG0001.jpg', 1, 'nombre2');
+insert into "categoria_por_precio" (idcategoria, imagen, precio_unitario, nombre) values ('DESTACADOS', 'IMAG0001.jpg', 5, 'nombre3');
+insert into "categoria_por_precio" (idcategoria, imagen, precio_unitario, nombre) values ('DESTACADOS', 'IMAG0001.jpg', 40, 'nombr4e');
+insert into "categoria_por_precio" (idcategoria, imagen, precio_unitario, nombre) values ('DESTACADOS', 'IMAG0001.jpg', 11, 'nombre5');
+
+insert into "categoria_por_precio" (idcategoria, imagen, precio_unitario, nombre) values ('INFORMATICA', 'IMAG0001.jpg', 10, 'nombre6');
+insert into "categoria_por_precio" (idcategoria, imagen, precio_unitario, nombre) values ('INFORMATICA', 'IMAG0001.jpg', 1, 'nombre7');
+insert into "categoria_por_precio" (idcategoria, imagen, precio_unitario, nombre) values ('INFORMATICA', 'IMAG0001.jpg', 5, 'nombre8');
+insert into "categoria_por_precio" (idcategoria, imagen, precio_unitario, nombre) values ('INFORMATICA', 'IMAG0001.jpg', 40, 'nombre9');
+insert into "categoria_por_precio" (idcategoria, imagen, precio_unitario, nombre) values ('INFORMATICA', 'IMAG0001.jpg', 1, 'nombre10');
+
+-- Ponemos limit a 3 para nuestras pruebas, pero habría que usar limit 40
+-- El paginado asumimos que vendrá notificado desde la aplicación, por eso añadimos el precio_unitario > 'lo que venga'
+select idcategoria,imagen, precio_unitario, nombre from "categoria_por_precio" where idcategoria= 'INFORMATICA' and precio_unitario>6 limit 3;
+--Si queremos hacer la ordenación contraria a lo definido en la creación de la tabla, usamos esta consulta.
+select idcategoria,imagen, precio_unitario, nombre from "categoria_por_precio" where idcategoria= 'INFORMATICA' and precio_unitario>6 order by precio_unitario desc limit 3;
+
+-- MOSTRAR código de referencia, imagen, nombre, precio, descripción
+-- Tabla de producto
+DROP TABLE "producto";
+-- Creamos la tabla de productos, para identificarlo a la hora de mostarlo en pantalla.
+CREATE TABLE "producto" (
+  referencia int,
+  imagen text, 
+  precio_unitario int, 
+  nombre text, 
+  descripcion text,
+  primary key (referencia));
+
+insert into "producto" (referencia, imagen, precio_unitario, nombre, descripcion) values (1, 'IMAG0001.jpg', 10, 'nombre1', 'descripcoion1');
+insert into "producto" (referencia, imagen, precio_unitario, nombre, descripcion) values (2, 'IMAG0001.jpg', 10, 'nombre2', 'descripcoion2');
+insert into "producto" (referencia, imagen, precio_unitario, nombre, descripcion) values (3, 'IMAG0001.jpg', 10, 'nombre3', 'descripcoion3');
+insert into "producto" (referencia, imagen, precio_unitario, nombre, descripcion) values (4, 'IMAG0001.jpg', 10, 'nombre4', 'descripcoion4');
+insert into "producto" (referencia, imagen, precio_unitario, nombre, descripcion) values (5, 'IMAG0001.jpg', 10, 'nombre5', 'descripcoion5');
+
+select referencia, imagen, precio_unitario, nombre, descripcion from "producto" where referencia = 4;
+
+-- coocurrencia nos lo dan
+-- podemos crear una tabla para la actualización de las coocurrencias
+
+-- pk(idproducto, coocurrencia)
+DROP TABLE "coocurrencia";
+-- Creamos la tabla de categorias donde tendremos también toda la información que 
+-- podemos necesitar sobre el producto asociado a una categoria.
+CREATE TABLE "coocurrencia" (
+  idproducto int,
+  coocurrencia int,
+  idproductocoocurrente text, 
+  primary key (idproducto, coocurrencia)) with clustering order by (coocurrencia desc);
+
+insert into "coocurrencia" (idproducto, coocurrencia, idproductocoocurrente) values (1, 1, 'json con las caracteristicas del producto coocurrente1');
+insert into "coocurrencia" (idproducto, coocurrencia, idproductocoocurrente) values (1, 2, 'json con las caracteristicas del producto coocurrente2');
+insert into "coocurrencia" (idproducto, coocurrencia, idproductocoocurrente) values (1, 3, 'json con las caracteristicas del producto coocurrente3');
+insert into "coocurrencia" (idproducto, coocurrencia, idproductocoocurrente) values (1, 5, 'json con las caracteristicas del producto coocurrente4');
+insert into "coocurrencia" (idproducto, coocurrencia, idproductocoocurrente) values (1, 7, 'json con las caracteristicas del producto coocurrente5');
+insert into "coocurrencia" (idproducto, coocurrencia, idproductocoocurrente) values (1, 10, 'json con las caracteristicas del producto coocurrente10');
+insert into "coocurrencia" (idproducto, coocurrencia, idproductocoocurrente) values (1, 20, 'json con las caracteristicas del producto coocurrente20');
+insert into "coocurrencia" (idproducto, coocurrencia, idproductocoocurrente) values (1, 30, 'json con las caracteristicas del producto coocurrente30');
+insert into "coocurrencia" (idproducto, coocurrencia, idproductocoocurrente) values (1, 50, 'json con las caracteristicas del producto coocurrente40');
+insert into "coocurrencia" (idproducto, coocurrencia, idproductocoocurrente) values (1, 70, 'json con las caracteristicas del producto coocurrente50');
+
+-- Limitamos la busqueda a 8 elementos
+select idproducto, coocurrencia, idproductocoocurrente from "coocurrencia" where idproducto=1 limit 8;
+
+
+-- idcarrito, idusuario, json con [nombres de productos, cantidad, precio por unidad, pvpAgrupado], pvpTotal 
+DROP TABLE "carrito";
+-- Creamos la tabla de categorias donde tendremos también toda la información que 
+-- podemos necesitar sobre el producto asociado a una categoria.
+CREATE TABLE "carrito" (
+  idcarrito int,
+  idusuario int,
+  relacion_productos text,
+  pvp_total int, 
+  primary key (idcarrito, idusuario));
+
+insert into "carrito" (idcarrito, idusuario, relacion_productos, pvp_total) values (1, 1, 'json con [nombres de productos, cantidad, precio por unidad, pvpAgrupado]', 101);
+insert into "carrito" (idcarrito, idusuario, relacion_productos, pvp_total) values (1, 2, 'json con [nombres de productos, cantidad, precio por unidad, pvpAgrupado]', 10);
+insert into "carrito" (idcarrito, idusuario, relacion_productos, pvp_total) values (1, 3, 'json con [nombres de productos, cantidad, precio por unidad, pvpAgrupado]', 201);
+insert into "carrito" (idcarrito, idusuario, relacion_productos, pvp_total) values (1, 4, 'json con [nombres de productos, cantidad, precio por unidad, pvpAgrupado]', 55);
+insert into "carrito" (idcarrito, idusuario, relacion_productos, pvp_total) values (2, 1, 'json con [nombres de productos, cantidad, precio por unidad, pvpAgrupado]', 4);
+
+-- Limitamos la busqueda a 8 elementos
+select idcarrito, idusuario, relacion_productos, pvp_total from "carrito" where idcarrito=2 and idusuario =1;
+
+
+-- Creamos la tabla de factura, que recupera de forma univoca una factura y un json con los datos asociados a la misma.
+-- Si quisiesemos buscar las facturas de un usuario, este modelo no nos valdría. Tendríamos que cambiar la PK, añadiendo en primer lugar el idusuario.
+DROP TABLE "factura";
+-- Creamos la tabla de categorias donde tendremos también toda la información que 
+-- podemos necesitar sobre el producto asociado a una categoria.
+CREATE TABLE "factura" (
+  idfactura int,
+  idusuario int,
+  relacion_productos text,
+  primary key (idfactura));
+
+insert into "factura" (idfactura, idusuario, relacion_productos) values (1, 1, 'json con datos de factura');
+insert into "factura" (idfactura, idusuario, relacion_productos) values (2, 2, 'json con datos de factura');
+insert into "factura" (idfactura, idusuario, relacion_productos) values (3, 3, 'json con datos de factura');
+insert into "factura" (idfactura, idusuario, relacion_productos) values (4, 4, 'json con datos de factura');
+insert into "factura" (idfactura, idusuario, relacion_productos) values (5, 1, 'json con datos de factura');
+
+-- Limitamos la busqueda a 8 elementos
+select idfactura, idusuario, relacion_productos from "factura" where idfactura=4;
+
+-- Historico de facturas. Historico de compras del usuario que consulta.
+-- Si quisiesemos buscar las facturas de un usuario, este modelo no nos valdría. Tendríamos que cambiar la PK, añadiendo en primer lugar el idusuario.
+DROP TABLE "historico_factura";
+-- Creamos la tabla de categorias donde tendremos también toda la información que 
+-- podemos necesitar sobre el producto asociado a una categoria.
+CREATE TABLE "historico_factura" (
+  idusuario int,
+  idfactura int,
+  fecha_compra timestamp,
+  importe double,
+  detalle_productos text, 
+  primary key (idusuario,idfactura));
+
+insert into "historico_factura" (idfactura, idusuario, fecha_compra, importe, detalle_productos) values (1, 1, dateof(now()), 1.0, 'json con datos de factura[(referencia, imagen, nombre, precio unitario) y las cantidades de los mismos.]');
+insert into "historico_factura" (idfactura, idusuario, fecha_compra, importe, detalle_productos) values (1, 2, dateof(now()), 2.0, 'json con datos de factura[(referencia, imagen, nombre, precio unitario) y las cantidades de los mismos.]');
+insert into "historico_factura" (idfactura, idusuario, fecha_compra, importe, detalle_productos) values (3, 3, dateof(now()), 3.0, 'json con datos de factura[(referencia, imagen, nombre, precio unitario) y las cantidades de los mismos.]');
+insert into "historico_factura" (idfactura, idusuario, fecha_compra, importe, detalle_productos) values (1, 4, dateof(now()), 4.0, 'json con datos de factura[(referencia, imagen, nombre, precio unitario) y las cantidades de los mismos.]');
+insert into "historico_factura" (idfactura, idusuario, fecha_compra, importe, detalle_productos) values (5, 1, dateof(now()), 5.0, 'json con datos de factura[(referencia, imagen, nombre, precio unitario) y las cantidades de los mismos.]');
+
+--Limitamos la busqueda a 8 elementos
+select idfactura, idusuario, fecha_compra, importe, detalle_productos from "historico_factura" where idusuario=1;
+--Si hacemos una select por idFactura podemos ir a la tabla de factura y nos ahorramos el duplicar datos
+

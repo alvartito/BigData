@@ -32,7 +32,7 @@ public class Reading2 {
 		ColumnList<String> columns = query.execute().getResult();
 		int i=1;
 		for (Column<String> column : columns) {
-			System.out.println(i+" email for user " + column.getName() + " is: " + column.getStringValue());
+			System.out.println(i+" Email for user " + column.getName() + " is: " + column.getStringValue());
 			i++;
 		}
 	}

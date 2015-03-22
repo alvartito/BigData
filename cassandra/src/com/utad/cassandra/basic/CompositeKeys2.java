@@ -13,12 +13,27 @@ import com.utad.cassandra.util.Utils;
 
 public class CompositeKeys2 {
 	public static void main(String args[]) throws ConnectionException {
+		// productos visitados por el usuario 1
+		String[] products1 = { "1", "2", "3", "1", "2" };
+		// productos visitados por el usuario 2
+		String[] products2 = { "1", "1", "3", "1", "6" };
+		// productos visitados por el usuario 3
+		String[] products3 = { "1", "2", "5", "7", "8" };
+		// productos visitados por el usuario 4
+		String[] products4 = { "1", "2", "2", "8", "9" };
+		// productos visitados por el usuario 5
+		String[] products5 = { "4", "5", "6", "7", "7" };
+
+		String[][] userVisitsProduct = { products1, products2, products3,
+				products4, products5 };
+		
 		String keyspaceName = "utad";
-		String columnFamilyName = "users_visits_product";
+		String columnFamilyName = "users_visits_product2";
 		// Para consultas
 		String rowKeyUsersById = "usersById";
 
 		// conectar
+		//ksUsers.dropColumnFamily("UserVisitsProduct2");
 		Keyspace ksUsers = Utils.getKeyspace(keyspaceName);
 
 		// ksUsers.dropColumnFamily(columnFamilyName);

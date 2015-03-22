@@ -81,7 +81,7 @@ public class UsingCounters {
 			// String user = key.split(":")[0];
 			// String product = key.split(":")[1];
 
-			System.out.println("user " + key + " visited product " + key + " " + value + " times");
+			System.out.println("user " + rowKeyUsersById + " visited product " + key + " " + value + " times");
 		}
 
 		System.out.println("Fin de la ejecucion ... " + new Date());

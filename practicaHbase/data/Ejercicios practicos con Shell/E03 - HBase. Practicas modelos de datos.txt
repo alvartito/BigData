@@ -1,0 +1,234 @@
+Prácticas de la sesión 1, dia 2
+
+------------
+Set de datos
+------------
+
+	NASDAQ Exchange Daily 1970-2010 Open, Close, High, Low and Volume
+
+	Enlace:	http://www.infochimps.com/datasets/nasdaq-exchange-daily-1970-2010-open-close-high-low-and-volume
+
+------------
+Fichero original
+------------
+
+	NASDAQ_daily_prices_subset.csv
+
+------------
+Datos fichero original
+------------
+
+	exchange,stock_symbol,date,stock_price_open,stock_price_high,stock_price_low,stock_price_close,stock_volume,stock_price_adj_close
+
+------------
+Ejemplo fichero original
+------------
+
+	NASDAQ,DELL,1997-08-26,83.87,84.75,82.50,82.81,48736000,10.35
+
+------------
+Requisitos para generar el modelo 2a
+------------
+
+metrica = {open, high, low, close, volume, adj}
+empresa = <stock_symbol>
+
+* El número de timestamps es demasiado grande
+* Las empresas son nuestros clientes y quieren correlaciones entre ellas y sus competidores
+* Las metricas son siempre las mismas y no cambian
+* Las querys suelen ser por empresa Y/O métrica 
+
+Rowkey: <empresa>/<timestamp>
+Column Family: <metrica>
+Qualifier: price, totals
+Value: <cotización>
+
+------------
+Scripts para el modelo 2a
+------------
+
+............
+Práctica 2a-1
+
+Crea el modelo
+............
+
+## *:hbase shell
+create 'm2a', {NAME => 'open'}, {NAME => 'close'}, {NAME => 'high'}, {NAME => 'low'}, {NAME => 'volume'}, {NAME => 'adj'}
+
+............
+Práctica 2a-2
+
+Importa los datos 
+............
+
+# transforma el fichero original y genera el modelo
+## hdfs:terminal
+tail -n +2 NASDAQ_daily_prices_subset.csv | ./modelo.pl RK=empresa/TS > /tmp/NASDAQ_daily_prices_subset_RK-emp-TS.tsv
+
+# borra el antiguo fichero transformado de HDFS
+## hdfs:terminal
+hadoop fs -rm /tmp/NASDAQ_daily_prices_subset_RK-emp-TS.tsv
+
+# copia el nuevo fichero transformado a HDFS
+## hdfs:terminal
+hadoop fs -copyFromLocal /tmp/NASDAQ_daily_prices_subset_RK-emp-TS.tsv /tmp/NASDAQ_daily_prices_subset_RK-emp-TS.tsv
+
+# importa el fichero transformado a HBase
+## hdfs:terminal
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.columns=HBASE_ROW_KEY,open:price,high:price,low:price,close:price,volume:totals,adj:totals,HBASE_TS_KEY m2a /tmp/NASDAQ_daily_prices_subset_RK-emp-TS.tsv
+
+------------
+Requisitos para generar el modelo 2b
+------------
+
+metrica = {open, high, low, close, volume, adj}
+empresa = <stock_symbol>
+
+* El número de metricas puede aumentar mucho
+* El número de timestamps es demasiado grande
+* Las querys suelen ser por empresa Y/O métrica 
+
+Rowkey: <empresa>/<timestamp>
+Column Family: price, totals
+Qualifier: <metrica>
+Value: <cotización>
+
+------------
+Scripts para el modelo 2b
+------------
+
+............
+Práctica 2b-1
+
+Crea el modelo
+............
+
+## *:hbase shell
+create 'm2b', {NAME => 'price'}, {NAME => 'totals'}
+
+............
+Práctica 2b-2
+
+Importa los datos 
+............
+
+# transforma el fichero original y genera el modelo
+## hdfs:terminal
+tail -n +2 NASDAQ_daily_prices_subset.csv | ./modelo.pl RK=empresa/TS > /tmp/NASDAQ_daily_prices_subset_RK-emp-TS.tsv
+
+# borra el antiguo fichero transformado de HDFS
+## hdfs:terminal
+hadoop fs -rm /tmp/NASDAQ_daily_prices_subset_RK-emp-TS.tsv
+
+# copia el nuevo fichero transformado a HDFS
+## hdfs:terminal
+hadoop fs -copyFromLocal /tmp/NASDAQ_daily_prices_subset_RK-emp-TS.tsv /tmp/NASDAQ_daily_prices_subset_RK-emp-TS.tsv
+
+# importa el fichero transformado a HBase
+## hdfs:terminal
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.columns=HBASE_ROW_KEY,price:open,price:high,price:low,price:close,totals:volume,totals:adj,HBASE_TS_KEY m2b /tmp/NASDAQ_daily_prices_subset_RK-emp-TS.tsv
+
+------------
+Requisitos para generar el modelo 2c
+------------
+
+metrica = {open, high, low, close, volume, adj}
+empresa = <stock_symbol>
+
+* El número de metricas puede aumentar mucho
+* El número de timestamps es demasiado grande
+* Las querys suelen ser por métrica Y/O empresa
+
+Rowkey: <metrica>/<timestamp>
+Column Family: price, totals
+Qualifier: <empresa>
+Value: <cotización>
+
+------------
+Scripts para el modelo 2c
+------------
+
+............
+Práctica 2c-1
+
+Crea el modelo
+............
+
+## *:hbase shell
+create 'm2c', {NAME => 'price'}, {NAME => 'totals'}
+
+............
+Práctica 2c-2
+
+Importa los datos 
+............
+
+# transforma el fichero original y genera el modelo
+## hdfs:terminal
+tail -n +2 NASDAQ_daily_prices_subset.csv | ./modelo.pl RK=metrica/TS > /tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv
+
+# borra el antiguo fichero transformado de HDFS
+## hdfs:terminal
+hadoop fs -rm /tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv
+
+# copia el nuevo fichero transformado a HDFS
+## hdfs:terminal
+hadoop fs -copyFromLocal /tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv /tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv
+
+# ¿¿¿¿Funcionará????
+# importa el fichero transformado a HBase
+## hdfs:terminal
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.columns=HBASE_ROW_KEY,<** a completar **>,HBASE_TS_KEY m2c /tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv
+
+------------
+Requisitos para generar el modelo 2d
+------------
+
+metrica = {open, high, low, close, volume, adj}
+empresa = <stock_symbol>
+
+* El número de metricas puede aumentar mucho
+* El número de timestamps es demasiado grande
+* Las querys suelen ser por metrica Y empresa
+
+Rowkey: <empresa>/<metrica>/<timestamp>
+Column Family: price, totals
+Qualifier: value
+Value: <cotización>
+
+------------
+Scripts para el modelo 2d
+------------
+
+............
+Práctica 2d-1
+
+Crea el modelo
+............
+
+## *:hbase shell
+create 'm2d', {NAME => 'price'}, {NAME => 'totals'}
+
+............
+Práctica 2d-2
+
+Importa los datos 
+............
+
+# transforma el fichero original y genera el modelo
+## hdfs:terminal
+tail -n +2 NASDAQ_daily_prices_subset.csv | ./modelo.pl RK=empresa/metrica/TS > /tmp/NASDAQ_daily_prices_subset_RK-empresa-metrica-TS.tsv
+
+# borra el antiguo fichero transformado de HDFS
+## hdfs:terminal
+hadoop fs -rm /tmp/NASDAQ_daily_prices_subset_RK-empresa-metrica-TS.tsv
+
+# copia el nuevo fichero transformado a HDFS
+## hdfs:terminal
+hadoop fs -copyFromLocal /tmp/NASDAQ_daily_prices_subset_RK-empresa-metrica-TS.tsv /tmp/NASDAQ_daily_prices_subset_RK-empresa-metrica-TS.tsv
+
+# ¿¿¿¿Funcionará????
+# importa el fichero transformado a HBase
+## hdfs:terminal
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.columns=HBASE_ROW_KEY,<** a completar **>,HBASE_TS_KEY m2c /tmp/NASDAQ_daily_prices_subset_RK-empresa-metrica-TS.tsv

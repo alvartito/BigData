@@ -1,0 +1,396 @@
+Prácticas de la sesión 1, dia 1
+
+------------
+Set de datos
+------------
+
+	NASDAQ Exchange Daily 1970-2010 Open, Close, High, Low and Volume
+
+	Enlace:	http://www.infochimps.com/datasets/nasdaq-exchange-daily-1970-2010-open-close-high-low-and-volume
+
+------------
+Fichero original
+------------
+
+	NASDAQ_daily_prices_subset.csv
+
+------------
+Datos fichero original
+------------
+
+	exchange,stock_symbol,date,stock_price_open,stock_price_high,stock_price_low,stock_price_close,stock_volume,stock_price_adj_close
+
+------------
+Ejemplo fichero original
+------------
+
+	NASDAQ,DELL,1997-08-26,83.87,84.75,82.50,82.81,48736000,10.35
+
+------------
+Requisitos para generar el modelo
+------------
+
+metrica = {open, high, low, close, volume, adj}
+empresa = <stock_symbol>
+
+* El numero de versiones que queremos guardar no es demasiado grande
+* Las empresas son nuestros clientes y quieren correlaciones entre ellas y sus competidores
+* Las metricas son siempre las mismas y no cambian
+* Las querys suelen ser sobre una métrica en concreto 
+
+Rowkey: <empresa>
+Column Family: <metrica>
+Qualifier: price, totals
+Version: <timestamp>
+
+------------
+Transformado por
+------------
+
+	modelo.pl RK=emp
+
+------------
+Fichero transformado
+------------
+
+	NASDAQ_daily_prices_subset_RK-emp.tsv
+
+------------
+Datos fichero transformado
+------------
+
+	stock_symbol,stock_price_open,stock_price_high,stock_price_low,stock_price_close,stock_volume,stock_price_adj_close,timstamp
+
+------------
+Ejemplo fichero transformado
+------------
+
+	DELL	83.87	84.75	82.50	82.81	48736000	10.35	872578800000
+
+------------
+Scripts
+------------
+
+............
+Práctica 1
+
+Crea el modelo
+............
+
+# crea tabla con 300 versiones por cada column family
+# Esquema:
+#  Rowkey: <empresa>
+#  Column Family: <metrica>
+#  Qualifier: price, totals
+#  Version: <timestamp>
+#
+#
+#
+# Rowkey: <empresa>
+# Column Family: <metrica>
+# Qualifier: price, totals
+# Version: <timestamp>
+#
+# Nombre de la tabla y los nombres de las column family que va a tener
+#
+## *:hbase shell
+create 'm1', {NAME => 'open', VERSIONS => 300}, {NAME => 'close', VERSIONS => 300}, {NAME => 'high', VERSIONS => 300}, {NAME => 'low', VERSIONS => 300}, {NAME => 'volume', VERSIONS => 300}, {NAME => 'adj', VERSIONS => 300}
+
+............
+Práctica 2
+
+Importa los datos
+............
+
+# transforma el fichero original y genera el modelo
+## hdfs:terminal
+# Esto es por si queremos lanzarlo nosotros, pero ya viene generado
+#tail -n +2 NASDAQ_daily_prices_subset.csv | ./modelo.pl RK=emp > /tmp/#NASDAQ_daily_prices_subset_RK-emp.tsv
+
+# borra el antiguo fichero transformado de HDFS
+## hdfs:terminal
+hadoop fs -rm /tmp/NASDAQ_daily_prices_subset_RK-emp.tsv
+
+# copia el nuevo fichero transformado a HDFS
+## hdfs:terminal
+#Si da error, o tal, navegar al directorio donde se encuentre el fichero a copiar a hdfs #y lanzar la sentencia quitando el directorio previo.
+hadoop fs -copyFromLocal /tmp/NASDAQ_daily_prices_subset_RK-emp.tsv /tmp/NASDAQ_daily_prices_subset_RK-emp.tsv
+
+hadoop fs -copyFromLocal NASDAQ_daily_prices_subset_RK-emp.tsv /tmp/NASDAQ_daily_prices_subset_RK-emp.tsv
+
+
+# importa el fichero transformado a HBase
+# Esquema:
+# 	rowkey: stock symbol
+# 	column qualifiers: open:price, close:price, high:price, low:price, volume:totals, adj:totals
+# 	versionado: intrínseco con nuestro propio TS
+## hdfs:terminal
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.columns=HBASE_ROW_KEY,open:price,high:price,low:price,close:price,volume:totals,adj:totals,HBASE_TS_KEY m1 /tmp/NASDAQ_daily_prices_subset_RK-emp.tsv
+
+#Para comprobar que hemos cargado mandanga
+scan 'm1'
+
+............
+Práctica 3
+
+La shell de HBase: consultas básicas sobre un modelo de datos
+............
+#
+#
+# Rowkey: <empresa>
+# Column Family: <metrica>
+# Qualifier: price, totals
+# Version: <timestamp>
+#
+# get > comando unitario en hbase, para una fila concreta
+#
+# get tabla, rowkey, {diccionario [qué columnas queremos], cuántas versiones, [intervalo]}  Los datos van de más nuevo a más antíguo
+#
+# obtiene las 100 ultimas versiones comprendidas en el rango de timestamps [0,1001314800000] de las columnas open:price y close:price de la rowkey "DXPE" 
+## *:hbase shell
+get 'm1', 'DXPE', {COLUMN => ['open:price','close:price'], VERSIONS => 100, TIMERANGE => [0,1001314800000]}
+
+get 'm1', 'DELL', {COLUMN => ['open:price','close:price'], VERSIONS => 100, TIMERANGE => [0,1001314800000]}
+
+get 'm1', 'DYNT', {COLUMN => ['open:price','close:price'], VERSIONS => 100, TIMERANGE => [0,1001314800000]}
+
+get 'm1', 'DYNT', {COLUMN => ['open:price','close:price'], VERSIONS => 3, TIMERANGE => [0,1001314800000]}
+
+get 'm1', 'DXPE', {COLUMN => ['open:price'], VERSIONS => 100, TIMERANGE => [0,1001314800000]}
+get 'm1', 'DXPE', {COLUMN => ['close:price'], VERSIONS => 100, TIMERANGE => [0,1001314800000]}
+
+# obtiene la última versión de las 4 primeras columnas de la rowkey "DXPE" 
+## *:hbase shell
+scan 'm1', {TIMERANGE => [0,1001314800000], VERSIONS => 10, FILTER => "(PrefixFilter ('DXPE') AND (ColumnPaginationFilter (4, 0))"}
+
+scan 'm1', {TIMERANGE => [0,1001314800000], VERSIONS => 10, FILTER => "((ColumnPaginationFilter (1, 0))"}
+
+............
+Práctica 4
+
+Examinar el sistema de ficheros, los archivos de storage, la consistencia del sistema y la configuración
+............
+
+# muestra los detalles de las tablas, region servers, regiones
+## root:terminal
+sudo -u hbase hbase hbck -details
+
+# muestra el contenido del file system de la tabla m1. Los store files no estan
+## hdfs:terminal
+hadoop fs -ls -R /hbase/data/default/m1
+
+# ejecuta un flush para persistir en disco antes de compactar
+## *:hbase shell
+flush 'm1'
+
+# muestra el contenido del file system de la tabla m1. Los datos se han persistido
+## hdfs:terminal
+hadoop fs -ls -R /hbase/data/default/m1
+
+# muestra el contenido del HFile al que apunta el path
+## hdfs:terminal
+hbase hfile -mbsv -f /hbase/data/default/m1/8c4b038a1029078bd7ae99752363ece3/low/ff95f05e0fe445ee8a168dbf6032899a
+
+# muestra las properties de configuración en xml de HBase
+## hdfs:terminal
+hbase org.apache.hadoop.hbase.HBaseConfiguration
+
+# muestra las properties de configuración en xml de Hadoop
+## hdfs:terminal
+hadoop org.apache.hadoop.conf.Configuration
+
+............
+Práctica 5
+
+Compactar y cambiar los esquemas en caliente
+............
+
+# crea tabla con 300 versiones por cada column family
+# Esquema:
+# 	column families: open, close, high, low, totals
+## *:hbase shell
+create 'm2', {NAME => 'open', VERSIONS => 300}, {NAME => 'close', VERSIONS => 300}, {NAME => 'high', VERSIONS => 300}, {NAME => 'low', VERSIONS => 300}, {NAME => 'volume', VERSIONS => 300}, {NAME => 'adj', VERSIONS => 300}
+
+# deshabilita la tabla
+## *:hbase shell
+disable 'm2'
+
+# disminuye el atributo global de la tabla MEMSTORE_FLUSHSIZE para aumentar el numero de store files
+## *:hbase shell
+alter 'm2', METHOD => 'table_att', MEMSTORE_FLUSHSIZE => '50000'
+
+# habilita la tabla
+## *:hbase shell
+enable 'm2'
+
+# elimina el directorio donde vamos a exportar la tabla
+## hdfs:terminal
+hadoop fs -rm -r /tmp/test
+
+# exporta datos de m1
+## hdfs:terminal
+hbase org.apache.hadoop.hbase.mapreduce.Export m1 /tmp/test 300
+
+# importa datos a m2
+## hdfs:terminal
+hbase org.apache.hadoop.hbase.mapreduce.Import m2 /tmp/test
+
+# ejecuta un flush para persistir en disco
+## *:hbase shell
+flush 'm2'
+
+# muestra el contenido del file system de la tabla m2
+## hdfs:terminal
+hadoop fs -ls -R /hbase/data/default/m2
+
+# ejecuta un major compact. Puede hacer falta ejecutarlo varias veces
+## *:hbase shell
+major_compact 'm2'
+
+# muestra el contenido del file system de la tabla m2
+## hdfs:terminal
+hadoop fs -ls -R /hbase/data/default/m2
+
+............
+Práctica 6
+
+Dividir una región
+............
+
+# muestra las regiones
+## *:hbase shell
+scan 'hbase:meta', COLUMNS => 'info:regioninfo'
+
+# divide una region
+## *:hbase shell
+split 'm1,,1424184670117.8c4b038a1029078bd7ae99752363ece3.'
+
+# muestra las regiones. Vemos que ahora sigue la region anterior como padre y hay dos nuevas
+## *:hbase shell
+scan 'hbase:meta', COLUMNS => 'info:regioninfo'
+
+# muestra el contenido del file system de la tabla m1
+## hdfs:terminal
+hadoop fs -ls -R /hbase/data/default/m1
+
+............
+Práctica 7
+
+Las particularidades de las celdas borradas
+............
+
+# borra la version con timestamp 905410800000 de la columna "open:price" de la fila "DXPE"
+## *:hbase shell
+delete 'm1','DXPE','open:price',905410800000
+
+# obtiene todas las 100 ultimas versiones (incluidas las ya borradas) en el rango [0,1001314800000] de la columna "open:price" de la rowkey "DXPE"
+## *:hbase shell
+scan 'm1', {TIMERANGE => [0,1001314800000], RAW => true, VERSIONS => 100, FILTER => "(PrefixFilter ('DXPE') AND (FamilyFilter (=, 'regexstring:open')) AND (QualifierFilter (=, 'regexstring:price')))"}
+
+# ejecuta un flush para persistir en disco antes de compactar
+## *:hbase shell
+flush 'm1'
+
+# ejecuta un major compact. Puede hacer falta ejecutarlo dos veces
+## *:hbase shell
+major_compact 'm1'
+
+# dejamos que el sistema termine de compactar y comprobamos si la celda todavía aparece
+## *:hbase shell
+scan 'm1', {TIMERANGE => [0,1001314800000], RAW => true, VERSIONS => 100, FILTER => "(PrefixFilter ('DXPE') AND (FamilyFilter (=, 'regexstring:open')) AND (QualifierFilter (=, 'regexstring:price')))"}
+
+............
+Práctica 8
+
+Habilita compresión
+............
+
+# crea tabla con 300 versiones por cada column family
+# Esquema:
+# 	column families: open, close, high, low, totals
+## *:hbase shell
+create 'm3', {NAME => 'open', VERSIONS => 300, COMPRESSION => 'gz'}, {NAME => 'close', VERSIONS => 300, COMPRESSION => 'gz'}, {NAME => 'high', VERSIONS => 300, COMPRESSION => 'gz'}, {NAME => 'low', VERSIONS => 300, COMPRESSION => 'gz'}, {NAME => 'volume', VERSIONS => 300, COMPRESSION => 'gz'}, {NAME => 'adj', VERSIONS => 300, COMPRESSION => 'gz'}
+
+# importa datos a m3
+## hdfs:terminal
+hbase org.apache.hadoop.hbase.mapreduce.Import m3 /tmp/test
+
+# ejecuta un flush para persistir en disco 
+## *:hbase shell
+flush 'm3'
+
+# muestra el contenido del file system de la tabla m3. Lo comparamos con m1 y vemos que m3 es mucho menor
+## hdfs:terminal
+hadoop fs -du /hbase/data/default/m3
+hadoop fs -du /hbase/data/default/m1
+
+# muestra el contenido del HFile al que apunta el path
+## hdfs:terminal
+hbase hfile -mbsv -f /hbase/data/default/m3/bbaf31f018ac33bd2813ecb1e06f99b1/adj/857899b681dc41a1b43a2201b9d20403
+
+# comprobar que el blockindex tiene un tamaño menor en cada segmento de datos
+hbase hfile -mbsv -f /hbase/data/default/m1/3a574a85d5dc51e50e4a0783366a6fe4/adj/5e79ce1997d74997845fa56e7ab4c20b
+
+............
+Práctica 9
+
+Efecto de los updates
+............
+
+# transforma el fichero original y genera el modelo
+## hdfs:terminal
+tail -n +2 NASDAQ_daily_prices_subset.csv | ./modelo.pl RK=empUpd > /tmp/NASDAQ_daily_prices_subset_RK-empUpd.tsv
+
+# borra el antiguo fichero transformado de HDFS
+## hdfs:terminal
+hadoop fs -rm /tmp/NASDAQ_daily_prices_subset_RK-empUpd.tsv
+
+# copia el nuevo fichero transformado a HDFS
+## hdfs:terminal
+hadoop fs -copyFromLocal /tmp/NASDAQ_daily_prices_subset_RK-empUpd.tsv /tmp/NASDAQ_daily_prices_subset_RK-empUpd.tsv
+
+# importa el fichero transformado a HBase
+# Esquema:
+# 	rowkey: stock symbol
+# 	column qualifiers: open:price, close:price, high:price, low:price, totals:volume, totals:stock
+# 	versionado: intrínseco con nuestro propio TS
+## hdfs:terminal
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.columns=HBASE_ROW_KEY,open:price,high:price,low:price,close:price,volume:totals,adj:totals,HBASE_TS_KEY m1 /tmp/NASDAQ_daily_prices_subset_RK-empUpd.tsv
+
+# ejecuta un flush para persistir en disco 
+## *:hbase shell
+flush 'm1'
+
+# muestra el contenido del HFile mas viejo para una column family
+## hdfs:terminal
+hbase hfile -mbsv -f /hbase/data/default/m1/6d1b273f473539671e1ebe68685dadff/volume/c587e027ae094b2d8b47a943fad503da
+
+# muestra el contenido del HFile mas nuevo para una column family
+## hdfs:terminal
+hbase hfile -mbsv -f /hbase/data/default/m1/6d1b273f473539671e1ebe68685dadff/volume/e7b8ea14929847c397136d25022898ac
+
+............
+Práctica 10
+
+Si todo falla regeneramos completamente HBase
+............
+
+#To became root (god mode on)
+sudo -i
+sudo -l hdfs
+
+# para HBase
+
+# regenera HBase a su estado inicial
+## hdfs:terminal
+hadoop fs -rm -r /hbase
+
+# crea el directorio base por defecto
+## hdfs:terminal
+hadoop fs -mkdir /hbase
+
+# cambia los permisos al usuario hbase
+## hdfs:terminal
+hadoop fs -chown hbase:hbase /hbase
+
+# arranca HBase

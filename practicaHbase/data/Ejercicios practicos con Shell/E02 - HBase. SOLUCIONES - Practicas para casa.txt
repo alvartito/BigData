@@ -1,0 +1,64 @@
+------------
+Scripts
+------------
+
+# Mostrar sólo las rowkeys de las 2 últimas versiones de cada celda de las 3 primeras filas
+
+scan 'm2',{LIMIT => 3, FILTER => "KeyOnlyFilter ()", VERSIONS => 2}
+
+# Mostrar la última versión de la primera celda de las 3 primeras rowkeys 
+
+scan 'm2',{LIMIT => 3, FILTER => "FirstKeyOnlyFilter  ()"}
+
+# Mostrar las 2 últimas versiones de cada celda de las 3 primeras filas cuyo rowkey empiece por 'DX'
+
+scan 'm2',{LIMIT => 3, FILTER => "PrefixFilter  ('DX')", VERSIONS => 2}
+
+# Mostrar las 2 últimas versiones de cada celda cuyo qualifier empiece por 'price' de las 3 primeras filas
+
+scan 'm2',{LIMIT => 3, FILTER => "ColumnPrefixFilter ('price')", VERSIONS => 2}
+
+# Mostrar las 2 últimas versiones de cada celda cuyo qualifier empiece por 'price' o por 'volume' de las 3 primeras filas
+
+scan 'm2',{LIMIT => 3, FILTER => "MultipleColumnPrefixFilter ('price','volume')", VERSIONS => 2}
+
+# Mostrar la última versión de las 8 primeras columas de primera fila
+
+scan 'm2',{LIMIT => 1, FILTER => "ColumnCountGetFilter (8)"}
+
+# Mostrar la última versión de las dos primeras filas
+
+scan 'm2',{FILTER => "PageFilter  (2)", VERSIONS => 1}
+
+# Mostrar la última versión de todas las columnas excepto la 1 y la 2 para las 2 primeras filas
+
+scan 'm2',{LIMIT => 2, FILTER => "ColumnPaginationFilter  (4, 2)"}
+
+# Mostrar la última versión de todas las celdas entre las filas 'DAIO' y 'DAKT' ambas inclusive
+
+scan 'm2',{STARTROW => 'DAIO', FILTER => "InclusiveStopFilter  ('DAKT')"}
+
+# Mostrar la última versión de todas las celdas entre las filas 'DAIO' hasta 'DAKT'
+
+scan 'm2',{STARTROW => 'DAIO', STOPROW => 'DAKT'}
+
+# Mostrar todas las versiones entre 25 de Octubre de 2001 y 29 de Enero de 2003 de todas las columnas para las filas entre las rowkeys 'DAIO' hasta 'DAKT'
+# Ayuda:
+# date '+%s' -d '2001-10-25'
+# date '+%s' -d '2003-01-29'
+# date -d @<timestamp>
+# y multiplicar por 1000 para generar el timestamp que necesita HBase
+
+scan 'm2', {STARTROW => 'DAIO', STOPROW => 'DAKT', TIMERANGE => [1003993200000, 1043827200000]}
+
+# Mostrar las 2 últimas versiones de todas las celdas de las filas cuyos rowkeys empiecen por 'D' y terminen por 'O'
+
+scan 'm2', {FILTER => "RowFilter  (=,'regexstring:D.*O$')", VERSIONS => 2}
+
+# Mostrar todas las versiones de la columna con qualifier 'volume' y valor 1900
+
+scan 'm2', {FILTER => "QualifierFilter (=, 'substring:volume') AND ValueFilter (=, 'binary:1900')", VERSIONS => 300}
+
+# Mostrar la última versión de la columna "totals:volume" cuyo valor sea 1900
+
+scan 'm2', {FILTER => "FamilyFilter (=, 'substring:totals') AND QualifierFilter (=, 'substring:volume') AND ValueFilter (=, 'binary:1900')"}

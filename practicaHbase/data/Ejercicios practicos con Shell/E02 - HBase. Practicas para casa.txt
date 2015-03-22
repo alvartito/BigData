@@ -1,0 +1,110 @@
+Prácticas de la sesión 1, dia 1
+
+------------
+Set de datos
+------------
+
+	NASDAQ Exchange Daily 1970-2010 Open, Close, High, Low and Volume
+
+	Enlace:	http://www.infochimps.com/datasets/nasdaq-exchange-daily-1970-2010-open-close-high-low-and-volume
+
+------------
+Fichero original
+------------
+
+	NASDAQ_daily_prices_subset.csv
+
+------------
+Datos fichero original
+------------
+
+	exchange,stock_symbol,date,stock_price_open,stock_price_high,stock_price_low,stock_price_close,stock_volume,stock_price_adj_close
+
+------------
+Ejemplo fichero original
+------------
+
+	NASDAQ,DELL,1997-08-26,83.87,84.75,82.50,82.81,48736000,10.35
+
+------------
+Requisitos para generar el modelo
+------------
+
+metrica = {open, high, low, close, volume, adj}
+empresa = <stock_symbol>
+
+* El numero de versiones que queremos guardar no es demasiado grande
+* Las empresas son nuestros clientes y quieren correlaciones entre ellas y sus competidores
+* Las metricas son siempre las mismas y no cambian
+* Las querys suelen ser sobre una métrica en concreto 
+
+Rowkey: <empresa>
+Column Family: <metrica>
+Qualifier: price, totals
+Version: <timestamp>
+
+------------
+Transformado por
+------------
+
+	modelo.pl RK=emp
+
+------------
+Fichero transformado
+------------
+
+	NASDAQ_daily_prices_subset_RK-emp.tsv
+
+------------
+Datos fichero transformado
+------------
+
+	stock_symbol,stock_price_open,stock_price_high,stock_price_low,stock_price_close,stock_volume,stock_price_adj_close,timstamp
+
+------------
+Ejemplo fichero transformado
+------------
+
+	DELL	83.87	84.75	82.50	82.81	48736000	10.35	872578800000
+
+------------
+Esquema
+------------
+
+	open:price, high:price, low:price, close:price, volume:totals, adj:totals
+
+------------
+Scripts
+------------
+
+# Mostrar sólo las rowkeys de las 2 últimas versiones de cada celda de las 3 primeras filas
+
+# Mostrar la última versión de la primera celda de las 3 primeras rowkeys 
+
+# Mostrar las 2 últimas versiones de cada celda de las 3 primeras filas cuyo rowkey empiece por 'DX'
+
+# Mostrar las 2 últimas versiones de cada celda cuyo qualifier empiece por 'price' de las 3 primeras filas
+
+# Mostrar las 2 últimas versiones de cada celda cuyo qualifier empiece por 'price' o por 'volume' de las 3 primeras filas
+
+# Mostrar la última versión de las 8 primeras columas de primera fila
+
+# Mostrar la última versión de las dos primeras filas
+
+# Mostrar la última versión de todas las columnas excepto la 1 y la 2 para las 2 primeras filas
+
+# Mostrar la última versión de todas las celdas entre las filas 'DAIO' y 'DAKT' ambas inclusive
+
+# Mostrar la última versión de todas las celdas entre las filas 'DAIO' hasta 'DAKT'
+
+# Mostrar todas las versiones entre 25 de Octubre de 2001 y 29 de Enero de 2003 de todas las columnas para las filas entre las rowkeys 'DAIO' hasta 'DAKT'
+# Ayuda:
+# date '+%s' -d '2001-10-25'
+# date '+%s' -d '2003-01-29'
+# y multiplicar por 1000 para generar el timestamp que necesita HBase
+
+# Mostrar las 2 últimas versiones de todas las celdas de las filas cuyos rowkeys empiecen por 'D' y terminen por 'O'
+
+# Mostrar todas las versiones de la columna con qualifier 'volume' y valor 1900
+
+# Mostrar la última versión de la columna "totals:volume" cuyo valor sea 1900

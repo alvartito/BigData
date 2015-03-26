@@ -33,7 +33,7 @@ public class UseDataTypes {
 	/**
 	 * Caso 1
 	 * <p>
-	 * crear el column family usando tipo Bytes en la ordenación de las column
+	 * crear el column family usando tipo Bytes en la ordenaciï¿½n de las column
 	 * keys
 	 * 
 	 * @throws ConnectionException
@@ -45,6 +45,8 @@ public class UseDataTypes {
 		cfUsers = new ColumnFamily<String, String>(columnFamilyName2,
 				StringSerializer.get(), StringSerializer.get());
 
+		ksUsers.dropColumnFamily(columnFamilyName2);
+		
 		try {
 			ksUsers.createColumnFamily(cfUsers, ImmutableMap
 					.<String, Object> builder()

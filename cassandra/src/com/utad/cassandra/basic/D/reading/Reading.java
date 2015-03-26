@@ -3,6 +3,7 @@ package com.utad.cassandra.basic.D.reading;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableMap;
 import com.netflix.astyanax.Keyspace;
 import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
 import com.netflix.astyanax.model.Column;
@@ -27,9 +28,17 @@ public class Reading {
 	public static void main(String args[]) throws ConnectionException {
 
 		ksUsers = Utils.getKeyspace(keySpaceName);
-		cfUsers = new ColumnFamily<String, String>(columnFamilyName,
-				StringSerializer.get(), StringSerializer.get());
+		//ksUsers.dropColumnFamily(columnFamilyName);
 
+		cfUsers = new ColumnFamily<String, String>(columnFamilyName, StringSerializer.get(), StringSerializer.get());
+		try {
+			ksUsers.createColumnFamily(
+					cfUsers,
+					ImmutableMap.<String, Object> builder().put("default_validation_class", "CounterColumnType")
+							.put("replicate_on_write", true).build());
+		} catch (Exception e) {
+			System.out.println("ya existe el column family " + columnFamilyName);
+		}
 		caso1();
 		caso2();
 		caso3();
@@ -46,13 +55,11 @@ public class Reading {
 	 * @throws ConnectionException
 	 * */
 	private static void caso1() throws ConnectionException {
-		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers)
-				.getKey(rowKey)
+		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKey)
 				.withColumnRange(new RangeBuilder().setLimit(20).build());
 		System.out.println("\nLeer los primeros 20 usuarios.");
 		for (Column<String> c : query.execute().getResult()) {
-			System.out.println("Email for user " + c.getName() + " is "
-					+ c.getStringValue());
+			System.out.println("Email for user " + c.getName() + " is " + c.getStringValue());
 		}
 	}
 
@@ -62,14 +69,11 @@ public class Reading {
 	 * @throws ConnectionException
 	 */
 	private static void caso2() throws ConnectionException {
-		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers)
-				.getKey(rowKey)
+		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKey)
 				.withColumnRange(new RangeBuilder().setStart("50").build());
-		System.out
-				.println("\nLeer todos los usuarios a partir del usuario con id 50.");
+		System.out.println("\nLeer todos los usuarios a partir del usuario con id 50.");
 		for (Column<String> c : query.execute().getResult()) {
-			System.out.println("Email for user " + c.getName() + " is "
-					+ c.getStringValue());
+			System.out.println("Email for user " + c.getName() + " is " + c.getStringValue());
 		}
 	}
 
@@ -79,14 +83,11 @@ public class Reading {
 	 * @throws ConnectionException
 	 * */
 	private static void caso3() throws ConnectionException {
-		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers)
-				.getKey(rowKey)
+		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKey)
 				.withColumnRange(new RangeBuilder().setEnd("50").build());
-		System.out
-				.println("\nLeer todos los usuarios desde el principio hasta el 50.");
+		System.out.println("\nLeer todos los usuarios desde el principio hasta el 50.");
 		for (Column<String> c : query.execute().getResult()) {
-			System.out.println("Email for user " + c.getName() + " is "
-					+ c.getStringValue());
+			System.out.println("Email for user " + c.getName() + " is " + c.getStringValue());
 		}
 	}
 
@@ -96,35 +97,25 @@ public class Reading {
 	 * @throws ConnectionException
 	 * */
 	private static void caso4() throws ConnectionException {
-		RowQuery<String, String> query = ksUsers
-				.prepareQuery(cfUsers)
-				.getKey(rowKey)
-				.withColumnRange(
-						new RangeBuilder().setStart("50").setEnd("60").build());
+		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKey)
+				.withColumnRange(new RangeBuilder().setStart("50").setEnd("60").build());
 		System.out.println("\nLeer todos los usuarios entre el 50 y el 60.");
 		for (Column<String> c : query.execute().getResult()) {
-			System.out.println("Email for user " + c.getName() + " is "
-					+ c.getStringValue());
+			System.out.println("Email for user " + c.getName() + " is " + c.getStringValue());
 		}
 	}
 
 	/**
-	 * Leer los usuarios entre el 50 y el 60, pero no más de 8
+	 * Leer los usuarios entre el 50 y el 60, pero no mï¿½s de 8
 	 * 
 	 * @throws ConnectionException
 	 * */
 	private static void caso5() throws ConnectionException {
-		RowQuery<String, String> query = ksUsers
-				.prepareQuery(cfUsers)
-				.getKey(rowKey)
-				.withColumnRange(
-						new RangeBuilder().setStart("50").setEnd("60")
-								.setLimit(8).build());
-		System.out
-				.println("\nLeer todos los usuarios entre el 50 y el 60, pero no más de 8.");
+		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKey)
+				.withColumnRange(new RangeBuilder().setStart("50").setEnd("60").setLimit(8).build());
+		System.out.println("\nLeer todos los usuarios entre el 50 y el 60, pero no mï¿½s de 8.");
 		for (Column<String> c : query.execute().getResult()) {
-			System.out.println("Email for user " + c.getName() + " is "
-					+ c.getStringValue());
+			System.out.println("Email for user " + c.getName() + " is " + c.getStringValue());
 		}
 	}
 
@@ -151,17 +142,16 @@ public class Reading {
 	 * */
 	private static void caso6() throws ConnectionException {
 
-		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers)
-				.getKey(rowKey).withColumnSlice(getListaUsuariosFiltro());
+		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKey)
+				.withColumnSlice(getListaUsuariosFiltro());
 		System.out.println("\nLeer los usuarios 1, 3, 5, 7 y 11.");
 		for (Column<String> c : query.execute().getResult()) {
-			System.out.println("Email for user " + c.getName() + " is "
-					+ c.getStringValue());
+			System.out.println("Email for user " + c.getName() + " is " + c.getStringValue());
 		}
 	}
 
 	/**
-	 * Leer los usuarios 1, 3, 5, 7 y 11, pero sólo a partir del usuario 5.
+	 * Leer los usuarios 1, 3, 5, 7 y 11, pero sï¿½lo a partir del usuario 5.
 	 * 
 	 * @throws ConnectionException
 	 * */
@@ -176,13 +166,10 @@ public class Reading {
 				aux.add(s);
 		}
 
-		RowQuery<String, String> query2 = ksUsers.prepareQuery(cfUsers)
-				.getKey(rowKey).withColumnSlice(aux);
-		System.out
-				.println("\nLeer los usuarios 1, 3, 5, 7 y 11, pero sólo a partir del usuario 5.");
+		RowQuery<String, String> query2 = ksUsers.prepareQuery(cfUsers).getKey(rowKey).withColumnSlice(aux);
+		System.out.println("\nLeer los usuarios 1, 3, 5, 7 y 11, pero sï¿½lo a partir del usuario 5.");
 		for (Column<String> c : query2.execute().getResult()) {
-			System.out.println("Email for user " + c.getName() + " is "
-					+ c.getStringValue());
+			System.out.println("Email for user " + c.getName() + " is " + c.getStringValue());
 		}
 	}
 

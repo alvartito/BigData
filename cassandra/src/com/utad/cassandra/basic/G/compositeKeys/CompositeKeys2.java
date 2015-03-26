@@ -30,46 +30,44 @@ public class CompositeKeys2 {
 						products4, products5 };
 
 //				family_user_visists_product2
-				
-				
+
 				Keyspace ksUsers = Utils.getKeyspace("utad");
 				
 				//ksUsers.dropColumnFamily("UserVisitsProduct2");
 				
 				ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(
 						"UserVisitsProduct2", StringSerializer.get(), StringSerializer.get());
-				
-				
-				
 				try{
 					ksUsers.createColumnFamily(
 							cfUsers,
 							ImmutableMap.<String, Object> builder()
 									.put("default_validation_class", "CounterColumnType")
 									.put("replicate_on_write",true).build());
-					
-					MutationBatch m = ksUsers.prepareMutationBatch();
-					String rowKey = "usersById";
-					
-					ColumnListMutation<String> clm = m.withRow(cfUsers, rowKey);
-					
-					for(int i= 0; i < userVisitsProduct.length; i++){
-						String user = (i + 1) + "";
-						for(String p : userVisitsProduct[i]){
-							String key = user + ":" + p;
-							clm.incrementCounterColumn(key, 1);
-						}
-					}
-					m.execute();
 				}
 				catch(Exception e){
 					System.out.println("Ya existe el column family");
 				}
+
+				MutationBatch m = ksUsers.prepareMutationBatch();
+				String rowKey = "usersById";
+				
+				ColumnListMutation<String> clm = m.withRow(cfUsers, rowKey);
+				
+				for(int i= 0; i < userVisitsProduct.length; i++){
+					String user = (i + 1) + "";
+					for(String p : userVisitsProduct[i]){
+						String key = user + ":" + p;
+						clm.incrementCounterColumn(key, 1);
+					}
+				}
+				m.execute();
+
 				
 				ColumnList<String> columns;
 
 				RowQuery<String,String> query = ksUsers.prepareQuery(cfUsers)
-						.getKey("usersById").withColumnRange(new RangeBuilder().setStart("3:").setEnd("4").build()).autoPaginate(true);
+						//.getKey("usersById").withColumnRange(new RangeBuilder().setStart("3:").setEnd("4").build()).autoPaginate(true);
+						.getKey("usersById").withColumnRange(new RangeBuilder().build()).autoPaginate(true);
 				
 				columns = query.execute().getResult();
 				
@@ -80,7 +78,7 @@ public class CompositeKeys2 {
 					String user = key.split(":")[0];
 					String prod = key.split(":")[1];
 										
-					System.out.println("user " + user + " has visited product " + prod + " " + value + " times");
+					System.out.println("User " + user + " has visited product " + prod + ": " + value + " times");
 				}
 	}
 }

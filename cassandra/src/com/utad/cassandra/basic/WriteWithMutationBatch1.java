@@ -19,7 +19,7 @@ public class WriteWithMutationBatch1 {
 		Keyspace ksUsers = Utils.getKeyspace("utad");
 
 		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(
-				"users", StringSerializer.get(), StringSerializer.get());
+				"users2", StringSerializer.get(), StringSerializer.get());
 
 		// Necesitamos conocer de antemano la partition key
 		String rowKey = "usersById";

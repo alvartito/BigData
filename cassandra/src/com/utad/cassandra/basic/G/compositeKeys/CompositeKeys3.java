@@ -17,6 +17,15 @@ import com.netflix.astyanax.util.RangeBuilder;
 import com.utad.cassandra.basic.User;
 import com.utad.cassandra.util.Utils;
 
+/**
+ * Claves Compuestas 3 Diseñar e implementar un column family para buscar
+ * usuarios a partir de su código postal y nombre de la calle de residencia.
+ * <p>
+ * Los datos a obtener son, para el CP 28001 y la calle Gran Via:
+ * <li>Id del usuario
+ * <li>email
+ * <li>Nombre
+ */
 public class CompositeKeys3 {
 
 	public static void main(String args[]) throws ConnectionException {
@@ -55,27 +64,26 @@ public class CompositeKeys3 {
 		// conectar y crear column family
 		Keyspace ksUsers = Utils.getKeyspace("utad");
 
-		String columnFamily = "UserVisitsProduct3";
+		String columnFamily = "compositeKeys";
 
-		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(
-				columnFamily, StringSerializer.get(), StringSerializer.get());
+		ColumnFamily<String, String> cfUsers = new ColumnFamily<String, String>(columnFamily, StringSerializer.get(),
+				StringSerializer.get());
 
 		try {
 			ksUsers.dropColumnFamily(columnFamily);
 		} catch (Exception e) {
 			System.out.println("No existe el column family a borrar: " + columnFamily);
 		}
-		
-		try{
+
+		try {
 			ksUsers.createColumnFamily(
 					cfUsers,
-					ImmutableMap.<String, Object> builder()
-							.put("key_validation_class", "BytesType")
+					ImmutableMap.<String, Object> builder().put("key_validation_class", "BytesType")
 							.put("comparator_type", "BytesType").build());
 		} catch (Exception e) {
-			System.out.println("Ya existe el column family: " + columnFamily);
+			System.out.println("Error creando el  column family: " + columnFamily + " " + e.getMessage());
 		}
-		
+
 		MutationBatch m = ksUsers.prepareMutationBatch();
 		String rowKey = "usersByCPAddress";
 
@@ -90,35 +98,35 @@ public class CompositeKeys3 {
 			String calle = user.calle;
 
 			// escribir
-			String key = id + ":" + cp+":"+calle;
-			String value = id+":"+nombre+":"+email;
+			String key = id + ":" + cp + ":" + calle;
+			String value = id + ":" + nombre + ":" + email;
 			clm.putColumn(key, value);
 			ksUsers.prepareColumnMutation(cfUsers, rowKey, key).putValue(value, null).execute();
 		}
-		
 
 		// leer el resultado
 		System.out.println("\nLeer el resultado");
-		RowQuery<String,String> query = ksUsers.prepareQuery(cfUsers)
-				.getKey(rowKey).withColumnRange(new RangeBuilder().build()).autoPaginate(true);
-		
+		RowQuery<String, String> query = ksUsers.prepareQuery(cfUsers).getKey(rowKey)
+				.withColumnRange(new RangeBuilder().build()).autoPaginate(true);
+
 		ColumnList<String> columns = query.execute().getResult();
-		
-		for(Column<String> c : columns){
+
+		for (Column<String> c : columns) {
 			String key = c.getName();
 			String value = c.getStringValue();
-			
-			System.out.println("clave");
+
+			System.out.println("\nclave");
 			String[] ksplit = key.split(":");
 			for (String string : ksplit) {
-				System.out.println(string);
+				System.out.println("\t"+string);
 			}
+			
 			System.out.println("valor");
 			String[] kvalue = value.split(":");
 
 			for (String string : kvalue) {
-				System.out.println(string);
+				System.out.println("\t"+string);
 			}
-		}		
+		}
 	}
 }

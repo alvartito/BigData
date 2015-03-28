@@ -151,7 +151,7 @@ public class Reading {
 	}
 
 	/**
-	 * Leer los usuarios 1, 3, 5, 7 y 11, pero s�lo a partir del usuario 5.
+	 * Leer los usuarios 1, 3, 5, 7 y 11, pero sólo a partir del usuario 5.
 	 * 
 	 * @throws ConnectionException
 	 * */
@@ -167,7 +167,7 @@ public class Reading {
 		}
 
 		RowQuery<String, String> query2 = ksUsers.prepareQuery(cfUsers).getKey(rowKey).withColumnSlice(aux);
-		System.out.println("\nLeer los usuarios 1, 3, 5, 7 y 11, pero s�lo a partir del usuario 5.");
+		System.out.println("\nLeer los usuarios 1, 3, 5, 7 y 11, pero sólo a partir del usuario 5.");
 		for (Column<String> c : query2.execute().getResult()) {
 			System.out.println("Email for user " + c.getName() + " is " + c.getStringValue());
 		}

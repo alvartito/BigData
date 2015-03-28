@@ -17,12 +17,15 @@ public class UsingJDriver2 {
 		String[] calles_28001 = { "Alcala", "Preciados", "Gran Via", "Princesa" };
 		String[] calles_28002 = { "Castellana", "Goya", "Serrano", "Velazquez" };
 
+		String addres = "Alcala";
+		String cpCode = "28001";
+
 		int index_28001 = 0;
 		int index_28002 = 0;
 
 		List<User> users = new ArrayList<User>();
 
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 2000; i++) {
 
 			String id = (i + 1) + "";
 			String email = "user" + id + "@void.com";
@@ -58,6 +61,9 @@ public class UsingJDriver2 {
 
 		session.execute("CREATE KEYSPACE utad_cql WITH replication = {'class':'SimpleStrategy', 'replication_factor':1};");
 
+		// Creo la tabla con la PK compuesta por CP, Calle, e Id Usuario, para
+		// asegurarme que cada registro que inserto es único (lo discrimino por
+		// id_usuario)
 		session.execute("CREATE TABLE utad_cql.usersByCPAddress (id_usuario int, cp int, nombre text, email text, calle text, primary key(cp, calle, id_usuario));");
 
 		PreparedStatement ps1 = session
@@ -77,10 +83,19 @@ public class UsingJDriver2 {
 		}
 
 		session.execute(batch);
+		System.out.println("\nRegistros insertados en Cassandra");
 
-		ResultSet results = session.execute("select id_usuario, nombre, email " +
-//				",cp, calle  " +
-				"from utad_cql.usersByCPAddress where calle='Alcala' and cp=28002");
+		// Muestro el resultado correspondiente, pero comento los campos que no
+		// se piden en el resultado, para confirmar, descomentandolos, que los
+		// datos son los correctos. Limitamos la muestra resultado a 20 registros.
+		StringBuilder sbQuery = new StringBuilder();
+		sbQuery.append("select id_usuario, nombre, email ");
+		//sbQuery.append(",cp, calle  ");
+		sbQuery.append("from utad_cql.usersByCPAddress where calle='").append(addres);
+		sbQuery.append("' and cp=").append(cpCode);
+		sbQuery.append(" limit 20");
+		
+		ResultSet results = session.execute(sbQuery.toString());
 
 		// Leemos los datos recuperados.
 		for (Row row : results) {
@@ -92,6 +107,7 @@ public class UsingJDriver2 {
 		}
 
 		cluster.close();
+		System.out.println("\nFin de la ejecución");
 	}
 
 }

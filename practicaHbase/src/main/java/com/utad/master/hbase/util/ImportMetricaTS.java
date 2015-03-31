@@ -20,20 +20,21 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 
 /**
- * El objetivo de esta practica de importar los datos usando mapreduce para generar un modelo como el indicado abajo
+ * El objetivo de esta practica de importar los datos usando mapreduce para
+ * generar un modelo como el indicado abajo
  */
 
 /*
- * Modelo de datos
- * Rowkey: <metrica>/<TS>
- * Column Family: price, totals
+ * Modelo de datos Rowkey: <metrica>/<TS> Column Family: price, totals
  * Qualifier: <empresa>
-*/
+ */
 
 public class ImportMetricaTS {
 
 	public static final String tableName = "MetricaTS";
-//	public static final String fileName = "file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
+	// public static final String fileName =
+	//Utlizamos 
+	// "file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
 	public static final String fileName = "data/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
 	public static final String columnFamily1 = "price";
 	public static final String columnFamily2 = "totals";
@@ -44,19 +45,21 @@ public class ImportMetricaTS {
 	/**
 	 * Clase mapper para hacer mapreduce con un fichero de entrada y una tabla
 	 * de salida
+	 * 
+	 * 
+	 * 
 	 */
 	static class Map extends Mapper<LongWritable, Text, Text, Put> {
 
-		protected void map(LongWritable key, Text value, Context context)
-				throws IOException, InterruptedException {
+		protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 
 			// Obtiene una linea del fichero de log
 			String messageStr = value.toString();
-			
+
 			if (messageStr.contains("\t")) {
 				// separa por tabuladores los campos
 				String[] logRecvArr = messageStr.split("\t");
-				
+
 				if (logRecvArr.length != 4) {
 					System.out.println("Linea incorrecta: " + messageStr);
 					return;
@@ -68,21 +71,18 @@ public class ImportMetricaTS {
 				String timestamp = logRecvArr[3];
 
 				// crea el objeto put
-				Put put = new Put(Bytes.toBytes(rowKey),
-						Long.valueOf(timestamp));
+				Put put = new Put(Bytes.toBytes(rowKey), Long.valueOf(timestamp));
 
 				// determina a que ColumnFamily pertenece la celda
 				if (rowKey.startsWith("volume") || rowKey.startsWith("adj")) {
-					put.add(Bytes.toBytes(columnFamily2),
-							Bytes.toBytes(empresa), Bytes.toBytes(valor));
+					put.add(Bytes.toBytes(columnFamily2), Bytes.toBytes(empresa), Bytes.toBytes(valor));
 				} else {
-					put.add(Bytes.toBytes(columnFamily1),
-							Bytes.toBytes(empresa), Bytes.toBytes(valor));
+					put.add(Bytes.toBytes(columnFamily1), Bytes.toBytes(empresa), Bytes.toBytes(valor));
 				}
 
 				// escribe el dato en el contexto
 				context.write(new Text("1"), put);
-				
+
 			} else {
 				System.out.println("Formato incorrecto");
 			}
@@ -108,25 +108,24 @@ public class ImportMetricaTS {
 		}
 
 		// crea el descriptor de la tabla
-		HTableDescriptor desc = new HTableDescriptor(
-				TableName.valueOf(tableName));
-		
+		HTableDescriptor desc = new HTableDescriptor(TableName.valueOf(tableName));
+
 		// crea el descriptor de la ColumnFamily1
 		HColumnDescriptor coldef1 = new HColumnDescriptor(columnFamily1);
-		
+
 		// set maxversions a 1 para ColumnFamily1
 		coldef1.setMaxVersions(1);
-		
+
 		// crea el descriptor de la ColumnFamily2
 		HColumnDescriptor coldef2 = new HColumnDescriptor(columnFamily2);
-		
+
 		// set maxversions a 1 para ColumnFamily2
 		coldef2.setMaxVersions(1);
-		
+
 		// actualiza el descriptor de la tabla
 		desc.addFamily(coldef1);
 		desc.addFamily(coldef2);
-		
+
 		// crea la tabla
 		admin.createTable(desc);
 	}

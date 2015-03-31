@@ -14,16 +14,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.filter.BinaryComparator;
-import org.apache.hadoop.hbase.filter.CompareFilter;
-import org.apache.hadoop.hbase.filter.FamilyFilter;
-import org.apache.hadoop.hbase.filter.Filter;
-import org.apache.hadoop.hbase.filter.FilterList;
-import org.apache.hadoop.hbase.filter.QualifierFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 /**
@@ -33,12 +25,16 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 public class EstimateMarketDropEntregable {
 
+    public static final String columnFamily1="probabilidad";
+    
+    public static final String modeloProbabilistico = "mod1";
+
+	
 	// nombre de la tabla
 	public static final String tableName = "MetricaTSEmpresa";
 	
 	// nombre del modelo
-	public static final String columnFamily1 = "model1";
-	
+		
 	// nombre de la metrica para ese modelo
 	public static final String metrica = "open-close";
 	
@@ -127,27 +123,7 @@ public class EstimateMarketDropEntregable {
 		return resultados;
 	}
 
-	/**
-	 * Funcion que permite construir el modelo estadístico
-	 * 
-	 * @param metric
-	 *            metrica que define el modelo estadístico
-	 * @return
-	 */
-	private static float getProbability(float metric) {
 
-		if ((metric) < 0) {
-			return (float) 0;
-		} else if (((metric) >= 0) && (metric) < 10) {
-			return (float) 0.2;
-		} else if (((metric) >= 10) && (metric) < 20) {
-			return (float) 0.5;
-		} else if ((metric) >= 20) {
-			return (float) 0.9;
-		}
-
-		return 0;
-	}
 
 	/**
 	 * Función para entrada de datos del usuario
@@ -194,9 +170,9 @@ public class EstimateMarketDropEntregable {
 
 		// imprime los resultados, si los hay
 		if (!empresa.isEmpty()) {
-			float probability = EstimateMarketDropEntregable.getProbability(metric);
-			System.out.println("La probabilidad maxima es " + probability + " para la empresa "
-					+ empresa);
+//			float probability = EstimateMarketDropEntregable.getProbability(metric);
+//			System.out.println("La probabilidad maxima es " + probability + " para la empresa "
+//					+ empresa);
 
 			return true;
 		}

@@ -14,8 +14,17 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.BinaryComparator;
+import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.FamilyFilter;
+import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.FilterList;
+import org.apache.hadoop.hbase.filter.QualifierFilter;
+import org.apache.hadoop.hbase.filter.ValueFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 /**
@@ -25,24 +34,16 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 public class EstimateMarketDropEntregable {
 
-    public static final String columnFamily1="probabilidad";
-    
-    public static final String modeloProbabilistico = "mod1";
 
-	
-	// nombre de la tabla
-	public static final String tableName = "MetricaTSEmpresa";
+	public static final String tableName = "TimestampEmpresaModeloMetrica";
+	public static final String columnFamily = "probabilidad";
+	public static final String qualifier = "prob";
+	public static final String modeloProbabilistico = "mod1";
 	
 	// nombre del modelo
 		
 	// nombre de la metrica para ese modelo
 	public static final String metrica = "open-close";
-	
-	// nombres de los segmentos del modelo estadístico
-	public static final String qualifier1 = "o-c<0";
-	public static final String qualifier2 = "0<=o-c<10";
-	public static final String qualifier3 = "10<=o-c<20";
-	public static final String qualifier4 = "o-c>=20";
 	
 	// formatos de la rowkey
 	public static final String formatRowKeyTimestamp = "%13s";
@@ -61,7 +62,7 @@ public class EstimateMarketDropEntregable {
 	}
 
 	/**
-	 * Busca la row con el maximo value para la metrica open-close
+	 * Busca la row con el maximo value para el qualifier 'prob' 
 	 * 
 	 * @param dateStart
 	 *            dia de busqueda
@@ -70,12 +71,12 @@ public class EstimateMarketDropEntregable {
 	 * @return
 	 * @throws IOException
 	 */
-	private List<String> getMetric(Date dateStart, String statModel) throws IOException {
+	private List<String> getMetric(Date dateStart) throws IOException {
 
 		// Calcula la fecha de fin sumando un dia
 		Calendar c = Calendar.getInstance();
 		c.setTime(dateStart);
-		c.add(Calendar.DAY_OF_MONTH, 1);
+		//c.add(Calendar.DAY_OF_MONTH, 1);
 		Date dateEnd = c.getTime();
 
 		// inicializa variables
@@ -87,20 +88,51 @@ public class EstimateMarketDropEntregable {
 		 * ***********
 		 */
 
-		ResultScanner scanner = null;
-
 		//Crear los filtros adecuados, y lanzar el scan, para llegar al resultado deseado
 		
 		/* ***********
 		 * Fin del codigo del alumno ***********
 		 */
 
-		// iteramos la lista de resultados
+		// Creamos la instancia para acceder por RPC a HBase
+		HTable tabla = new HTable(conf, tableName);
+
+		// crea al array de filtros
+		List<Filter> filters = new ArrayList<Filter>();
+
+		// crea el filtro para ColumnFamily
+		Filter filter1 = new FamilyFilter(CompareFilter.CompareOp.EQUAL,
+				new BinaryComparator(Bytes.toBytes(columnFamily)));
+		filters.add(filter1);
+		
+		// crea el filtro para qualifier
+		Filter filter2 = new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
+				Bytes.toBytes(qualifier)));
+		filters.add(filter2);
+		
+		StringBuilder sbRk = new StringBuilder();
+		sbRk.append(modeloProbabilistico).append("/").append(dateEnd);
+		
+		// crea el filtro para el RoyKey, el value que nos han pedido
+		Filter filter3 = new ValueFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
+				Bytes.toBytes(sbRk.toString())));
+		filters.add(filter3);
+
+		// crea la lista de filtros con AND
+		FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters);
+
+		Scan scan = new Scan();
+		// asociamos al scan la lista de filtros
+		scan.setFilter(filterList);
+
+		// obtenemos el iterador sobre la lista de resultados
+		ResultScanner scanner = tabla.getScanner(scan);
+		// iteramos la lista de resultados (rango de RK)
 		for (Result result : scanner) {
 			// captura la RK
 			String rk = Bytes.toString(result.getRow());
-			Cell kv = result.getColumnLatestCell(Bytes.toBytes(columnFamily1),
-					Bytes.toBytes(statModel));
+			Cell kv = result.getColumnLatestCell(Bytes.toBytes(columnFamily),
+					Bytes.toBytes(qualifier));
 			// captura el value asociado a la celda
 			float metric = Bytes.toFloat(CellUtil.cloneValue(kv));
 			// selecciona el maximo
@@ -112,7 +144,9 @@ public class EstimateMarketDropEntregable {
 		}
 		// cerramos el scanner
 		scanner.close();
-
+		//Cerramos la tabla
+		tabla.close();
+		
 		// si ha encontrado un resultado lo mete en la lista
 		ArrayList<String> resultados = new ArrayList<String>();
 		if (!empresa.isEmpty()) {
@@ -124,6 +158,65 @@ public class EstimateMarketDropEntregable {
 	}
 
 
+	/**
+	 * PROPUESTO 2 Usando sólo filtros hacer un Scan para encontrar la última
+	 * versión del registro con valor price:low=24.81
+	 */
+	private void propuesto2() throws IOException {
+
+		System.out.println("\n*** propuesto2 ***\n");
+
+		// Creamos la instancia para acceder por RPC a HBase
+		HTable tabla = new HTable(conf, tableName);
+
+		// crea al array de filtros
+		List<Filter> filters = new ArrayList<Filter>();
+
+		// crea el filtro para ColumnFamily
+		Filter filter1 = new FamilyFilter(CompareFilter.CompareOp.EQUAL,
+				new BinaryComparator(Bytes.toBytes(columnFamily)));
+		filters.add(filter1);
+		
+		// crea el filtro para qualifier
+		Filter filter2 = new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
+				Bytes.toBytes("low")));
+		filters.add(filter2);
+		
+		// crea el filtro para el RoyKey, el value que nos han pedido
+		Filter filter3 = new ValueFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
+				Bytes.toBytes("24.81")));
+		filters.add(filter3);
+
+		// crea la lista de filtros con AND
+		FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters);
+
+		Scan scan = new Scan();
+		// asociamos al scan la lista de filtros
+		scan.setFilter(filterList);
+
+		// obtenemos el iterador sobre la lista de resultados
+		ResultScanner scanner = tabla.getScanner(scan);
+		// iteramos la lista de resultados (rango de RK)
+		for (Result result : scanner) {
+			// Resultado del scanner (rango de RK)
+			System.out.println(result);
+			// Contenido de cada RK
+			List<Cell> celdas = result.listCells();
+			for (Cell cell : celdas) {
+				System.out.println("Key: " + cell.toString());
+				System.out.println("Value: "
+						+ Bytes.toString(CellUtil.cloneValue(cell)));
+			}
+
+		}
+
+		// cerramos el scanner
+		scanner.close();
+		// cerramos la tabla
+		tabla.close();
+	}
+
+	
 
 	/**
 	 * Función para entrada de datos del usuario
@@ -156,13 +249,13 @@ public class EstimateMarketDropEntregable {
 	 * probabilidad correspondiente La probabilidad maxima es 0.5 para la empresa DITC
 	 */
 
-	public static boolean printProbability(EstimateMarketDropEntregable model, Date date, String segment)
+	public static boolean printProbability(EstimateMarketDropEntregable model, Date date)
 			throws IOException {
 
 		String empresa = "";
 		float metric = 0;
 
-		List<String> metricList = model.getMetric(date, segment);
+		List<String> metricList = model.getMetric(date);
 		if (!metricList.isEmpty()) {
 			empresa = metricList.get(0);
 			metric = Float.valueOf(metricList.get(1));
@@ -184,28 +277,16 @@ public class EstimateMarketDropEntregable {
 
 		EstimateMarketDropEntregable model = new EstimateMarketDropEntregable();
 
+		//Fecha de entrada por teclado
 		Date date = EstimateMarketDropEntregable.getDate();
+		
+		// Buscamos en nuestra tabla la empresa con mayor probabilidad de
+		// desplome para la fecha introducida.
 
 		// prueba con el segmento de mas alta probabilidad
-		if (EstimateMarketDropEntregable.printProbability(model, date, qualifier4)) {
+		if (EstimateMarketDropEntregable.printProbability(model, date)) {
 			return;
 		}
-
-		// prueba con el segmento de mas alta probabilidad
-		if (EstimateMarketDropEntregable.printProbability(model, date, qualifier3)) {
-			return;
-		}
-
-		// prueba con el segmento de mas alta probabilidad
-		if (EstimateMarketDropEntregable.printProbability(model, date, qualifier2)) {
-			return;
-		}
-
-		// prueba con el segmento de mas alta probabilidad
-		if (EstimateMarketDropEntregable.printProbability(model, date, qualifier1)) {
-			return;
-		}
-
 	}
 
 }

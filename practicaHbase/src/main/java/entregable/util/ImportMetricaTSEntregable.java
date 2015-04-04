@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.lang.mutable.Mutable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -15,14 +14,12 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
-import org.apache.hadoop.hbase.mapreduce.TableOutputFormat;
 import org.apache.hadoop.hbase.mapreduce.TableReducer;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 
@@ -63,7 +60,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 
 public class ImportMetricaTSEntregable {
 
-	int i = 0;
+	private static int i = 0;
 
 	// public static final String
 	// fileName="file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
@@ -73,6 +70,7 @@ public class ImportMetricaTSEntregable {
 
 	public static final String tableName = "TimestampEmpresaModeloMetrica";
 	public static final String modeloProbabilistico = "mod1";
+	public static String nombreMercado;
 	public static final String columnFamily = modeloProbabilistico;
 	public static final String qualifierEmpresa = "emp";
 	public static final String qualifierProbabilidad = "prob";
@@ -82,12 +80,12 @@ public class ImportMetricaTSEntregable {
 	private HBaseAdmin admin = null;
 
 	private static Date dateFormateada;
-	
+
 	/*
 	 * Clase mapper para hacer mapreduce con un fichero de entrada y una tabla
 	 * de salida
 	 */
-	static class Map extends Mapper<LongWritable, Text, Text, Text> {
+	static class Map extends Mapper<LongWritable, Text, Text, Put> {
 
 		protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 
@@ -100,12 +98,11 @@ public class ImportMetricaTSEntregable {
 					String[] logRecvArr = messageStr.split(",");
 					if (logRecvArr.length != 9) {
 						System.out.println("Linea incorrecta: " + messageStr);
-
 						return;
 					}
 
 					// Recuperamos unicamente los valores que nos interesan
-//					String mercado = logRecvArr[0];
+					nombreMercado = logRecvArr[0];
 					String nombreEmpresa = logRecvArr[1];
 					String date = logRecvArr[2];
 					// formato de entrada de la fecha
@@ -121,22 +118,30 @@ public class ImportMetricaTSEntregable {
 					float spClose = new Float(logRecvArr[6]);
 
 					float probability = getProbability(spOpen - spClose);
+					
+					if(dateFormateada.getTime() == new Long("663548400000")){
+						System.out.println("\n\n\n"+i+" "+dateFormateada+"-/-"+dateFormateada.getTime()+" - - - "+nombreEmpresa+":"+probability+"\n\n\n");
+//						i++;
+					}
+					
+					// crea el objeto put
+					Put put = new Put(Bytes.toBytes(nombreMercado+"/"+modeloProbabilistico+"/"+dateFormateada.getTime()+"/"+i), dateFormateada.getTime());
 
+					// determina a que ColumnFamily pertenece la celda
+					put.add(Bytes.toBytes(columnFamily), Bytes.toBytes(qualifierEmpresa), Bytes.toBytes(nombreEmpresa));
 					// escribe el dato en el conexto
-					context.write(new Text(modeloProbabilistico+"/"+dateFormateada), new Text(qualifierEmpresa+"\t"+nombreEmpresa));
+					context.write(new Text("1"), put);
 
+					put.add(Bytes.toBytes(columnFamily), Bytes.toBytes(qualifierProbabilidad), Bytes.toBytes(probability));
 					// escribe el dato en el conexto
-					context.write(new Text(modeloProbabilistico+"/"+dateFormateada), new Text(qualifierProbabilidad+"\t"+probability));
-
+					context.write(new Text("1"), put);
+					i++;
+					
 				} else {
 					System.out.println("Formato incorrecto");
 				}
 			} else {
-//				System.out.println("Cabecera de la tabla:\n");
-//				String[] cabecera = messageStr.split(",");
-//				for (String string : cabecera) {
-//					System.out.println("\t" + string);
-//				}
+				System.out.println("Cabecera de la tabla\n");
 			}
 		}
 	}
@@ -223,25 +228,19 @@ public class ImportMetricaTSEntregable {
 		job.setJobName(this.getClass().getSimpleName());
 		job.setJarByClass(ImportMetricaTSEntregable.class);
 
-		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(Text.class);
-
 		// asigna los formatos de entrada y salida del job
 		job.setInputFormatClass(TextInputFormat.class);
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Put.class);
 		
 		// asigna la clase Map
 		job.setMapperClass(Map.class);
-		job.setReducerClass(Red.class);
 		// indica que no hay reducer
-		job.setNumReduceTasks(1);
+		job.setNumReduceTasks(0);
 
 		// asigna el fichero de entrada
 		FileInputFormat.setInputPaths(job, new Path(fileName));
 
 		// Vincula este job a la tabla de HBase como salida
-		TableMapReduceUtil.initTableReducerJob(tableName, Red.class, job);
+		TableMapReduceUtil.initTableReducerJob(tableName, null, job);
 
 		// lanza el job
 		job.waitForCompletion(true);

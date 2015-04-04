@@ -14,7 +14,6 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
-import org.apache.hadoop.hbase.mapreduce.TableReducer;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -29,13 +28,15 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
  * <p>
  * Modelo de datos
  * <li>
- * Rowkey: modelo/timestamp/empresa
+ * Rowkey: mercado/modelo_probabilistico/timestamp/num_secuencial
  * <li>
- * Column Family: probabilidad
+ * Column Family: modelo_probabilistico
  * <li>
- * Qualifier: prob
+ * Qualifiers: 
+ * <li>empresa
+ * <li>probabilidad_de_desplome
  * <li>
- * Value: empresa/probabilidad
+ * Value: empresa/probabilidad_de_desplome
  * <p>
  * Cabecera de la tabla a importar:
  * <li>
@@ -60,10 +61,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 
 public class ImportMetricaTSEntregable {
 
-	private static int i = 0;
-
-	// public static final String
-	// fileName="file:/tmp/NASDAQ_daily_prices_subset_RK-metrica-TS.tsv";
+	private static double i = 0;
 
 	// Usaremos el fichero original para parsear nuestros datos:
 	public static final String fileName = "data/NASDAQ_daily_prices_subset.csv";
@@ -119,23 +117,18 @@ public class ImportMetricaTSEntregable {
 
 					float probability = getProbability(spOpen - spClose);
 					
-					if(dateFormateada.getTime() == new Long("663548400000")){
-						System.out.println("\n\n\n"+i+" "+dateFormateada+"-/-"+dateFormateada.getTime()+" - - - "+nombreEmpresa+":"+probability+"\n\n\n");
-//						i++;
-					}
-					
 					// crea el objeto put
 					Put put = new Put(Bytes.toBytes(nombreMercado+"/"+modeloProbabilistico+"/"+dateFormateada.getTime()+"/"+i), dateFormateada.getTime());
 
 					// determina a que ColumnFamily pertenece la celda
 					put.add(Bytes.toBytes(columnFamily), Bytes.toBytes(qualifierEmpresa), Bytes.toBytes(nombreEmpresa));
-					// escribe el dato en el conexto
+					// escribe el dato en el contexto
 					context.write(new Text("1"), put);
 
 					put.add(Bytes.toBytes(columnFamily), Bytes.toBytes(qualifierProbabilidad), Bytes.toBytes(probability));
-					// escribe el dato en el conexto
+					// escribe el dato en el contexto
 					context.write(new Text("1"), put);
-					i++;
+					i=i+new Double(0.001);
 					
 				} else {
 					System.out.println("Formato incorrecto");
@@ -146,26 +139,6 @@ public class ImportMetricaTSEntregable {
 		}
 	}
 	
-	static class Red extends TableReducer<Text, Text, Text> {
-		protected void red(Text key, Text value, Context context) throws IOException, InterruptedException{
-
-			// crea el objeto put
-			Put put = new Put(Bytes.toBytes(key.toString()), System.currentTimeMillis());
-
-			String[] valor = value.toString().split("\t");
-
-			// determina a que ColumnFamily pertenece la celda
-			if(valor[0].equals(qualifierEmpresa)){
-				put.add(Bytes.toBytes(columnFamily), Bytes.toBytes(qualifierEmpresa), Bytes.toBytes(valor[1]));
-			} else {
-				put.add(Bytes.toBytes(columnFamily), Bytes.toBytes(qualifierProbabilidad), Bytes.toBytes(valor[1]));
-			}
-
-			// escribe el dato en el conexto
-			context.write(new Text("1"), put);
-		}
-	}
-
 	/*
 	 * Crea los objetos de configuracion y admin para acceso a HBase
 	 */
@@ -223,7 +196,6 @@ public class ImportMetricaTSEntregable {
 	 */
 	private void execute() throws Exception {
 		// construye el objeto job y le asigna los tipos de entrada y salida
-
 		Job job = Job.getInstance();
 		job.setJobName(this.getClass().getSimpleName());
 		job.setJarByClass(ImportMetricaTSEntregable.class);
@@ -266,5 +238,4 @@ public class ImportMetricaTSEntregable {
 		modelo.creaTabla();
 		modelo.execute();
 	}
-
 }

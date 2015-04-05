@@ -131,6 +131,16 @@ public class EstimateMarketDropEntregable {
 		// Cerramos la tabla
 		tabla.close();
 
+		
+		// Hashmap con clave la probabilidad y valor, un Array<String> con los
+		// posibles valores de las empresas.
+		// Asi, cuando ordene, puedo recuperar varias empresas con la mayor
+		// probabilidad (si hay mas de una).		
+		
+		
+		
+		
+		
 		ArrayList<String> retorno = new ArrayList<String>();
 		if (!resultados.isEmpty()) {
 			List<String> tmp = Collections.list(resultados.keys());

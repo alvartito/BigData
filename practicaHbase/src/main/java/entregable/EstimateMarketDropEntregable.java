@@ -110,7 +110,7 @@ public class EstimateMarketDropEntregable {
 		ResultScanner scanner = tabla.getScanner(scan);
 
 		// iteramos la lista de resultados (rango de RK)
-		Hashtable<Float, String> resultados = new Hashtable<Float, String>();
+		Hashtable<String, String> resultados = new Hashtable<String, String>();
 
 		// si ha encontrado un resultado lo mete en la lista
 		for (Result result : scanner) {
@@ -124,7 +124,7 @@ public class EstimateMarketDropEntregable {
 			// captura el value asociado a la celda
 			float metric = Bytes.toFloat(CellUtil.cloneValue(kp));
 
-			resultados.put(metric, sEmpresa);
+			resultados.put(metric+":"+sEmpresa, sEmpresa);
 		}
 		// cerramos el scanner
 		scanner.close();
@@ -133,12 +133,18 @@ public class EstimateMarketDropEntregable {
 
 		ArrayList<String> retorno = new ArrayList<String>();
 		if (!resultados.isEmpty()) {
-			List<Float> tmp = Collections.list(resultados.keys());
-			float max = Collections.max(tmp);
-			String empresa = resultados.get(max);
+			List<String> tmp = Collections.list(resultados.keys());
+			Collections.sort(tmp);
+			for (String string : tmp) {
+				String[] split = string.split(":");
+				retorno.add(split[1]);
+				retorno.add(split[0]);
+			}
+//			float max = Collections.max(tmp);
+//			String empresa = resultados.get(max);
 
-			retorno.add(empresa);
-			retorno.add(String.valueOf(max));
+//			retorno.add(empresa);
+//			retorno.add(String.valueOf(max));
 		}
 
 		return retorno;
@@ -168,10 +174,14 @@ public class EstimateMarketDropEntregable {
 		ArrayList<String> metricList = model.getMetric(date);
 		// imprime los resultados, si los hay
 		if (!metricList.isEmpty()) {
-			String empresa = metricList.get(0);
-			String probabilidad = metricList.get(1);
-			System.out.println("\nLa probabilidad maxima es " + probabilidad + " para la empresa " + empresa
-					+ " en el día " + dateInString);
+			if(metricList.size()>2){
+				String empresa = metricList.get(0);
+				String probabilidad = metricList.get(1);
+				System.out.println("\nLa probabilidad maxima es " + probabilidad + " para la empresa " + empresa
+						+ " en el día " + dateInString);
+			} else {
+				
+			}
 		}
 
 		return false;

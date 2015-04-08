@@ -50,7 +50,8 @@ public class EstimateMarketDropEntregable {
 	public static final String nombreMercado = "NASDAQ";
 
 	// formato de entrada de la fecha
-	private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+	private static final SimpleDateFormat formatter = new SimpleDateFormat(
+			"dd/MM/yyyy");
 
 	// variables para acceder a HBase
 	private Configuration conf = null;
@@ -73,7 +74,8 @@ public class EstimateMarketDropEntregable {
 	 * @return
 	 * @throws IOException
 	 */
-	private ArrayList<String> getMetric(Date dateStart) throws IOException {
+	private Hashtable<Float, List<String>> getMetric(Date dateStart)
+			throws IOException {
 
 		// Calcula la fecha de fin sumando un dia
 		Calendar c = Calendar.getInstance();
@@ -91,17 +93,20 @@ public class EstimateMarketDropEntregable {
 		// resultado deseado
 		// Creamos un objeto scan con start y stop rows, ya que nuestro modelo
 		// está preparado para este tipo de búsquedas.
-		Scan scan = new Scan(Bytes.toBytes(nombreMercado + "/" + modeloProbabilistico + "/" + dateStart.getTime()),
-				Bytes.toBytes(nombreMercado + "/" + modeloProbabilistico + "/" + dateEnd.getTime()));
+		Scan scan = new Scan(Bytes.toBytes(nombreMercado + "/"
+				+ modeloProbabilistico + "/" + dateStart.getTime()),
+				Bytes.toBytes(nombreMercado + "/" + modeloProbabilistico + "/"
+						+ dateEnd.getTime()));
 
 		// Crea el filtro para ColumnFamily. Lo añadimos porque como puede ser
 		// parametrizable, hay que tenerlo en cuenta.
-		Filter filterCF = new FamilyFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(
-				Bytes.toBytes(columnFamily)));
+		Filter filterCF = new FamilyFilter(CompareFilter.CompareOp.EQUAL,
+				new BinaryComparator(Bytes.toBytes(columnFamily)));
 		filters.add(filterCF);
 
 		// crea la lista de filtros con AND
-		FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters);
+		FilterList filterList = new FilterList(
+				FilterList.Operator.MUST_PASS_ALL, filters);
 
 		// asociamos al scan la lista de filtros
 		scan.setFilter(filterList);
@@ -110,54 +115,39 @@ public class EstimateMarketDropEntregable {
 		ResultScanner scanner = tabla.getScanner(scan);
 
 		// iteramos la lista de resultados (rango de RK)
-		Hashtable<String, String> resultados = new Hashtable<String, String>();
+		Hashtable<Float, List<String>> resultados = new Hashtable<Float, List<String>>();
 
 		// si ha encontrado un resultado lo mete en la lista
 		for (Result result : scanner) {
-			Cell ke = result.getColumnLatestCell(Bytes.toBytes(columnFamily), Bytes.toBytes(qualifierEmpresa));
+			Cell ke = result.getColumnLatestCell(Bytes.toBytes(columnFamily),
+					Bytes.toBytes(qualifierEmpresa));
 
 			// captura el value asociado a la celda
 			String sEmpresa = Bytes.toString(CellUtil.cloneValue(ke));
 
-			Cell kp = result.getColumnLatestCell(Bytes.toBytes(columnFamily), Bytes.toBytes(qualifierProbabilidad));
+			Cell kp = result.getColumnLatestCell(Bytes.toBytes(columnFamily),
+					Bytes.toBytes(qualifierProbabilidad));
 
 			// captura el value asociado a la celda
 			float metric = Bytes.toFloat(CellUtil.cloneValue(kp));
 
-			resultados.put(metric+":"+sEmpresa, sEmpresa);
+			if (resultados.containsKey(metric)) {
+				List<String> empresas = resultados.get(metric);
+				empresas.add(sEmpresa);
+				resultados.put(metric, empresas);
+			} else {
+				List<String> empresas = new ArrayList<String>();
+				empresas.add(sEmpresa);
+				resultados.put(metric, empresas);
+			}
+
 		}
 		// cerramos el scanner
 		scanner.close();
 		// Cerramos la tabla
 		tabla.close();
 
-		
-		// Hashmap con clave la probabilidad y valor, un Array<String> con los
-		// posibles valores de las empresas.
-		// Asi, cuando ordene, puedo recuperar varias empresas con la mayor
-		// probabilidad (si hay mas de una).		
-		
-		
-		
-		
-		
-		ArrayList<String> retorno = new ArrayList<String>();
-		if (!resultados.isEmpty()) {
-			List<String> tmp = Collections.list(resultados.keys());
-			Collections.sort(tmp);
-			for (String string : tmp) {
-				String[] split = string.split(":");
-				retorno.add(split[1]);
-				retorno.add(split[0]);
-			}
-//			float max = Collections.max(tmp);
-//			String empresa = resultados.get(max);
-
-//			retorno.add(empresa);
-//			retorno.add(String.valueOf(max));
-		}
-
-		return retorno;
+		return resultados;
 	}
 
 	/**
@@ -179,19 +169,32 @@ public class EstimateMarketDropEntregable {
 		return date;
 	}
 
-	public static boolean printProbability(EstimateMarketDropEntregable model, Date date) throws IOException {
+	public static boolean printProbability(EstimateMarketDropEntregable model,
+			Date date) throws IOException {
 
-		ArrayList<String> metricList = model.getMetric(date);
+		Hashtable<Float, List<String>> metricList = model.getMetric(date);
 		// imprime los resultados, si los hay
 		if (!metricList.isEmpty()) {
-			if(metricList.size()>2){
-				String empresa = metricList.get(0);
-				String probabilidad = metricList.get(1);
-				System.out.println("\nLa probabilidad maxima es " + probabilidad + " para la empresa " + empresa
-						+ " en el día " + dateInString);
+
+			List<Float> claves = Collections.list(metricList.keys());
+			Collections.sort(claves);
+			float maxProb = Collections.max(claves);
+
+			List<String> empresas = metricList.get(maxProb);
+			if (empresas.size() > 1) {
+				System.out.println("\nLa probabilidad maxima es " + maxProb
+						+ " para las empresas:\n");
+				for (String empresa : empresas) {
+					System.out.println(empresa);
+				}
+				System.out.println("\nen el día " + dateInString);
 			} else {
-				
+				System.out.println("\nLa probabilidad maxima es " + maxProb
+						+ " para la empresa " + empresas.get(0) + " en el día "
+						+ dateInString);
 			}
+		} else {
+			System.out.println("No existen datos para la fecha introducida "+dateInString);
 		}
 
 		return false;
@@ -206,7 +209,6 @@ public class EstimateMarketDropEntregable {
 
 		// Buscamos en nuestra tabla la empresa con mayor probabilidad de
 		// desplome para la fecha introducida.
-
 		if (EstimateMarketDropEntregable.printProbability(model, date)) {
 			return;
 		}

@@ -47,6 +47,7 @@ public class HolaMundoSpout extends BaseRichSpout {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void open(Map conf, TopologyContext context,
 			SpoutOutputCollector collector) {

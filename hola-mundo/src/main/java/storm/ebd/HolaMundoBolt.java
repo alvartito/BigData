@@ -33,6 +33,7 @@ public class HolaMundoBolt extends BaseRichBolt {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void prepare(Map arg0, TopologyContext arg1, OutputCollector arg2) {
 		// TODO Auto-generated method stub

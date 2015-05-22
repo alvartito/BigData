@@ -16,8 +16,8 @@ import backtype.storm.utils.Utils;
  * <p>
  * El Spout va a invocar de forma repetida el método nextTuple().
  * <p>
- * El método declareOutputFields() indica el contenido de las tuplas enviadas
- * con emit() en el método nextTuple().
+ * El método declareOutputFields() indica el contenido de las tuplas enviadas con emit() en el
+ * método nextTuple().
  * 
  * */
 public class HolaMundoSpout extends BaseRichSpout {
@@ -49,8 +49,7 @@ public class HolaMundoSpout extends BaseRichSpout {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void open(Map conf, TopologyContext context,
-			SpoutOutputCollector collector) {
+	public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
 		this.collector = collector;
 	}
 

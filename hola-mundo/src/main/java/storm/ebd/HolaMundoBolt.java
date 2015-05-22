@@ -9,15 +9,14 @@ import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
 
 /**
- * Esta clase consume las tuplas producidas e implementa la lógica necesaria. La
- * creamos dentro del mismo paquete storm.ebd y hacemos que herede de la clase
- * BaseRichBolt.
+ * Esta clase consume las tuplas producidas e implementa la lógica necesaria. La creamos dentro del
+ * mismo paquete storm.ebd y hacemos que herede de la clase BaseRichBolt.
  * 
  * */
 public class HolaMundoBolt extends BaseRichBolt {
 
 	private int myCount = 0;
-	
+
 	/**
 	 * 
 	 */
@@ -26,10 +25,9 @@ public class HolaMundoBolt extends BaseRichBolt {
 	@Override
 	public void execute(Tuple input) {
 		String test = input.getStringByField("sentence");
-		if("Hola Mundo".equals(test)){
-		myCount++;
-		System.out.println("Encontrado Hola Mundo!. Contador:" +
-		Integer.toString(myCount));
+		if ("Hola Mundo".equals(test)) {
+			myCount++;
+			System.out.println("Encontrado Hola Mundo!. Contador:" + Integer.toString(myCount));
 		}
 	}
 

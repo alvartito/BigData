@@ -17,49 +17,28 @@ import backtype.storm.utils.Utils;
 
 public class ClickTopology {
 
-	private TopologyBuilder builder;
+	private TopologyBuilder builder = new TopologyBuilder();
 	private final String DEFAULT_JEDIS_PORT = "6379";
-	private Config conf;
-	private LocalCluster cluster;
+	private Config conf = new Config();
+	private LocalCluster cluster = new LocalCluster();
 
 	public ClickTopology() {
-		getBuilder().setSpout("clickSpout", new ClickSpout(), 10);
+		builder.setSpout("clickSpout", new ClickSpout(), 10);
 		// Primera capa de bolts
-		getBuilder().setBolt("repeatsBolt", new RepeatVisitBolt(), 10).shuffleGrouping("clickSpout");
+		builder.setBolt("repeatsBolt", new RepeatVisitBolt(), 10).shuffleGrouping("clickSpout");
 		//La topología divide los streams en el bolt según el siguiente criterio de fieldsGrouping:
-		getBuilder().setBolt("geographyBolt", new GeographyBolt(new HttpIPResolver()), 10).shuffleGrouping("clickSpout");
+		builder.setBolt("geographyBolt", new GeographyBolt(new HttpIPResolver()), 10).shuffleGrouping("clickSpout");
 		// Segunda capa de bolts: conmutativa
-		getBuilder().setBolt("totalStats", new VisitorStatsBolt(), 1).globalGrouping("repeatsBolt");
-		getBuilder().setBolt("geoStats", new GeoStatsBolt(), 10).fieldsGrouping("geographyBolt",
+		builder.setBolt("totalStats", new VisitorStatsBolt(), 1).globalGrouping("repeatsBolt");
+		builder.setBolt("geoStats", new GeoStatsBolt(), 10).fieldsGrouping("geographyBolt",
 				new Fields(storm.ebd.util.Fields.COUNTRY));
-		getConf().put(Conf.REDIS_PORT_KEY, DEFAULT_JEDIS_PORT);
-	}
-
-	public TopologyBuilder getBuilder() {
-		if(null == builder){
-			builder = new TopologyBuilder();
-		}
-		return builder;
-	}
-
-	public LocalCluster getLocalCluster() {
-		if(null == cluster){
-			cluster = new LocalCluster();
-		}
-		return cluster;
-	}
-
-	public Config getConf() {
-		if(null == conf) {
-			conf = new Config();
-		}
-		return conf;
+		conf.put(Conf.REDIS_PORT_KEY, DEFAULT_JEDIS_PORT);
 	}
 
 	public void runLocal(int runTime) {
-		getConf().setDebug(true);
-		getConf().put(Conf.REDIS_HOST_KEY, "localhost");
-		getLocalCluster().submitTopology("test", conf, getBuilder().createTopology());
+		conf.setDebug(true);
+		conf.put(Conf.REDIS_HOST_KEY, "localhost");
+		cluster.submitTopology("test", conf, builder.createTopology());
 		if (runTime > 0) {
 			Utils.sleep(runTime);
 			shutDownLocal();
@@ -67,16 +46,16 @@ public class ClickTopology {
 	}
 
 	public void shutDownLocal() {
-		if (getLocalCluster() != null) {
-			getLocalCluster().killTopology("test");
-			getLocalCluster().shutdown();
+		if (cluster != null) {
+			cluster.killTopology("test");
+			cluster.shutdown();
 		}
 	}
 
 	public void runCluster(String name, String redisHost) throws AlreadyAliveException, InvalidTopologyException {
-		getConf().setNumWorkers(20);
-		getConf().put(Conf.REDIS_HOST_KEY, redisHost);
-		StormSubmitter.submitTopology(name, getConf(), getBuilder().createTopology());
+		conf.setNumWorkers(20);
+		conf.put(Conf.REDIS_HOST_KEY, redisHost);
+		StormSubmitter.submitTopology(name, conf, builder.createTopology());
 	}
 
 	public static void main(String[] args) throws Exception {

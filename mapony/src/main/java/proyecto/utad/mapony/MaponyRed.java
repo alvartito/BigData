@@ -5,12 +5,14 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class MaponyRed extends Reducer<Text, Text, Text, Text> {
+import writables.RawDataWritable;
+
+public class MaponyRed extends Reducer<Text, RawDataWritable, Text, RawDataWritable> {
 
 	Text amigoA = new Text();
 	Text amigoB = new Text();
 
-	protected void reduce(Text clave, Text valor, Context context) throws IOException, InterruptedException {
+	protected void reduce(Text clave, RawDataWritable valor, Context context) throws IOException, InterruptedException {
 		context.write(clave, valor);
 	};
 }

@@ -6,17 +6,13 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
+
 /** @author Álvaro Sánchez Blasco */
 /**
  * @author cloudera
  *
  */
-public class RawDataWritable implements
-Writable {
-
-	private String amigo;
-	private boolean relacion;
-	
+public class RawDataWritable implements Writable {
 	/** Photo/Video Identifier */
 	private String identifier;
 	/** User Nsid */
@@ -63,11 +59,10 @@ Writable {
 	private String extension;
 	/** Photos/Video Marker (0 = Photo, 1 = Video) */
 	private String marker;
-	
-	
-	
-	public RawDataWritable(){}
-	
+
+	public RawDataWritable() {
+	}
+
 	/**
 	 * @param identifier
 	 * @param userNsid
@@ -103,13 +98,6 @@ Writable {
 				serverIdentifier, farmIdentifier, secret, secretOriginal, extension, marker);
 	}
 
-	public void set(boolean relacion, String amigo) {
-		this.amigo = amigo;
-		this.relacion = relacion;
-		setRelacion(relacion);
-		setAmigo(amigo);
-	}
-	
 	/**
 	 * @param identifier
 	 * @param userNsid
@@ -141,42 +129,118 @@ Writable {
 			String licenseUrl, String serverIdentifier, String farmIdentifier, String secret, String secretOriginal,
 			String extension, String marker) {
 
-	}
-	
-	public String get() {
-		return amigo+ "," + relacion;
-	}
-	
-	public String toString() {
-		return amigo + "|" + relacion;
-	}
-	
-	public void write(DataOutput out) throws IOException {
-		Text.writeString(out, amigo);
-		out.writeBoolean(relacion);
+		this.identifier = identifier;
+		setIdentifier(identifier);
 
-	
+		this.userNsid = userNsid;
+		setUserNsid(userNsid);
+
+		this.userNickname = userNickname;
+		this.dateTaken = dateTaken;
+		this.dateUploaded = dateUploaded;
+		this.captureDevice = captureDevice;
+		this.title = title;
+		this.description = description;
+		this.userTags = userTags;
+		this.machineTags = machineTags;
+		this.longitude = longitude;
+		this.latitude = latitude;
+		this.accuracy = accuracy;
+		this.pageUrl = pageUrl;
+		this.downloadUrl = downloadUrl;
+		this.licenseName = licenseName;
+		this.licenseUrl = licenseUrl;
+		this.serverIdentifier = serverIdentifier;
+		this.farmIdentifier = farmIdentifier;
+		this.secret = secret;
+		this.secretOriginal = secretOriginal;
+		this.extension = extension;
+		this.marker = marker;
+
+		setUserNickname(userNickname);
+		setDateTaken(dateTaken);
+		setDateUploaded(dateUploaded);
+		setCaptureDevice(captureDevice);
+		setTitle(title);
+		setDescription(description);
+		setUserTags(userTags);
+		setMachineTags(machineTags);
+		setLongitude(longitude);
+		setLatitude(latitude);
+		setAccuracy(accuracy);
+		setPageUrl(pageUrl);
+		setDownloadUrl(downloadUrl);
+		setLicenseName(licenseName);
+		setLicenseUrl(licenseUrl);
+		setServerIdentifier(serverIdentifier);
+		setFarmIdentifier(farmIdentifier);
+		setSecret(secret);
+		setSecretOriginal(secretOriginal);
+		setExtension(extension);
+		setMarker(marker);
+
+	}
+
+	public String get() {
+		// TODO Falta completar el método get()
+		return identifier + "," + userNsid;
+	}
+
+	public String toString() {
+		// TODO Falta completar el método toString()
+		return identifier + "|" + userNsid;
+	}
+
+	public void write(DataOutput out) throws IOException {
+		Text.writeString(out, identifier);
+		Text.writeString(out, userNsid);
+		Text.writeString(out, userNickname);
+		Text.writeString(out, dateTaken);
+		Text.writeString(out, dateUploaded);
+		Text.writeString(out, captureDevice);
+		Text.writeString(out, title);
+		Text.writeString(out, description);
+		Text.writeString(out, userTags);
+		Text.writeString(out, machineTags);
+		Text.writeString(out, longitude);
+		Text.writeString(out, latitude);
+		Text.writeString(out, accuracy);
+		Text.writeString(out, pageUrl);
+		Text.writeString(out, downloadUrl);
+		Text.writeString(out, licenseName);
+		Text.writeString(out, licenseUrl);
+		Text.writeString(out, serverIdentifier);
+		Text.writeString(out, farmIdentifier);
+		Text.writeString(out, secret);
+		Text.writeString(out, secretOriginal);
+		Text.writeString(out, extension);
+		Text.writeString(out, marker);
 	}
 
 	public void readFields(DataInput in) throws IOException {
-		amigo = Text.readString(in);
-		relacion = in.readBoolean();
-	}
-
-	public String getAmigo() {
-		return amigo;
-	}
-
-	private void setAmigo(String amigo) {
-		this.amigo = amigo;
-	}
-
-	public boolean isRelacion() {
-		return relacion;
-	}
-
-	private void setRelacion(boolean relacion) {
-		this.relacion = relacion;
+		identifier = Text.readString(in);
+		userNsid = Text.readString(in);
+		userNickname = Text.readString(in);
+		dateTaken = Text.readString(in);
+		dateUploaded = Text.readString(in);
+		captureDevice = Text.readString(in);
+		title = Text.readString(in);
+		description = Text.readString(in);
+		userTags = Text.readString(in);
+		machineTags = Text.readString(in);
+		longitude = Text.readString(in);
+		latitude = Text.readString(in);
+		accuracy = Text.readString(in);
+		pageUrl = Text.readString(in);
+		downloadUrl = Text.readString(in);
+		licenseName = Text.readString(in);
+		licenseUrl = Text.readString(in);
+		serverIdentifier = Text.readString(in);
+		farmIdentifier = Text.readString(in);
+		secret = Text.readString(in);
+		secretOriginal = Text.readString(in);
+		extension = Text.readString(in);
+		marker = Text.readString(in);
 	}
 
 	/**
@@ -187,7 +251,8 @@ Writable {
 	}
 
 	/**
-	 * @param identifier the identifier to set
+	 * @param identifier
+	 *            the identifier to set
 	 */
 	public final void setIdentifier(String identifier) {
 		this.identifier = identifier;
@@ -201,7 +266,8 @@ Writable {
 	}
 
 	/**
-	 * @param userNsid the userNsid to set
+	 * @param userNsid
+	 *            the userNsid to set
 	 */
 	public final void setUserNsid(String userNsid) {
 		this.userNsid = userNsid;
@@ -215,7 +281,8 @@ Writable {
 	}
 
 	/**
-	 * @param userNickname the userNickname to set
+	 * @param userNickname
+	 *            the userNickname to set
 	 */
 	public final void setUserNickname(String userNickname) {
 		this.userNickname = userNickname;
@@ -229,7 +296,8 @@ Writable {
 	}
 
 	/**
-	 * @param dateTaken the dateTaken to set
+	 * @param dateTaken
+	 *            the dateTaken to set
 	 */
 	public final void setDateTaken(String dateTaken) {
 		this.dateTaken = dateTaken;
@@ -243,7 +311,8 @@ Writable {
 	}
 
 	/**
-	 * @param dateUploaded the dateUploaded to set
+	 * @param dateUploaded
+	 *            the dateUploaded to set
 	 */
 	public final void setDateUploaded(String dateUploaded) {
 		this.dateUploaded = dateUploaded;
@@ -257,7 +326,8 @@ Writable {
 	}
 
 	/**
-	 * @param captureDevice the captureDevice to set
+	 * @param captureDevice
+	 *            the captureDevice to set
 	 */
 	public final void setCaptureDevice(String captureDevice) {
 		this.captureDevice = captureDevice;
@@ -271,7 +341,8 @@ Writable {
 	}
 
 	/**
-	 * @param title the title to set
+	 * @param title
+	 *            the title to set
 	 */
 	public final void setTitle(String title) {
 		this.title = title;
@@ -285,7 +356,8 @@ Writable {
 	}
 
 	/**
-	 * @param description the description to set
+	 * @param description
+	 *            the description to set
 	 */
 	public final void setDescription(String description) {
 		this.description = description;
@@ -299,7 +371,8 @@ Writable {
 	}
 
 	/**
-	 * @param userTags the userTags to set
+	 * @param userTags
+	 *            the userTags to set
 	 */
 	public final void setUserTags(String userTags) {
 		this.userTags = userTags;
@@ -313,7 +386,8 @@ Writable {
 	}
 
 	/**
-	 * @param machineTags the machineTags to set
+	 * @param machineTags
+	 *            the machineTags to set
 	 */
 	public final void setMachineTags(String machineTags) {
 		this.machineTags = machineTags;
@@ -327,7 +401,8 @@ Writable {
 	}
 
 	/**
-	 * @param longitude the longitude to set
+	 * @param longitude
+	 *            the longitude to set
 	 */
 	public final void setLongitude(String longitude) {
 		this.longitude = longitude;
@@ -341,7 +416,8 @@ Writable {
 	}
 
 	/**
-	 * @param latitude the latitude to set
+	 * @param latitude
+	 *            the latitude to set
 	 */
 	public final void setLatitude(String latitude) {
 		this.latitude = latitude;
@@ -355,7 +431,8 @@ Writable {
 	}
 
 	/**
-	 * @param accuracy the accuracy to set
+	 * @param accuracy
+	 *            the accuracy to set
 	 */
 	public final void setAccuracy(String accuracy) {
 		this.accuracy = accuracy;
@@ -369,7 +446,8 @@ Writable {
 	}
 
 	/**
-	 * @param pageUrl the pageUrl to set
+	 * @param pageUrl
+	 *            the pageUrl to set
 	 */
 	public final void setPageUrl(String pageUrl) {
 		this.pageUrl = pageUrl;
@@ -383,7 +461,8 @@ Writable {
 	}
 
 	/**
-	 * @param downloadUrl the downloadUrl to set
+	 * @param downloadUrl
+	 *            the downloadUrl to set
 	 */
 	public final void setDownloadUrl(String downloadUrl) {
 		this.downloadUrl = downloadUrl;
@@ -397,7 +476,8 @@ Writable {
 	}
 
 	/**
-	 * @param licenseName the licenseName to set
+	 * @param licenseName
+	 *            the licenseName to set
 	 */
 	public final void setLicenseName(String licenseName) {
 		this.licenseName = licenseName;
@@ -411,7 +491,8 @@ Writable {
 	}
 
 	/**
-	 * @param licenseUrl the licenseUrl to set
+	 * @param licenseUrl
+	 *            the licenseUrl to set
 	 */
 	public final void setLicenseUrl(String licenseUrl) {
 		this.licenseUrl = licenseUrl;
@@ -425,7 +506,8 @@ Writable {
 	}
 
 	/**
-	 * @param serverIdentifier the serverIdentifier to set
+	 * @param serverIdentifier
+	 *            the serverIdentifier to set
 	 */
 	public final void setServerIdentifier(String serverIdentifier) {
 		this.serverIdentifier = serverIdentifier;
@@ -439,7 +521,8 @@ Writable {
 	}
 
 	/**
-	 * @param farmIdentifier the farmIdentifier to set
+	 * @param farmIdentifier
+	 *            the farmIdentifier to set
 	 */
 	public final void setFarmIdentifier(String farmIdentifier) {
 		this.farmIdentifier = farmIdentifier;
@@ -453,7 +536,8 @@ Writable {
 	}
 
 	/**
-	 * @param secret the secret to set
+	 * @param secret
+	 *            the secret to set
 	 */
 	public final void setSecret(String secret) {
 		this.secret = secret;
@@ -467,7 +551,8 @@ Writable {
 	}
 
 	/**
-	 * @param secretOriginal the secretOriginal to set
+	 * @param secretOriginal
+	 *            the secretOriginal to set
 	 */
 	public final void setSecretOriginal(String secretOriginal) {
 		this.secretOriginal = secretOriginal;
@@ -481,7 +566,8 @@ Writable {
 	}
 
 	/**
-	 * @param extension the extension to set
+	 * @param extension
+	 *            the extension to set
 	 */
 	public final void setExtension(String extension) {
 		this.extension = extension;
@@ -495,7 +581,8 @@ Writable {
 	}
 
 	/**
-	 * @param marker the marker to set
+	 * @param marker
+	 *            the marker to set
 	 */
 	public final void setMarker(String marker) {
 		this.marker = marker;

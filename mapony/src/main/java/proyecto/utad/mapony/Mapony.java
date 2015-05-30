@@ -13,6 +13,8 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import writables.RawDataWritable;
+
 public class Mapony extends Configured implements Tool {
 
 	public int run(String[] args) throws Exception {
@@ -37,10 +39,10 @@ public class Mapony extends Configured implements Tool {
 		jobMapony.setOutputFormatClass(TextOutputFormat.class);
 
 		jobMapony.setMapOutputKeyClass(Text.class);
-		jobMapony.setMapOutputValueClass(Text.class);
+		jobMapony.setMapOutputValueClass(RawDataWritable.class);
 
 		jobMapony.setOutputKeyClass(Text.class);
-		jobMapony.setOutputValueClass(Text.class);
+		jobMapony.setOutputValueClass(RawDataWritable.class);
 
 		jobMapony.setMapperClass(MaponyMap.class);
 		jobMapony.setReducerClass(MaponyRed.class);

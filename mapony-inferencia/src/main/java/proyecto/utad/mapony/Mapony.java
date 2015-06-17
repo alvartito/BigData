@@ -16,7 +16,6 @@ import org.apache.hadoop.util.ToolRunner;
 import proyecto.utad.mapony.maps.MaponyMap;
 import proyecto.utad.mapony.reducers.MaponyRed;
 import writables.CustomWritable;
-import writables.RawDataWritable;
 
 public class Mapony extends Configured implements Tool {
 

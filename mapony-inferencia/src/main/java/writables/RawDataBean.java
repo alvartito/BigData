@@ -1,18 +1,10 @@
 package writables;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
-
-/** @author Álvaro Sánchez Blasco */
-/**
- * @author cloudera
+/** @author Álvaro Sánchez Blasco
  *
  */
-public class RawDataWritable implements Writable {
+public class RawDataBean {
 	/** Photo/Video Identifier */
 	private String identifier;
 	/** User Nsid */
@@ -60,7 +52,7 @@ public class RawDataWritable implements Writable {
 	/** Photos/Video Marker (0 = Photo, 1 = Video) */
 	private String marker;
 
-	public RawDataWritable() {
+	public RawDataBean() {
 	}
 
 	/**
@@ -88,7 +80,7 @@ public class RawDataWritable implements Writable {
 	 * @param extension
 	 * @param marker
 	 */
-	public RawDataWritable(String identifier, String userNsid, String userNickname, String dateTaken,
+	public RawDataBean(String identifier, String userNsid, String userNickname, String dateTaken,
 			String dateUploaded, String captureDevice, String title, String description, String userTags,
 			String machineTags, String longitude, String latitude, String accuracy, String pageUrl, String downloadUrl,
 			String licenseName, String licenseUrl, String serverIdentifier, String farmIdentifier, String secret,
@@ -181,67 +173,66 @@ public class RawDataWritable implements Writable {
 
 	}
 
-	public String get() {
-		// TODO Falta completar el método get()
-		return identifier + "," + userNsid;
-	}
-
+	/**
+	 * @see java.lang.Object#toString()
+	 * @return identifier + "|" + description + "|" + downloadUrl + "|" + longitude + "|" + latitude + "|" +
+	 *         title + "|" + machineTags + "|" + userTags;
+	 */
 	public String toString() {
-		// TODO Falta completar el método toString()
-		return identifier + "|" + userNsid;
+		return identifier + "|" + description + "|" + downloadUrl + "|" + longitude + "|" + latitude + "|" + title + "|" + machineTags + "|" + userTags;
 	}
 
-	public void write(DataOutput out) throws IOException {
-		Text.writeString(out, identifier);
-		Text.writeString(out, userNsid);
-		Text.writeString(out, userNickname);
-		Text.writeString(out, dateTaken);
-		Text.writeString(out, dateUploaded);
-		Text.writeString(out, captureDevice);
-		Text.writeString(out, title);
-		Text.writeString(out, description);
-		Text.writeString(out, userTags);
-		Text.writeString(out, machineTags);
-		Text.writeString(out, longitude);
-		Text.writeString(out, latitude);
-		Text.writeString(out, accuracy);
-		Text.writeString(out, pageUrl);
-		Text.writeString(out, downloadUrl);
-		Text.writeString(out, licenseName);
-		Text.writeString(out, licenseUrl);
-		Text.writeString(out, serverIdentifier);
-		Text.writeString(out, farmIdentifier);
-		Text.writeString(out, secret);
-		Text.writeString(out, secretOriginal);
-		Text.writeString(out, extension);
-		Text.writeString(out, marker);
-	}
-
-	public void readFields(DataInput in) throws IOException {
-		identifier = Text.readString(in);
-		userNsid = Text.readString(in);
-		userNickname = Text.readString(in);
-		dateTaken = Text.readString(in);
-		dateUploaded = Text.readString(in);
-		captureDevice = Text.readString(in);
-		title = Text.readString(in);
-		description = Text.readString(in);
-		userTags = Text.readString(in);
-		machineTags = Text.readString(in);
-		longitude = Text.readString(in);
-		latitude = Text.readString(in);
-		accuracy = Text.readString(in);
-		pageUrl = Text.readString(in);
-		downloadUrl = Text.readString(in);
-		licenseName = Text.readString(in);
-		licenseUrl = Text.readString(in);
-		serverIdentifier = Text.readString(in);
-		farmIdentifier = Text.readString(in);
-		secret = Text.readString(in);
-		secretOriginal = Text.readString(in);
-		extension = Text.readString(in);
-		marker = Text.readString(in);
-	}
+//	public void write(DataOutput out) throws IOException {
+//		Text.writeString(out, identifier);
+//		Text.writeString(out, userNsid);
+//		Text.writeString(out, userNickname);
+//		Text.writeString(out, dateTaken);
+//		Text.writeString(out, dateUploaded);
+//		Text.writeString(out, captureDevice);
+//		Text.writeString(out, title);
+//		Text.writeString(out, description);
+//		Text.writeString(out, userTags);
+//		Text.writeString(out, machineTags);
+//		Text.writeString(out, longitude);
+//		Text.writeString(out, latitude);
+//		Text.writeString(out, accuracy);
+//		Text.writeString(out, pageUrl);
+//		Text.writeString(out, downloadUrl);
+//		Text.writeString(out, licenseName);
+//		Text.writeString(out, licenseUrl);
+//		Text.writeString(out, serverIdentifier);
+//		Text.writeString(out, farmIdentifier);
+//		Text.writeString(out, secret);
+//		Text.writeString(out, secretOriginal);
+//		Text.writeString(out, extension);
+//		Text.writeString(out, marker);
+//	}
+//
+//	public void readFields(DataInput in) throws IOException {
+//		identifier = Text.readString(in);
+//		userNsid = Text.readString(in);
+//		userNickname = Text.readString(in);
+//		dateTaken = Text.readString(in);
+//		dateUploaded = Text.readString(in);
+//		captureDevice = Text.readString(in);
+//		title = Text.readString(in);
+//		description = Text.readString(in);
+//		userTags = Text.readString(in);
+//		machineTags = Text.readString(in);
+//		longitude = Text.readString(in);
+//		latitude = Text.readString(in);
+//		accuracy = Text.readString(in);
+//		pageUrl = Text.readString(in);
+//		downloadUrl = Text.readString(in);
+//		licenseName = Text.readString(in);
+//		licenseUrl = Text.readString(in);
+//		serverIdentifier = Text.readString(in);
+//		farmIdentifier = Text.readString(in);
+//		secret = Text.readString(in);
+//		secretOriginal = Text.readString(in);
+//		extension = Text.readString(in);
+//		marker = Text.readString(in);
+//	}
 
 	/**
 	 * @return the identifier

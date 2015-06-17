@@ -14,41 +14,78 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.node.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ClienteES {
+public class ElasticSearchClient {
 
-	private String index = null;
-	private String type = null;
-	private Client client = null;
-	private Node node = null;
+	private String index;
+	private String type;
+	private Client client;
+	private Node node;
+	private final Logger logger = LoggerFactory.getLogger(ElasticSearchClient.class);
 
-	public ClienteES(String index, String type, String clusterName) {
-		super();
-		this.index = index;
-		this.type = type;
-		this.node = nodeBuilder().clusterName(clusterName).client(true).node();
-		this.client = node.client();
-		if (isIndexExist(this.index)) {
-			deleteIndex(this.client, this.index);
-			createIndex(this.index);
-			System.out.println("Indice: " + index + "/" + type + " borrado y creado");
+	/**
+	 * Crea la conexión con ES, en un cluster determinado, creando un indice que llega como parámetro.
+	 * 
+	 * @param index
+	 *            - Indice.
+	 * @param type
+	 *            - tipo.
+	 * @param clusterName
+	 *            - Nombre del cluster de ES.
+	 */
+	public ElasticSearchClient(String index, String type, String clusterName) {
+		setIndex(index);
+		setType(type);
+		setNode(nodeBuilder().clusterName(clusterName).client(true).node());
+		setClient(getNode().client());
+		if (existeIndiceEnElCluster()) {
+			borrarIndice();
+			crearIndice();
+			getLogger().info("Indice: " + getIndex() + "/" + getType() + " borrado y creado");
 		} else {
-			createIndex(this.index);
-			System.out.println("Indice: " + index + "/" + type + " nuevo y creado");
+			crearIndice();
+			getLogger().info("Indice: " + getIndex() + "/" + getType() + " nuevo y creado");
 		}
 	}
 
-	private void createIndex(String index) {
+	/**
+	 * Comprueba si el indice que queremos dar de alta, ya existe en el cluster.
+	 * 
+	 * @param index
+	 *            - Indice a comprobar.
+	 * @return true si ya existe.
+	 */
+	private boolean existeIndiceEnElCluster() {
+		ActionFuture<IndicesExistsResponse> existe = getClient().admin().indices().exists(new IndicesExistsRequest(getIndex()));
+		IndicesExistsResponse actionGet = existe.actionGet();
+		return actionGet.isExists();
+	}
+
+	
+	/**
+	 * Crea el indice que llega como parametro en el cluster de ES.
+	 * 
+	 * @param index
+	 *            - Indice a crear.
+	 */
+	private void crearIndice() {
 		XContentBuilder typemapping = buildJsonMappings();
 		XContentBuilder settings = buildJsonSettings();
 
-		client.admin().indices().create(new CreateIndexRequest(index).settings(settings).mapping(type, typemapping)).actionGet();
-
+		getClient().admin().indices().create(new CreateIndexRequest(getIndex()).settings(settings).mapping(getType(), typemapping)).actionGet();
 	}
 
-	private void deleteIndex(Client client, String index) {
+	/**
+	 * Método que borra, si existe, el indice en el cluster de ES.
+	 * 
+	 * @param client
+	 * @param index
+	 */
+	private void borrarIndice() {
 		try {
-			DeleteIndexResponse delete = client.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
+			DeleteIndexResponse delete = getClient().admin().indices().delete(new DeleteIndexRequest(getIndex())).actionGet();
 			if (!delete.isAcknowledged()) {
 			} else {
 			}
@@ -156,11 +193,68 @@ public class ClienteES {
 		}
 		return builder;
 	}
-
-	private boolean isIndexExist(String index) {
-		ActionFuture<IndicesExistsResponse> exists = client.admin().indices().exists(new IndicesExistsRequest(index));
-		IndicesExistsResponse actionGet = exists.actionGet();
-		return actionGet.isExists();
+	
+	/**
+	 * @return the index
+	 */
+	private final String getIndex() {
+		return index;
 	}
 
+	/**
+	 * @param index the index to set
+	 */
+	private final void setIndex(String index) {
+		this.index = index;
+	}
+
+	/**
+	 * @return the type
+	 */
+	private final String getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	private final void setType(String type) {
+		this.type = type;
+	}
+
+	/**
+	 * @return the client
+	 */
+	private final Client getClient() {
+		return client;
+	}
+
+	/**
+	 * @param client the client to set
+	 */
+	private final void setClient(Client client) {
+		this.client = client;
+	}
+
+	/**
+	 * @return the node
+	 */
+	private final Node getNode() {
+		return node;
+	}
+
+	/**
+	 * @param node the node to set
+	 */
+	private final void setNode(Node node) {
+		this.node = node;
+	}
+
+	/**
+	 * @return the logger
+	 */
+	private final Logger getLogger() {
+		return logger;
+	}
+	
 }

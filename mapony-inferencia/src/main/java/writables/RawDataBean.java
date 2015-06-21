@@ -51,6 +51,8 @@ public class RawDataBean {
 	private String extension;
 	/** Photos/Video Marker (0 = Photo, 1 = Video) */
 	private String marker;
+	
+	private String geoHash;
 
 	public RawDataBean() {
 	}
@@ -176,10 +178,11 @@ public class RawDataBean {
 	/**
 	 * @see java.lang.Object#toString()
 	 * @return identifier + "|" + description + "|" + downloadUrl + "|" + longitude + "|" + latitude + "|" +
-	 *         title + "|" + machineTags + "|" + userTags;
+	 *         title + "|" + machineTags + "|" + userTags + "|" + geoHash;
 	 */
 	public String toString() {
-		return identifier + "|" + description + "|" + downloadUrl + "|" + longitude + "|" + latitude + "|" + title + "|" + machineTags + "|" + userTags;
+		return getIdentifier() + "|" + getDescription() + "|" + getDownloadUrl() + "|" + getLongitude() + "|" + getLatitude() + "|" + getTitle()
+				+ "|" + getMachineTags() + "|" + getUserTags() + "|" + getGeoHash();
 	}
 
 //	public void write(DataOutput out) throws IOException {
@@ -577,5 +580,19 @@ public class RawDataBean {
 	 */
 	public final void setMarker(String marker) {
 		this.marker = marker;
+	}
+
+	/**
+	 * @return the geoHash
+	 */
+	public final String getGeoHash() {
+		return geoHash;
+	}
+
+	/**
+	 * @param geoHash the geoHash to set
+	 */
+	public final void setGeoHash(String geoHash) {
+		this.geoHash = geoHash;
 	}
 }

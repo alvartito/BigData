@@ -10,12 +10,13 @@ import writables.GeoHashBean;
 
 public class GeoHashCiudad {
 
-	private HashMap<String, GeoHashBean> datos;
+	private static HashMap<String, GeoHashBean> datos;
 	
 	private String archivo;
 
 	public GeoHashCiudad(final String archivo) {
 		setArchivo(archivo);
+		cargaGeoHashCiudades();
 	}
 
 	public HashMap<String, GeoHashBean> cargaGeoHashCiudades() {
@@ -63,8 +64,12 @@ public class GeoHashCiudad {
 
 	/**
 	 * @return the datos
+	 * @throws Exception 
 	 */
-	public final HashMap<String, GeoHashBean> getDatos() {
+	public static final HashMap<String, GeoHashBean> getDatos() throws Exception {
+		if(null == datos){
+			throw new Exception("Datos de ciudades no cargados");
+		}
 		return datos;
 	}
 

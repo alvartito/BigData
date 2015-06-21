@@ -1,6 +1,10 @@
 package writables;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.hsr.geohash.GeoHash;
+import constantes.Constantes;
 
 
 /** @author Álvaro Sánchez Blasco
@@ -8,6 +12,8 @@ import ch.hsr.geohash.GeoHash;
  */
 public class GeoHashBean {
 
+	private final Logger logger = LoggerFactory.getLogger(GeoHashBean.class);
+	
 	private String geonameid;
 	private String name;
 	private String asciiname;
@@ -84,7 +90,7 @@ public class GeoHashBean {
 		String[] continentePais = timezone.split("/");
 		setContinente(continentePais[0]);
 		setPais(continentePais[1]);
-		setGeoHash(GeoHash.geoHashStringWithCharacterPrecision(getLatitude(), getLongitude(), 12));
+		setGeoHash(GeoHash.geoHashStringWithCharacterPrecision(getLatitude(), getLongitude(), Constantes.precisionGeoHash));
 	}
 
 	public GeoHashBean(final String[] datos) {
@@ -111,7 +117,9 @@ public class GeoHashBean {
 		String[] continentePais = getTimezone().split("/");
 		setContinente(continentePais[0]);
 		setPais(continentePais[1]);
-		setGeoHash(GeoHash.geoHashStringWithCharacterPrecision(getLatitude(), getLongitude(), 12));
+		setGeoHash(GeoHash.geoHashStringWithCharacterPrecision(getLatitude(), getLongitude(), Constantes.precisionGeoHash));
+		
+//		getLogger().info(toString());
 	}
 	
 	
@@ -473,6 +481,14 @@ public class GeoHashBean {
 	 */
 	private final void setGeoHash(final String geoHash) {
 		this.geoHash = geoHash;
+	}
+
+
+	/**
+	 * @return the logger
+	 */
+	private final Logger getLogger() {
+		return logger;
 	}
 
 //	public void write(DataOutput out) throws IOException {

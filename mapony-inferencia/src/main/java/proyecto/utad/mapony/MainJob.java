@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import proyecto.utad.mapony.maps.MaponyMap;
 import proyecto.utad.mapony.reducers.FlickReducer;
 import writables.CustomWritable;
+import aux.GeoHashCiudad;
+import constantes.Constantes;
 
 //TODO mvn eclipse:eclipse -DdownloadJavadocs -DdownloadSources
 public class MainJob extends Configured implements Tool {
@@ -32,7 +34,7 @@ public class MainJob extends Configured implements Tool {
 	private static String clusterName;
 	private static final Logger logger = LoggerFactory.getLogger(MainJob.class);
 	private String rutaFicheros;
-	private String rutaPaises;
+//	private String rutaPaises;
 
 	private static void loadProperties(final String fileName) throws IOException {
 		if (null == properties) {
@@ -44,23 +46,24 @@ public class MainJob extends Configured implements Tool {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		indexES = properties.getProperty("index_name");
-		typeES = properties.getProperty("type_name");
-		clusterName = properties.getProperty("clusterName");
+		indexES = properties.getProperty(Constantes.indice);
+		typeES = properties.getProperty(Constantes.tipo);
+		clusterName = properties.getProperty(Constantes.cluster);
+		
+		new GeoHashCiudad(properties.getProperty(Constantes.paises)); 
 	}
 
 	public int run(String[] args) throws Exception {
 		// Lectura de las properties de configuracion
-		setRutaFicheros(properties.getProperty("ruta_ficheros"));
-		setRutaPaises(properties.getProperty("ruta_paises"));
-		
-		
-		final String ip = properties.getProperty("ip");
-		final String port = properties.getProperty("port");
-		final int numeroReducer = Integer.parseInt(properties.getProperty("numero_reducer"));
+		setRutaFicheros(properties.getProperty(Constantes.datos));
+//		setRutaPaises(properties.getProperty(Constantes.paises));
+
+		final String ip = properties.getProperty(Constantes.ip);
+		final String port = properties.getProperty(Constantes.puerto);
+		final int numeroReducer = Integer.parseInt(properties.getProperty(Constantes.reducers));
 
 		// Creamos el job
-		Job job = Job.getInstance(getConf(), "Flickrjob");
+		Job job = Job.getInstance(getConf(), Constantes.jobName);
 		job.setJarByClass(MainJob.class);
 
 		Path pathOrigen = new Path(getRutaFicheros());
@@ -114,7 +117,7 @@ public class MainJob extends Configured implements Tool {
 		job.setNumReduceTasks(numeroReducer);
 
 		job.waitForCompletion(true);
-		logger.info("\nJob finalizado con éxito\n");
+		getLogger().info(Constantes.MSG_FIN_JOB);
 
 		return 1;
 	}
@@ -126,9 +129,9 @@ public class MainJob extends Configured implements Tool {
 //		}
 //		loadProperties(args[0]);
 		
-		loadProperties("job.properties");
+		loadProperties(Constantes.propiedades);
 		
-		logger.info("\nPropiedades cargadas\n");
+		getLogger().info(Constantes.MSG_PROPIEDADES_CARGADAS);
 		new ElasticSearchClient(indexES, typeES, clusterName);
 		ToolRunner.run(new MainJob(), args);
 		System.exit(1);
@@ -149,17 +152,17 @@ public class MainJob extends Configured implements Tool {
 		this.rutaFicheros = rutaFicheros;
 	}
 
-	/**
-	 * @return the rutaPaises
-	 */
-	private final String getRutaPaises() {
-		return rutaPaises;
-	}
+//	/**
+//	 * @param rutaPaises the rutaPaises to set
+//	 */
+//	private final void setRutaPaises(String rutaPaises) {
+//		this.rutaPaises = rutaPaises;
+//	}
 
 	/**
-	 * @param rutaPaises the rutaPaises to set
+	 * @return the logger
 	 */
-	private final void setRutaPaises(String rutaPaises) {
-		this.rutaPaises = rutaPaises;
+	private static final Logger getLogger() {
+		return logger;
 	}
 }

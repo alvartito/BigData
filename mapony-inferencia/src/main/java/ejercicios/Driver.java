@@ -4,8 +4,6 @@ import proyecto.utad.mapony.Mapony;
 import aux.ProgramDriver;
 
 public class Driver extends ProgramDriver {
-
-	
 	
 	public Driver() throws Throwable {
 		super();

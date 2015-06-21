@@ -8,15 +8,14 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import aux.GeoHashCiudad;
 import writables.CustomWritable;
 import writables.RawDataBean;
 
-public class MaponyMap extends Mapper<LongWritable, Text, Text, CustomWritable> {
+public class GeoHashMap extends Mapper<LongWritable, Text, Text, CustomWritable> {
 
 	private Text outKey;
 
-	private final Logger logger = LoggerFactory.getLogger(MaponyMap.class);
+	private final Logger logger = LoggerFactory.getLogger(GeoHashMap.class);
 
 	protected void map(LongWritable offset, Text line, Context context) throws IOException, InterruptedException {
 		String[] dato = line.toString().split("\t");
@@ -28,7 +27,6 @@ public class MaponyMap extends Mapper<LongWritable, Text, Text, CustomWritable> 
 		
 		// Además, si no tiene informados los campos de longitud y latitud, también descartamos el registro.
 		if ("1".toString().compareTo(rdBean.getMarker()) != 0 && ("".compareTo(rdBean.getLatitude()) != 0 && "".compareTo(rdBean.getLongitude()) != 0)) {
-			
 			getLogger().info(rdBean.toString());
 			outKey = new Text(rdBean.getIdentifier());
 

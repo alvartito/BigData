@@ -32,6 +32,7 @@ public class MainJob extends Configured implements Tool {
 	private static String clusterName;
 	private static final Logger logger = LoggerFactory.getLogger(MainJob.class);
 	private String rutaFicheros;
+	private String rutaPaises;
 
 	private static void loadProperties(final String fileName) throws IOException {
 		if (null == properties) {
@@ -51,6 +52,9 @@ public class MainJob extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 		// Lectura de las properties de configuracion
 		setRutaFicheros(properties.getProperty("ruta_ficheros"));
+		setRutaPaises(properties.getProperty("ruta_paises"));
+		
+		
 		final String ip = properties.getProperty("ip");
 		final String port = properties.getProperty("port");
 		final int numeroReducer = Integer.parseInt(properties.getProperty("numero_reducer"));
@@ -143,5 +147,19 @@ public class MainJob extends Configured implements Tool {
 	 */
 	private final void setRutaFicheros(final String rutaFicheros) {
 		this.rutaFicheros = rutaFicheros;
+	}
+
+	/**
+	 * @return the rutaPaises
+	 */
+	private final String getRutaPaises() {
+		return rutaPaises;
+	}
+
+	/**
+	 * @param rutaPaises the rutaPaises to set
+	 */
+	private final void setRutaPaises(String rutaPaises) {
+		this.rutaPaises = rutaPaises;
 	}
 }

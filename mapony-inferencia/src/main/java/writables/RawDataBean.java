@@ -53,6 +53,10 @@ public class RawDataBean {
 	private String marker;
 	
 	private String geoHash;
+	private String pais;
+	private String ciudad;
+	private String continente;
+	
 
 	public RawDataBean() {
 	}
@@ -183,6 +187,65 @@ public class RawDataBean {
 	public String toString() {
 		return getIdentifier() + "|" + getDescription() + "|" + getDownloadUrl() + "|" + getLongitude() + "|" + getLatitude() + "|" + getTitle()
 				+ "|" + getMachineTags() + "|" + getUserTags() + "|" + getGeoHash();
+	}
+	
+	public String toCsvString() {
+		StringBuilder csv = new StringBuilder();
+		
+		csv.append(getIdentifier());
+		
+		if(null != getDescription() && !"".equals(getDescription())){
+			csv.append(",").append(getDescription());
+		} else {
+			csv.append(",").append("\t");
+		}
+		if(null != getDownloadUrl() && !"".equals(getDownloadUrl())){
+			csv.append(",").append(getDownloadUrl());
+		} else {
+			csv.append(",").append("\t");
+		}
+		if(null != getDateTaken() && !"".equals(getDateTaken())){
+			csv.append(",").append(getDateTaken());
+		} else {
+			csv.append(",").append("\t");
+		}
+		if(null != getLongitude() && !"".equals(getLongitude())){
+			csv.append(",").append(getLongitude());
+		} else {
+			csv.append(",").append("\t");
+		}
+		if(null != getLatitude() && !"".equals(getLatitude())){
+			csv.append(",").append(getLatitude());
+		} else {
+			csv.append(",").append("\t");
+		}
+		if(null != getTitle() && !"".equals(getTitle())){
+			csv.append(",").append(getTitle());
+		} else {
+			csv.append(",").append("\t");
+		}
+		if(null != getCaptureDevice() && !"".equals(getCaptureDevice())){
+			csv.append(",").append(getCaptureDevice());
+		} else {
+			csv.append(",").append("\t");
+		}
+		if(null != getCiudad() && !"".equals(getCiudad())){
+			csv.append(",").append(getCiudad());
+		} else {
+			csv.append(",").append("\t");
+		}
+		if(null != getPais() && !"".equals(getPais())){
+			csv.append(",").append(getPais());
+		} else {
+			csv.append(",").append("\t");
+		}
+		if(null != getContinente() && !"".equals(getContinente())){
+			csv.append(",").append(getContinente());
+		} else {
+			csv.append(",").append("\t");
+		}
+
+		return csv.toString();
 	}
 
 //	public void write(DataOutput out) throws IOException {
@@ -594,5 +657,47 @@ public class RawDataBean {
 	 */
 	public final void setGeoHash(String geoHash) {
 		this.geoHash = geoHash;
+	}
+
+	/**
+	 * @return the pais
+	 */
+	public final String getPais() {
+		return pais;
+	}
+
+	/**
+	 * @param pais the pais to set
+	 */
+	public final void setPais(String pais) {
+		this.pais = pais;
+	}
+
+	/**
+	 * @return the ciudad
+	 */
+	public final String getCiudad() {
+		return ciudad;
+	}
+
+	/**
+	 * @param ciudad the ciudad to set
+	 */
+	public final void setCiudad(String ciudad) {
+		this.ciudad = ciudad;
+	}
+
+	/**
+	 * @return the continente
+	 */
+	public final String getContinente() {
+		return continente;
+	}
+
+	/**
+	 * @param continente the continente to set
+	 */
+	public final void setContinente(String continente) {
+		this.continente = continente;
 	}
 }

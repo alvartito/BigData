@@ -9,10 +9,10 @@ public class Driver extends ProgramDriver {
 	
 	public Driver() throws Throwable {
 		super();
-		addClass("Mapony CSV. Exportar a csv.", MaponyCsvJob.class, "MaponyCsvJob");
-		addClass("Mapony Group By Near Places (MaponyGroupNearJob)", MaponyGroupNearJob.class, "MaponyGroupNearJob");
-		addClass("Mapony Inferencia (carga en ES)", MaponyInferenciaJob.class, "MaponyInferenciaJob");
-		addClass("Mapony Pruebas", MaponyPruebasJob.class, "MaponyPruebasJob");
+		addClass("csv", MaponyCsvJob.class, "Mapony CSV. Exportar a csv.");
+		addClass("agrupa", MaponyGroupNearJob.class, "Mapony Group By Near Places (MaponyGroupNearJob)");
+		addClass("inferencia", MaponyInferenciaJob.class, "Mapony Inferencia (carga en ES)");
+		addClass("pruebas", MaponyPruebasJob.class, "Mapony Pruebas");
 	}
 
 	public static void main(String[] args) throws Throwable {

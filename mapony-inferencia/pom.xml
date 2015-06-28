@@ -75,7 +75,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>proyecto.utad.mapony.Mapony</mainClass>
+							<mainClass>util.driver.Driver</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

@@ -49,7 +49,7 @@ public final class MaponyCte {
 	public static final String MSG_PROPIEDADES_CARGADAS = "\nPropiedades cargadas\n";
 
 	public static final String getMsgFinJob(final String jobName) {
-		return "\nJob +"+ jobName +" finalizado con éxito\n";
+		return "\nJob "+ jobName +" finalizado con éxito\n";
 	}
 
 	public static final String propiedades = "job.properties";
@@ -69,6 +69,7 @@ public final class MaponyCte {
 	public static final String jobNameMainJob = "Inferencia Job";
 	public static final String jobNameGroupNear = "Group Near Job";
 	public static final String jobNameCsv = "Create CSV Job";
+	public static final String jobNamePruebas = "Pruebas Job";
 	
 	
 }

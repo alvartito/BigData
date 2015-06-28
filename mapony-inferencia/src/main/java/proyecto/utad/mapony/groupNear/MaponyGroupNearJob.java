@@ -54,8 +54,8 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 
 		Configuration config = getConf();
 
-		Path pathOrigen = new Path(getRutaFicheros());
-		Path outPath = new Path("data/gnj");
+//		Path pathOrigen = new Path(getRutaFicheros());
+		Path outPath = new Path("data/groupNearJobOut");
 
 		// conf.set("fs.defaultFS", "hdfs://localhost.localdomain:8020");
 		
@@ -77,14 +77,18 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 		jobMaponyGroupNear.setOutputKeyClass(Text.class);
 		jobMaponyGroupNear.setOutputValueClass(Text.class);
 
-		MultipleInputs.addInputPath(jobMaponyGroupNear, pathOrigen, TextInputFormat.class, MaponyGroupNearMap.class);
+		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-0.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-1.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-2.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-3.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-4.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
 
 		jobMaponyGroupNear.setCombinerClass(MaponyRed.class);
 		jobMaponyGroupNear.setReducerClass(MaponyRed.class);
 
-//		jobMapony.setNumReduceTasks(6);
-
-//		FileInputFormat.addInputPath(jobMapony, inputPath);
+////		jobMapony.setNumReduceTasks(6);
+//
+////		FileInputFormat.addInputPath(jobMapony, inputPath);
 		FileOutputFormat.setOutputPath(jobMaponyGroupNear, outPath);
 
 		jobMaponyGroupNear.waitForCompletion(true);

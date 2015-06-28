@@ -1,4 +1,4 @@
-package proyecto.utad.mapony.inferencia;
+package proyecto.utad.mapony.pruebas;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,33 +7,35 @@ import java.util.Properties;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.elasticsearch.hadoop.mr.EsOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import proyecto.utad.mapony.inferencia.map.MaponyInferenciaMap;
+import proyecto.utad.mapony.csv.MaponyCsvJob;
+import proyecto.utad.mapony.pruebas.map.MaponyPruebasMap;
 import util.ElasticSearchClient;
 import util.GeoHashCiudad;
 import util.constantes.MaponyCte;
-import util.reducers.FlickReducer;
-import util.writables.CustomWritable;
+import util.reducers.MaponyRed;
 
 //TODO mvn eclipse:eclipse -DdownloadJavadocs -DdownloadSources
-public class MaponyInferenciaJob extends Configured implements Tool {
+public class MaponyPruebasJob extends Configured implements Tool {
 
 	private static Properties properties;
 	private static String indexES;
 	private static String typeES;
 	private static String clusterName;
-	private static final Logger logger = LoggerFactory.getLogger(MaponyInferenciaJob.class);
+	private static final Logger logger = LoggerFactory.getLogger(MaponyPruebasJob.class);
 	private String rutaFicheros;
 
 	private static void loadProperties(final String fileName) throws IOException {
@@ -54,71 +56,39 @@ public class MaponyInferenciaJob extends Configured implements Tool {
 	}
 
 	public int run(String[] args) throws Exception {
-		// Lectura de las properties de configuracion
 		setRutaFicheros(properties.getProperty(MaponyCte.datos));
 
-		final String ip = properties.getProperty(MaponyCte.ip);
-		final String port = properties.getProperty(MaponyCte.puerto);
-		final int numeroReducer = Integer.parseInt(properties.getProperty(MaponyCte.reducers));
-
-		// Creamos el job
-		Job job = Job.getInstance(getConf(), MaponyCte.jobNameMainJob);
-		job.setJarByClass(MaponyInferenciaJob.class);
+		Configuration config = getConf();
 
 		Path pathOrigen = new Path(getRutaFicheros());
+		Path outPath = new Path("data/pruebas");
 
-		Configuration conf = job.getConfiguration();
+		// Borramos todos los directorios que puedan existir
+		FileSystem.get(outPath.toUri(), config).delete(outPath, true);
+		
+		Job job = Job.getInstance(config, MaponyCte.jobNamePruebas);
+		job.setJarByClass(MaponyCsvJob.class);
 
-		// TODO Con MultipleInputs de verdad, descomentar este bloque
-		// final FileSystem fs = FileSystem.get(new URI("hdfs://quickstart.cloudera:8020/"),
-		// conf);
-		//
-		// // Recuperamos los datos del path origen
-		// FileStatus[] glob = fs.globStatus(pathOrigen);
-		//
-		// // Si tenemos datos...
-		// if (null != glob) {
-		// if (glob.length > 0) {
-		// for (FileStatus fileStatus : glob) {
-		// Path pFich = fileStatus.getPath();
-		// // MultipleInputs
-		// MultipleInputs.addInputPath(job, pFich, TextInputFormat.class, MaponyMap.class);
-		// }
-		// }
-		// }
-
-		// conf.set("fs.defaultFS", "hdfs://localhost.localdomain:8020");
-		conf.setBoolean("mapred.map.tasks.speculative.execution", false);
-		conf.setBoolean("mapred.reduce.tasks.speculative.execution", false);
-		conf.set("es.input.json", "yes");
-		conf.set("key.value.separator.in.input.line", " ");
-		conf.set("es.nodes", ip + ":" + port);
-		conf.set("es.resource", indexES + "/" + typeES);
-
-		// Output a Elastic Search Output Format
-		job.setOutputFormatClass(EsOutputFormat.class);
-
-		// TODO con MultipleInputs de verdad, comentar esta linea
-		MultipleInputs.addInputPath(job, pathOrigen, SequenceFileInputFormat.class, MaponyInferenciaMap.class);
-
-		// Salida del mapper
+		job.setInputFormatClass(TextInputFormat.class);
+		job.setOutputFormatClass(TextOutputFormat.class);
+		
 		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(CustomWritable.class);
+		job.setMapOutputValueClass(Text.class);
 
-		// Salida del reducer
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(MapWritable.class);
+		job.setOutputValueClass(Text.class);
 
-		// Mapper y Reducer
-		job.setReducerClass(FlickReducer.class);
-
-		// Numero de Reducers
-		job.setNumReduceTasks(numeroReducer);
+//		MultipleInputs.addInputPath(job, pathOrigen, TextInputFormat.class, MaponyPruebasMap.class);
+		MultipleInputs.addInputPath(job, pathOrigen, SequenceFileInputFormat.class, MaponyPruebasMap.class);
+		
+		job.setReducerClass(MaponyRed.class);
+		FileOutputFormat.setOutputPath(job, outPath);
 
 		job.waitForCompletion(true);
-		getLogger().info(MaponyCte.getMsgFinJob(MaponyCte.jobNameMainJob));
 
-		return 1;
+		getLogger().info(MaponyCte.getMsgFinJob(MaponyCte.jobNamePruebas));
+
+		return 0;
 	}
 
 	public static void main(final String args[]) throws Exception {
@@ -132,7 +102,7 @@ public class MaponyInferenciaJob extends Configured implements Tool {
 
 		getLogger().info(MaponyCte.MSG_PROPIEDADES_CARGADAS);
 		new ElasticSearchClient(indexES, typeES, clusterName);
-		ToolRunner.run(new MaponyInferenciaJob(), args);
+		ToolRunner.run(new MaponyPruebasJob(), args);
 		System.exit(1);
 	}
 

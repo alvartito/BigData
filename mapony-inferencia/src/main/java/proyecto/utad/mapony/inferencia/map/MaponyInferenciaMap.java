@@ -3,26 +3,25 @@ package proyecto.utad.mapony.inferencia.map;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.hsr.geohash.GeoHash;
 import util.GeoHashCiudad;
 import util.beans.GeoHashBean;
 import util.beans.RawDataBean;
 import util.constantes.MaponyCte;
 import util.writables.CustomWritable;
+import ch.hsr.geohash.GeoHash;
 
-public class MaponyInferenciaMap extends Mapper<LongWritable, Text, Text, CustomWritable> {
+public class MaponyInferenciaMap extends Mapper<Text, Text, Text, CustomWritable> {
 
 	private Text outKey;
 	private HashMap<String, GeoHashBean> ciudades;
 	private final Logger logger = LoggerFactory.getLogger(MaponyInferenciaMap.class);
 
-	protected void map(LongWritable geoHash, Text line, Context context) throws IOException, InterruptedException {
+	protected void map(Text geoHash, Text line, Context context) throws IOException, InterruptedException {
 
 		try {
 			if (null == ciudades) {

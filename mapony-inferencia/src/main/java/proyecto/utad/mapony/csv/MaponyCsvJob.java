@@ -25,10 +25,10 @@ import util.GeoHashCiudad;
 import util.constantes.MaponyCte;
 import util.reducers.MaponyRed;
 
-public class Mapony extends Configured implements Tool {
+public class MaponyCsvJob extends Configured implements Tool {
 
 	private static Properties properties;
-	private static final Logger logger = LoggerFactory.getLogger(Mapony.class);
+	private static final Logger logger = LoggerFactory.getLogger(MaponyCsvJob.class);
 	private String rutaFicheros;
 	
 	
@@ -59,7 +59,7 @@ public class Mapony extends Configured implements Tool {
 		FileSystem.get(outPath.toUri(), config).delete(outPath, true);
 		
 		Job jobMapony = Job.getInstance(config, MaponyCte.jobNameCsv);
-		jobMapony.setJarByClass(Mapony.class);
+		jobMapony.setJarByClass(MaponyCsvJob.class);
 
 		jobMapony.setInputFormatClass(TextInputFormat.class);
 		jobMapony.setOutputFormatClass(TextOutputFormat.class);
@@ -92,7 +92,7 @@ public class Mapony extends Configured implements Tool {
 		
 		getLogger().info(MaponyCte.MSG_PROPIEDADES_CARGADAS);
 
-		ToolRunner.run(new Mapony(), args);
+		ToolRunner.run(new MaponyCsvJob(), args);
 		System.exit(1);
 
 	}

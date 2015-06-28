@@ -90,7 +90,7 @@ public class GeoHashBean {
 		String[] continentePais = timezone.split("/");
 		setContinente(continentePais[0]);
 		setPais(continentePais[1]);
-		setGeoHash(GeoHash.geoHashStringWithCharacterPrecision(getLatitude(), getLongitude(), Constantes.precisionGeoHash));
+		setGeoHash(GeoHash.geoHashStringWithCharacterPrecision(getLatitude(), getLongitude(), Constantes.precisionGeoHashCiudad));
 	}
 
 	public GeoHashBean(final String[] datos) {
@@ -117,7 +117,7 @@ public class GeoHashBean {
 		String[] continentePais = getTimezone().split("/");
 		setContinente(continentePais[0]);
 		setPais(continentePais[1]);
-		setGeoHash(GeoHash.geoHashStringWithCharacterPrecision(getLatitude(), getLongitude(), Constantes.precisionGeoHash));
+		setGeoHash(GeoHash.geoHashStringWithCharacterPrecision(getLatitude(), getLongitude(), Constantes.precisionGeoHashCiudad));
 		
 //		getLogger().info(toString());
 	}

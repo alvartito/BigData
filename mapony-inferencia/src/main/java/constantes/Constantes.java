@@ -26,7 +26,25 @@ public final class Constantes {
 	
 	public static final String PATH_TEMPORAL = "tmpJobs";
 	
-	public static final int precisionGeoHash = 2;
+	public static final int precisionGeoHashCiudad = 2;
+	/**
+	 *
+	 * Geohash Level Dimensions 
+	 * <p>g 1 ~ 5,004km x 5,004km 
+	 * <p>gc 2 ~ 1,251km x 625km 
+	 * <p>gcp 3 ~ 156km x 156km 
+	 * <p>gcpu 4 ~39km x 19.5km 
+	 * <p>gcpuu 5 ~ 4.9km x 4.9km 
+	 * <p>gcpuuz 6 ~ 1.2km x 0.61km 
+	 * <p>gcpuuz9 7 ~ 152.8m x 152.8m 
+	 * <p>gcpuuz94 8 ~ 38.2m x 19.1m 
+	 * <p>gcpuuz94k 9 ~ 4.78m x 4.78m 
+	 * <p>gcpuuz94kk 10 ~ 1.19m x 0.60m 
+	 * <p>gcpuuz94kkp 11 ~ 14.9cm x 14.9cm 
+	 * <p>gcpuuz94kkp5 12 ~ 3.7cm x 1.8cm
+	 *
+	 */
+	public static final int precisionGeoHashAgrupar = 6;
 	
 	public static final String MSG_PROPIEDADES_CARGADAS = "\nPropiedades cargadas\n";
 	

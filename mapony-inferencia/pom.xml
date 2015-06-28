@@ -75,7 +75,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>proyecto.utad.mapony.MainJob</mainClass>
+							<mainClass>proyecto.utad.mapony.Mapony</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

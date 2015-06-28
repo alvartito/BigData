@@ -1,7 +1,6 @@
 package proyecto.utad.mapony.maps;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -9,28 +8,16 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import writables.GeoHashBean;
 import writables.RawDataBean;
-import aux.GeoHashCiudad;
 import ch.hsr.geohash.GeoHash;
 import constantes.Constantes;
 
-public class MaponyCsvMap extends Mapper<LongWritable, Text, Text, Text> {
+public class MaponyGroupNearMap extends Mapper<LongWritable, Text, Text, Text> {
 
 	private Text outKey;
-	private HashMap<String, GeoHashBean> ciudades;
-	private final Logger logger = LoggerFactory.getLogger(MaponyCsvMap.class);
+	private final Logger logger = LoggerFactory.getLogger(MaponyGroupNearMap.class);
 
 	protected void map(LongWritable offset, Text line, Context context) throws IOException, InterruptedException {
-
-		try {
-			if (null == ciudades) {
-				ciudades = GeoHashCiudad.getDatos();
-			}
-		} catch (Exception e) {
-			getLogger().error(e.getMessage());
-		}
-
 		String[] dato = line.toString().split("\t");
 
 		// Comenzamos por limpiar las referencias de videos, por lo que el campo [22] del String[] ha de ser
@@ -45,19 +32,11 @@ public class MaponyCsvMap extends Mapper<LongWritable, Text, Text, Text> {
 			double dLatitude = new Double(rdBean.getLatitude());
 			double dLongitude = new Double(rdBean.getLongitude());
 
-			String geoHash = GeoHash.geoHashStringWithCharacterPrecision(dLatitude, dLongitude, Constantes.precisionGeoHashCiudad);
+			String geoHash = GeoHash.geoHashStringWithCharacterPrecision(dLatitude, dLongitude, Constantes.precisionGeoHashAgrupar);
 			rdBean.setGeoHash(geoHash);
 
-			if (ciudades.containsKey(geoHash)) {
-				GeoHashBean temp = ciudades.get(geoHash);
-//				getLogger().info("Dato Encontrado para " + rdBean.getIdentifier() + ": " + temp.toString());
-				String[] geoHashCiudadPaisContinente = temp.toString().split("|");
-				rdBean.setCiudad(geoHashCiudadPaisContinente[1]);
-				rdBean.setPais(geoHashCiudadPaisContinente[2]);
-				rdBean.setPais(geoHashCiudadPaisContinente[3]);
-				outKey = new Text(rdBean.toCsvString());
-				context.write(outKey, new Text(""));
-			}
+			outKey = new Text(rdBean.getGeoHash());
+			context.write(outKey, new Text(rdBean.toSequenceFileString()));
 		}
 	}
 

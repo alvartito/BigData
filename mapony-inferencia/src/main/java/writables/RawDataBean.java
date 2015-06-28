@@ -248,6 +248,50 @@ public class RawDataBean {
 		return csv.toString();
 	}
 
+	public String toSequenceFileString() {
+		StringBuilder sequenceFileInfo = new StringBuilder();
+		
+		sequenceFileInfo.append(getIdentifier());
+		
+		if(null != getDescription() && !"".equals(getDescription())){
+			sequenceFileInfo.append(",").append(getDescription());
+		} else {
+			sequenceFileInfo.append(",").append("\t");
+		}
+		if(null != getDownloadUrl() && !"".equals(getDownloadUrl())){
+			sequenceFileInfo.append(",").append(getDownloadUrl());
+		} else {
+			sequenceFileInfo.append(",").append("\t");
+		}
+		if(null != getDateTaken() && !"".equals(getDateTaken())){
+			sequenceFileInfo.append(",").append(getDateTaken());
+		} else {
+			sequenceFileInfo.append(",").append("\t");
+		}
+		if(null != getLongitude() && !"".equals(getLongitude())){
+			sequenceFileInfo.append(",").append(getLongitude());
+		} else {
+			sequenceFileInfo.append(",").append("\t");
+		}
+		if(null != getLatitude() && !"".equals(getLatitude())){
+			sequenceFileInfo.append(",").append(getLatitude());
+		} else {
+			sequenceFileInfo.append(",").append("\t");
+		}
+		if(null != getTitle() && !"".equals(getTitle())){
+			sequenceFileInfo.append(",").append(getTitle());
+		} else {
+			sequenceFileInfo.append(",").append("\t");
+		}
+		if(null != getCaptureDevice() && !"".equals(getCaptureDevice())){
+			sequenceFileInfo.append(",").append(getCaptureDevice());
+		} else {
+			sequenceFileInfo.append(",").append("\t");
+		}
+
+		return sequenceFileInfo.toString();
+	}
+	
 //	public void write(DataOutput out) throws IOException {
 //		Text.writeString(out, identifier);
 //		Text.writeString(out, userNsid);

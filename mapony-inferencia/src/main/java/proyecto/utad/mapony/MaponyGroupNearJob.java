@@ -9,7 +9,9 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.BZip2Codec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
@@ -22,14 +24,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import proyecto.utad.mapony.maps.MaponyCsvMap;
+import proyecto.utad.mapony.maps.MaponyGroupNearMap;
 import proyecto.utad.mapony.reducers.MaponyRed;
 import aux.GeoHashCiudad;
 import constantes.Constantes;
 
-public class Mapony extends Configured implements Tool {
+public class MaponyGroupNearJob extends Configured implements Tool {
 
 	private static Properties properties;
-	private static final Logger logger = LoggerFactory.getLogger(Mapony.class);
+	private static final Logger logger = LoggerFactory.getLogger(MaponyGroupNearJob.class);
 	private String rutaFicheros;
 	
 	
@@ -54,34 +57,39 @@ public class Mapony extends Configured implements Tool {
 		Configuration config = getConf();
 
 		Path pathOrigen = new Path(getRutaFicheros());
-		Path outPath = new Path("data/csv");
+		Path outPath = new Path("data/gnj");
 
+		// conf.set("fs.defaultFS", "hdfs://localhost.localdomain:8020");
+		
 		// Borramos todos los directorios que puedan existir
 		FileSystem.get(outPath.toUri(), config).delete(outPath, true);
 		
-		Job jobMapony = Job.getInstance(config, "Mapony Job");
-		jobMapony.setJarByClass(Mapony.class);
+		Job jobMaponyGroupNear = Job.getInstance(config, "Mapony Group Near Job");
+		jobMaponyGroupNear.setJarByClass(MaponyGroupNearJob.class);
 
-		jobMapony.setInputFormatClass(TextInputFormat.class);
-		jobMapony.setOutputFormatClass(TextOutputFormat.class);
-		
-		jobMapony.setMapOutputKeyClass(Text.class);
-		jobMapony.setMapOutputValueClass(Text.class);
+		jobMaponyGroupNear.setInputFormatClass(TextInputFormat.class);
+		jobMaponyGroupNear.setOutputFormatClass(SequenceFileOutputFormat.class);
+		SequenceFileOutputFormat.setCompressOutput(jobMaponyGroupNear, true);
+		SequenceFileOutputFormat.setOutputCompressorClass(jobMaponyGroupNear, BZip2Codec.class);
+		SequenceFileOutputFormat.setOutputCompressionType(jobMaponyGroupNear, CompressionType.BLOCK);
 
-		jobMapony.setOutputKeyClass(Text.class);
-		jobMapony.setOutputValueClass(Text.class);
+		jobMaponyGroupNear.setMapOutputKeyClass(Text.class);
+		jobMaponyGroupNear.setMapOutputValueClass(Text.class);
 
-		MultipleInputs.addInputPath(jobMapony, pathOrigen, TextInputFormat.class, MaponyCsvMap.class);
+		jobMaponyGroupNear.setOutputKeyClass(Text.class);
+//		jobMaponyGroupNear.setOutputValueClass(Text.class);
 
-//		jobMapony.setMapperClass(MaponyMap.class);
-		jobMapony.setReducerClass(MaponyRed.class);
+		MultipleInputs.addInputPath(jobMaponyGroupNear, pathOrigen, TextInputFormat.class, MaponyGroupNearMap.class);
+
+		jobMaponyGroupNear.setCombinerClass(MaponyRed.class);
+		jobMaponyGroupNear.setReducerClass(MaponyRed.class);
 
 //		jobMapony.setNumReduceTasks(6);
 
 //		FileInputFormat.addInputPath(jobMapony, inputPath);
-		FileOutputFormat.setOutputPath(jobMapony, outPath);
+		FileOutputFormat.setOutputPath(jobMaponyGroupNear, outPath);
 
-		jobMapony.waitForCompletion(true);
+		jobMaponyGroupNear.waitForCompletion(true);
 
 		System.out.println("Fin ejecucion para el job mapony");
 
@@ -93,7 +101,7 @@ public class Mapony extends Configured implements Tool {
 		
 		getLogger().info(Constantes.MSG_PROPIEDADES_CARGADAS);
 
-		ToolRunner.run(new Mapony(), args);
+		ToolRunner.run(new MaponyGroupNearJob(), args);
 		System.exit(1);
 
 	}

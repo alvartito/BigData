@@ -46,13 +46,13 @@ public class MaponyMap extends Mapper<LongWritable, Text, Text, CustomWritable> 
 			double dLatitude = new Double(rdBean.getLatitude());
 			double dLongitude = new Double(rdBean.getLongitude());
 
-			String geoHash = GeoHash.geoHashStringWithCharacterPrecision(dLatitude, dLongitude, Constantes.precisionGeoHash);
+			String geoHash = GeoHash.geoHashStringWithCharacterPrecision(dLatitude, dLongitude, Constantes.precisionGeoHashCiudad);
 			rdBean.setGeoHash(geoHash);
 
 			if (ciudades.containsKey(geoHash)) {
 				GeoHashBean temp = ciudades.get(geoHash);
 
-				getLogger().info("Dato Encontrado para " + rdBean.getIdentifier() + ": " + temp.toString());
+//				getLogger().info("Dato Encontrado para " + rdBean.getIdentifier() + ": " + temp.toString());
 				
 				outKey = new Text(rdBean.getIdentifier());
 

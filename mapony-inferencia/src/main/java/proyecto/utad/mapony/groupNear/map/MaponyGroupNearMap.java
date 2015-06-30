@@ -5,17 +5,12 @@ import java.io.IOException;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import util.beans.RawDataBean;
 import util.constantes.MaponyCte;
 import ch.hsr.geohash.GeoHash;
 
 public class MaponyGroupNearMap extends Mapper<LongWritable, Text, Text, Text> {
-
-	private Text outKey;
-	private final Logger logger = LoggerFactory.getLogger(MaponyGroupNearMap.class);
 
 	protected void map(LongWritable offset, Text line, Context context) throws IOException, InterruptedException {
 		String[] dato = line.toString().split("\t");
@@ -35,15 +30,7 @@ public class MaponyGroupNearMap extends Mapper<LongWritable, Text, Text, Text> {
 			String geoHash = GeoHash.geoHashStringWithCharacterPrecision(dLatitude, dLongitude, MaponyCte.precisionGeoHashAgrupar);
 			rdBean.setGeoHash(geoHash);
 
-			outKey = new Text(rdBean.getGeoHash());
-			context.write(outKey, new Text(rdBean.toSequenceFileString()));
+			context.write(new Text(rdBean.getGeoHash()), new Text(rdBean.toSequenceFileString()));
 		}
 	}
-
-	/**
-	 * @return the logger
-	 */
-	private final Logger getLogger() {
-		return logger;
-	};
 }

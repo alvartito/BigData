@@ -18,4 +18,14 @@ public class MaponyUtil {
 		return tieneValor;
 	}
 
+	/**
+	 * The first step removes all characters that are not a letter or a space and replaces them with a space.
+	 * The second step removes multiple spaces by only one space.
+	 * 
+	 * @param cadena
+	 * @return la cadena limpia de caracteres extraños
+	 */
+	public static final String cleanString(String cadena) {
+		return cadena.replaceAll("[\\d[^\\w\\s]]+", " ").replaceAll("(\\s{2,})", " ");
+	}
 }

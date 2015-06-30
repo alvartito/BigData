@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import proyecto.utad.mapony.groupNear.map.MaponyGroupNearMap;
-import util.GeoHashCiudad;
 import util.constantes.MaponyCte;
 import util.reducers.MaponyRed;
 
@@ -31,9 +30,8 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 
 	private static Properties properties;
 	private static final Logger logger = LoggerFactory.getLogger(MaponyGroupNearJob.class);
-	private String rutaFicheros;
-	
-	
+//	private String rutaFicheros;
+
 	private static void loadProperties(final String fileName) throws IOException {
 		if (null == properties) {
 			properties = new Properties();
@@ -44,21 +42,16 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
-		new GeoHashCiudad(properties.getProperty(MaponyCte.paises)); 
 	}
 	
 	
 	public int run(String[] args) throws Exception {
-		setRutaFicheros(properties.getProperty(MaponyCte.datos));
+//		setRutaFicheros(properties.getProperty(MaponyCte.datos));
 
 		Configuration config = getConf();
 
-//		Path pathOrigen = new Path(getRutaFicheros());
 		Path outPath = new Path("data/groupNearJobOut");
 
-		// conf.set("fs.defaultFS", "hdfs://localhost.localdomain:8020");
-		
 		// Borramos todos los directorios que puedan existir
 		FileSystem.get(outPath.toUri(), config).delete(outPath, true);
 		
@@ -82,13 +75,15 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-2.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
 		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-3.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
 		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-4.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-5.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-6.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-7.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-8.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-9.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
 
 		jobMaponyGroupNear.setCombinerClass(MaponyRed.class);
 		jobMaponyGroupNear.setReducerClass(MaponyRed.class);
 
-////		jobMapony.setNumReduceTasks(6);
-//
-////		FileInputFormat.addInputPath(jobMapony, inputPath);
 		FileOutputFormat.setOutputPath(jobMaponyGroupNear, outPath);
 
 		jobMaponyGroupNear.waitForCompletion(true);
@@ -108,27 +103,25 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 
 	}
 
-
 	/**
 	 * @return the logger
 	 */
 	private static final Logger getLogger() {
 		return logger;
 	}
-
-
-	/**
-	 * @return the rutaFicheros
-	 */
-	private final String getRutaFicheros() {
-		return rutaFicheros;
-	}
-
-
-	/**
-	 * @param rutaFicheros the rutaFicheros to set
-	 */
-	private final void setRutaFicheros(String rutaFicheros) {
-		this.rutaFicheros = rutaFicheros;
-	}
+//
+//	/**
+//	 * @return the rutaFicheros
+//	 */
+//	private final String getRutaFicheros() {
+//		return rutaFicheros;
+//	}
+//
+//
+//	/**
+//	 * @param rutaFicheros the rutaFicheros to set
+//	 */
+//	private final void setRutaFicheros(String rutaFicheros) {
+//		this.rutaFicheros = rutaFicheros;
+//	}
 }

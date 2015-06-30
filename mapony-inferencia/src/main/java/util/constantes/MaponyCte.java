@@ -52,7 +52,7 @@ public final class MaponyCte {
 		return "\nJob "+ jobName +" finalizado con éxito\n";
 	}
 
-	public static final String VACIO = MaponyCte.VACIO;
+	public static final String VACIO = "";
 	
 	public static final String propiedades = "job.properties";
 	

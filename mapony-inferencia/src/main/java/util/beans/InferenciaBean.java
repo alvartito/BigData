@@ -8,6 +8,7 @@ package util.beans;
 public class InferenciaBean {
 	/** Photo/Video Identifier */
 	private String identifier;
+	
 	private String dateTaken;
 	/** Capture Device */
 	private String captureDevice;

@@ -129,34 +129,8 @@ public class RawDataBean {
 			String licenseUrl, String serverIdentifier, String farmIdentifier, String secret, String secretOriginal,
 			String extension, String marker) {
 
-		this.identifier = identifier;
 		setIdentifier(identifier);
-
-		this.userNsid = userNsid;
 		setUserNsid(userNsid);
-
-		this.userNickname = userNickname;
-		this.dateTaken = dateTaken;
-		this.dateUploaded = dateUploaded;
-		this.captureDevice = captureDevice;
-		this.title = title;
-		this.description = description;
-		this.userTags = userTags;
-		this.machineTags = machineTags;
-		this.longitude = longitude;
-		this.latitude = latitude;
-		this.accuracy = accuracy;
-		this.pageUrl = pageUrl;
-		this.downloadUrl = downloadUrl;
-		this.licenseName = licenseName;
-		this.licenseUrl = licenseUrl;
-		this.serverIdentifier = serverIdentifier;
-		this.farmIdentifier = farmIdentifier;
-		this.secret = secret;
-		this.secretOriginal = secretOriginal;
-		this.extension = extension;
-		this.marker = marker;
-
 		setUserNickname(userNickname);
 		setDateTaken(dateTaken);
 		setDateUploaded(dateUploaded);
@@ -178,7 +152,6 @@ public class RawDataBean {
 		setSecretOriginal(secretOriginal);
 		setExtension(extension);
 		setMarker(marker);
-
 	}
 
 	/**
@@ -256,7 +229,7 @@ public class RawDataBean {
 		sequenceFileInfo.append(getIdentifier());
 		
 		if(MaponyUtil.tieneValor(getDescription())){
-			sequenceFileInfo.append("\t").append(cleanString(getDescription()));
+			sequenceFileInfo.append("\t").append(MaponyUtil.cleanString(getDescription()));
 		} else {
 			sequenceFileInfo.append("\t");
 		}
@@ -281,22 +254,22 @@ public class RawDataBean {
 			sequenceFileInfo.append("\t");
 		}
 		if(MaponyUtil.tieneValor(getTitle())){
-			sequenceFileInfo.append("\t").append(cleanString(getTitle()));
+			sequenceFileInfo.append("\t").append(MaponyUtil.cleanString(getTitle()));
 		} else {
 			sequenceFileInfo.append("\t");
 		}
 		if(MaponyUtil.tieneValor(getCaptureDevice())){
-			sequenceFileInfo.append("\t").append(cleanString(getCaptureDevice()));
+			sequenceFileInfo.append("\t").append(MaponyUtil.cleanString(getCaptureDevice()));
 		} else {
 			sequenceFileInfo.append("\t");
 		}
 		if(MaponyUtil.tieneValor(getUserTags())){
-			sequenceFileInfo.append("\t").append(cleanString(getUserTags()));
+			sequenceFileInfo.append("\t").append(MaponyUtil.cleanString(getUserTags()));
 		} else {
 			sequenceFileInfo.append("\t");
 		}
 		if(MaponyUtil.tieneValor(getMachineTags())){
-			sequenceFileInfo.append("\t").append(cleanString(getMachineTags()));
+			sequenceFileInfo.append("\t").append(MaponyUtil.cleanString(getMachineTags()));
 		} else {
 			sequenceFileInfo.append("\t");
 		}		
@@ -355,350 +328,6 @@ public class RawDataBean {
 //		marker = Text.readString(in);
 //	}
 
-	/**
-	 * @return the identifier
-	 */
-	public final String getIdentifier() {
-		return identifier;
-	}
-
-	/**
-	 * @param identifier
-	 *            the identifier to set
-	 */
-	public final void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	/**
-	 * @return the userNsid
-	 */
-	public final String getUserNsid() {
-		return userNsid;
-	}
-
-	/**
-	 * @param userNsid
-	 *            the userNsid to set
-	 */
-	public final void setUserNsid(String userNsid) {
-		this.userNsid = userNsid;
-	}
-
-	/**
-	 * @return the userNickname
-	 */
-	public final String getUserNickname() {
-		return userNickname;
-	}
-
-	/**
-	 * @param userNickname
-	 *            the userNickname to set
-	 */
-	public final void setUserNickname(String userNickname) {
-		this.userNickname = userNickname;
-	}
-
-	/**
-	 * @return the dateTaken
-	 */
-	public final String getDateTaken() {
-		return dateTaken;
-	}
-
-	/**
-	 * @param dateTaken
-	 *            the dateTaken to set
-	 */
-	public final void setDateTaken(String dateTaken) {
-		this.dateTaken = dateTaken;
-	}
-
-	/**
-	 * @return the dateUploaded
-	 */
-	public final String getDateUploaded() {
-		return dateUploaded;
-	}
-
-	/**
-	 * @param dateUploaded
-	 *            the dateUploaded to set
-	 */
-	public final void setDateUploaded(String dateUploaded) {
-		this.dateUploaded = dateUploaded;
-	}
-
-	/**
-	 * @return the captureDevice
-	 */
-	public final String getCaptureDevice() {
-		return captureDevice;
-	}
-
-	/**
-	 * @param captureDevice
-	 *            the captureDevice to set
-	 */
-	public final void setCaptureDevice(String captureDevice) {
-		this.captureDevice = captureDevice;
-	}
-
-	/**
-	 * @return the title
-	 */
-	public final String getTitle() {
-		return title;
-	}
-
-	/**
-	 * @param title
-	 *            the title to set
-	 */
-	public final void setTitle(String title) {
-		this.title = title;
-	}
-
-	/**
-	 * @return the description
-	 */
-	public final String getDescription() {
-		return description;
-	}
-
-	/**
-	 * @param description
-	 *            the description to set
-	 */
-	public final void setDescription(String description) {
-		this.description = description;
-	}
-
-	/**
-	 * @return the userTags
-	 */
-	public final String getUserTags() {
-		return userTags;
-	}
-
-	/**
-	 * @param userTags
-	 *            the userTags to set
-	 */
-	public final void setUserTags(String userTags) {
-		this.userTags = userTags;
-	}
-
-	/**
-	 * @return the machineTags
-	 */
-	public final String getMachineTags() {
-		return machineTags;
-	}
-
-	/**
-	 * @param machineTags
-	 *            the machineTags to set
-	 */
-	public final void setMachineTags(String machineTags) {
-		this.machineTags = machineTags;
-	}
-
-	/**
-	 * @return the longitude
-	 */
-	public final String getLongitude() {
-		return longitude;
-	}
-
-	/**
-	 * @param longitude
-	 *            the longitude to set
-	 */
-	public final void setLongitude(String longitude) {
-		this.longitude = longitude;
-	}
-
-	/**
-	 * @return the latitude
-	 */
-	public final String getLatitude() {
-		return latitude;
-	}
-
-	/**
-	 * @param latitude
-	 *            the latitude to set
-	 */
-	public final void setLatitude(String latitude) {
-		this.latitude = latitude;
-	}
-
-	/**
-	 * @return the accuracy
-	 */
-	public final String getAccuracy() {
-		return accuracy;
-	}
-
-	/**
-	 * @param accuracy
-	 *            the accuracy to set
-	 */
-	public final void setAccuracy(String accuracy) {
-		this.accuracy = accuracy;
-	}
-
-	/**
-	 * @return the pageUrl
-	 */
-	public final String getPageUrl() {
-		return pageUrl;
-	}
-
-	/**
-	 * @param pageUrl
-	 *            the pageUrl to set
-	 */
-	public final void setPageUrl(String pageUrl) {
-		this.pageUrl = pageUrl;
-	}
-
-	/**
-	 * @return the downloadUrl
-	 */
-	public final String getDownloadUrl() {
-		return downloadUrl;
-	}
-
-	/**
-	 * @param downloadUrl
-	 *            the downloadUrl to set
-	 */
-	public final void setDownloadUrl(String downloadUrl) {
-		this.downloadUrl = downloadUrl;
-	}
-
-	/**
-	 * @return the licenseName
-	 */
-	public final String getLicenseName() {
-		return licenseName;
-	}
-
-	/**
-	 * @param licenseName
-	 *            the licenseName to set
-	 */
-	public final void setLicenseName(String licenseName) {
-		this.licenseName = licenseName;
-	}
-
-	/**
-	 * @return the licenseUrl
-	 */
-	public final String getLicenseUrl() {
-		return licenseUrl;
-	}
-
-	/**
-	 * @param licenseUrl
-	 *            the licenseUrl to set
-	 */
-	public final void setLicenseUrl(String licenseUrl) {
-		this.licenseUrl = licenseUrl;
-	}
-
-	/**
-	 * @return the serverIdentifier
-	 */
-	public final String getServerIdentifier() {
-		return serverIdentifier;
-	}
-
-	/**
-	 * @param serverIdentifier
-	 *            the serverIdentifier to set
-	 */
-	public final void setServerIdentifier(String serverIdentifier) {
-		this.serverIdentifier = serverIdentifier;
-	}
-
-	/**
-	 * @return the farmIdentifier
-	 */
-	public final String getFarmIdentifier() {
-		return farmIdentifier;
-	}
-
-	/**
-	 * @param farmIdentifier
-	 *            the farmIdentifier to set
-	 */
-	public final void setFarmIdentifier(String farmIdentifier) {
-		this.farmIdentifier = farmIdentifier;
-	}
-
-	/**
-	 * @return the secret
-	 */
-	public final String getSecret() {
-		return secret;
-	}
-
-	/**
-	 * @param secret
-	 *            the secret to set
-	 */
-	public final void setSecret(String secret) {
-		this.secret = secret;
-	}
-
-	/**
-	 * @return the secretOriginal
-	 */
-	public final String getSecretOriginal() {
-		return secretOriginal;
-	}
-
-	/**
-	 * @param secretOriginal
-	 *            the secretOriginal to set
-	 */
-	public final void setSecretOriginal(String secretOriginal) {
-		this.secretOriginal = secretOriginal;
-	}
-
-	/**
-	 * @return the extension
-	 */
-	public final String getExtension() {
-		return extension;
-	}
-
-	/**
-	 * @param extension
-	 *            the extension to set
-	 */
-	public final void setExtension(String extension) {
-		this.extension = extension;
-	}
-
-	/**
-	 * @return the marker
-	 */
-	public final String getMarker() {
-		return marker;
-	}
-
-	/**
-	 * @param marker
-	 *            the marker to set
-	 */
-	public final void setMarker(String marker) {
-		this.marker = marker;
-	}
 
 	/**
 	 * @return the geoHash
@@ -756,9 +385,325 @@ public class RawDataBean {
 		this.continente = continente;
 	}
 	
-	private final String cleanString(String tags) {
-		String clean = tags.replaceAll("[\\d[^\\w\\s]]+", " ").replaceAll("(\\s{2,})", " ");
-		System.err.println(clean);
-		return clean;
+	/**
+	 * @return the identifier
+	 */
+	public final String getIdentifier() {
+		return identifier;
+	}
+
+	/**
+	 * @param identifier the identifier to set
+	 */
+	private final void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
+	/**
+	 * @return the userNsid
+	 */
+	private final String getUserNsid() {
+		return userNsid;
+	}
+
+	/**
+	 * @param userNsid the userNsid to set
+	 */
+	private final void setUserNsid(String userNsid) {
+		this.userNsid = userNsid;
+	}
+
+	/**
+	 * @return the userNickname
+	 */
+	private final String getUserNickname() {
+		return userNickname;
+	}
+
+	/**
+	 * @param userNickname the userNickname to set
+	 */
+	private final void setUserNickname(String userNickname) {
+		this.userNickname = userNickname;
+	}
+
+	/**
+	 * @return the dateTaken
+	 */
+	private final String getDateTaken() {
+		return dateTaken;
+	}
+
+	/**
+	 * @param dateTaken the dateTaken to set
+	 */
+	private final void setDateTaken(String dateTaken) {
+		this.dateTaken = dateTaken;
+	}
+
+	/**
+	 * @return the dateUploaded
+	 */
+	private final String getDateUploaded() {
+		return dateUploaded;
+	}
+
+	/**
+	 * @param dateUploaded the dateUploaded to set
+	 */
+	private final void setDateUploaded(String dateUploaded) {
+		this.dateUploaded = dateUploaded;
+	}
+
+	/**
+	 * @return the captureDevice
+	 */
+	private final String getCaptureDevice() {
+		return captureDevice;
+	}
+
+	/**
+	 * @param captureDevice the captureDevice to set
+	 */
+	private final void setCaptureDevice(String captureDevice) {
+		this.captureDevice = captureDevice;
+	}
+
+	/**
+	 * @return the title
+	 */
+	public final String getTitle() {
+		return title;
+	}
+
+	/**
+	 * @param title the title to set
+	 */
+	private final void setTitle(String title) {
+		this.title = title;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public final String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	private final void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the userTags
+	 */
+	public final String getUserTags() {
+		return userTags;
+	}
+
+	/**
+	 * @param userTags the userTags to set
+	 */
+	private final void setUserTags(String userTags) {
+		this.userTags = userTags;
+	}
+
+	/**
+	 * @return the machineTags
+	 */
+	public final String getMachineTags() {
+		return machineTags;
+	}
+
+	/**
+	 * @param machineTags the machineTags to set
+	 */
+	private final void setMachineTags(String machineTags) {
+		this.machineTags = machineTags;
+	}
+
+	/**
+	 * @return the longitude
+	 */
+	public final String getLongitude() {
+		return longitude;
+	}
+
+	/**
+	 * @param longitude the longitude to set
+	 */
+	private final void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
+	/**
+	 * @return the latitude
+	 */
+	public final String getLatitude() {
+		return latitude;
+	}
+
+	/**
+	 * @param latitude the latitude to set
+	 */
+	private final void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+	/**
+	 * @return the accuracy
+	 */
+	private final String getAccuracy() {
+		return accuracy;
+	}
+
+	/**
+	 * @param accuracy the accuracy to set
+	 */
+	private final void setAccuracy(String accuracy) {
+		this.accuracy = accuracy;
+	}
+
+	/**
+	 * @return the pageUrl
+	 */
+	private final String getPageUrl() {
+		return pageUrl;
+	}
+
+	/**
+	 * @param pageUrl the pageUrl to set
+	 */
+	private final void setPageUrl(String pageUrl) {
+		this.pageUrl = pageUrl;
+	}
+
+	/**
+	 * @return the downloadUrl
+	 */
+	public final String getDownloadUrl() {
+		return downloadUrl;
+	}
+
+	/**
+	 * @param downloadUrl the downloadUrl to set
+	 */
+	private final void setDownloadUrl(String downloadUrl) {
+		this.downloadUrl = downloadUrl;
+	}
+
+	/**
+	 * @return the licenseName
+	 */
+	private final String getLicenseName() {
+		return licenseName;
+	}
+
+	/**
+	 * @param licenseName the licenseName to set
+	 */
+	private final void setLicenseName(String licenseName) {
+		this.licenseName = licenseName;
+	}
+
+	/**
+	 * @return the licenseUrl
+	 */
+	private final String getLicenseUrl() {
+		return licenseUrl;
+	}
+
+	/**
+	 * @param licenseUrl the licenseUrl to set
+	 */
+	private final void setLicenseUrl(String licenseUrl) {
+		this.licenseUrl = licenseUrl;
+	}
+
+	/**
+	 * @return the serverIdentifier
+	 */
+	private final String getServerIdentifier() {
+		return serverIdentifier;
+	}
+
+	/**
+	 * @param serverIdentifier the serverIdentifier to set
+	 */
+	private final void setServerIdentifier(String serverIdentifier) {
+		this.serverIdentifier = serverIdentifier;
+	}
+
+	/**
+	 * @return the farmIdentifier
+	 */
+	private final String getFarmIdentifier() {
+		return farmIdentifier;
+	}
+
+	/**
+	 * @param farmIdentifier the farmIdentifier to set
+	 */
+	private final void setFarmIdentifier(String farmIdentifier) {
+		this.farmIdentifier = farmIdentifier;
+	}
+
+	/**
+	 * @return the secret
+	 */
+	private final String getSecret() {
+		return secret;
+	}
+
+	/**
+	 * @param secret the secret to set
+	 */
+	private final void setSecret(String secret) {
+		this.secret = secret;
+	}
+
+	/**
+	 * @return the secretOriginal
+	 */
+	private final String getSecretOriginal() {
+		return secretOriginal;
+	}
+
+	/**
+	 * @param secretOriginal the secretOriginal to set
+	 */
+	private final void setSecretOriginal(String secretOriginal) {
+		this.secretOriginal = secretOriginal;
+	}
+
+	/**
+	 * @return the extension
+	 */
+	private final String getExtension() {
+		return extension;
+	}
+
+	/**
+	 * @param extension the extension to set
+	 */
+	private final void setExtension(String extension) {
+		this.extension = extension;
+	}
+
+	/**
+	 * @return the marker
+	 */
+	public final String getMarker() {
+		return marker;
+	}
+
+	/**
+	 * @param marker the marker to set
+	 */
+	private final void setMarker(String marker) {
+		this.marker = marker;
 	}
 }

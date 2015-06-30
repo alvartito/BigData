@@ -52,6 +52,8 @@ public final class MaponyCte {
 		return "\nJob "+ jobName +" finalizado con éxito\n";
 	}
 
+	public static final String VACIO = MaponyCte.VACIO;
+	
 	public static final String propiedades = "job.properties";
 	
 	public static final String datos = "ruta_ficheros";

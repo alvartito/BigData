@@ -40,7 +40,7 @@ public class MaponyCsvMap extends Mapper<LongWritable, Text, Text, Text> {
 
 		// Además, si no tiene informados los campos de longitud y latitud, también descartamos el registro.
 		if ("1".toString().compareTo(rdBean.getMarker()) != 0
-				&& ("".compareTo(rdBean.getLatitude()) != 0 && "".compareTo(rdBean.getLongitude()) != 0)) {
+				&& (MaponyCte.VACIO.compareTo(rdBean.getLatitude()) != 0 && MaponyCte.VACIO.compareTo(rdBean.getLongitude()) != 0)) {
 
 			double dLatitude = new Double(rdBean.getLatitude());
 			double dLongitude = new Double(rdBean.getLongitude());
@@ -56,7 +56,7 @@ public class MaponyCsvMap extends Mapper<LongWritable, Text, Text, Text> {
 				rdBean.setPais(geoHashCiudadPaisContinente[2]);
 				rdBean.setPais(geoHashCiudadPaisContinente[3]);
 				outKey = new Text(rdBean.toCsvString());
-				context.write(outKey, new Text(""));
+				context.write(outKey, new Text(MaponyCte.VACIO));
 			}
 		}
 	}

@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
+import util.constantes.MaponyCte;
 import util.writables.CustomWritable;
 
 public class FotoMapper extends Mapper<Text, Text, Text, CustomWritable> {
@@ -12,7 +13,7 @@ public class FotoMapper extends Mapper<Text, Text, Text, CustomWritable> {
 		public void map(Text k, Text v, Context con)
 				throws IOException, InterruptedException {
 			String[] line = k.toString().split("\t");
-			String url = "";
+			String url = MaponyCte.VACIO;
 			if (line.length == 4){
 				url = "http://farm"+line[1]+".static.flickr.com/"+line[2]+"/"+line[0]+"_"+line[3]+"_t.jpg"; 
 				CustomWritable value = new CustomWritable("foto");

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import util.beans.RawDataBean;
+import util.constantes.MaponyCte;
 import util.writables.CustomWritable;
 
 public class GeoHashMap extends Mapper<LongWritable, Text, Text, CustomWritable> {
@@ -26,7 +27,7 @@ public class GeoHashMap extends Mapper<LongWritable, Text, Text, CustomWritable>
 				dato[12], dato[13], dato[14], dato[15], dato[16], dato[17], dato[18], dato[19], dato[20], dato[21], dato[22]);
 		
 		// Además, si no tiene informados los campos de longitud y latitud, también descartamos el registro.
-		if ("1".toString().compareTo(rdBean.getMarker()) != 0 && ("".compareTo(rdBean.getLatitude()) != 0 && "".compareTo(rdBean.getLongitude()) != 0)) {
+		if ("1".toString().compareTo(rdBean.getMarker()) != 0 && (MaponyCte.VACIO.compareTo(rdBean.getLatitude()) != 0 && MaponyCte.VACIO.compareTo(rdBean.getLongitude()) != 0)) {
 			getLogger().info(rdBean.toString());
 			outKey = new Text(rdBean.getIdentifier());
 

@@ -1,5 +1,7 @@
 package util.beans;
 
+import util.MaponyUtil;
+
 
 /** @author Álvaro Sánchez Blasco
  *
@@ -194,52 +196,52 @@ public class RawDataBean {
 		
 		csv.append(getIdentifier());
 		
-		if(null != getDescription() && !"".equals(getDescription())){
+		if(MaponyUtil.tieneValor(getDescription())){
 			csv.append(",").append(getDescription());
 		} else {
 			csv.append(",").append("\t");
 		}
-		if(null != getDownloadUrl() && !"".equals(getDownloadUrl())){
+		if(MaponyUtil.tieneValor(getDownloadUrl())){
 			csv.append(",").append(getDownloadUrl());
 		} else {
 			csv.append(",").append("\t");
 		}
-		if(null != getDateTaken() && !"".equals(getDateTaken())){
+		if(MaponyUtil.tieneValor(getDateTaken())){
 			csv.append(",").append(getDateTaken());
 		} else {
 			csv.append(",").append("\t");
 		}
-		if(null != getLongitude() && !"".equals(getLongitude())){
+		if(MaponyUtil.tieneValor(getLongitude())){
 			csv.append(",").append(getLongitude());
 		} else {
 			csv.append(",").append("\t");
 		}
-		if(null != getLatitude() && !"".equals(getLatitude())){
+		if(MaponyUtil.tieneValor(getLatitude())){
 			csv.append(",").append(getLatitude());
 		} else {
 			csv.append(",").append("\t");
 		}
-		if(null != getTitle() && !"".equals(getTitle())){
+		if(MaponyUtil.tieneValor(getTitle())){
 			csv.append(",").append(getTitle());
 		} else {
 			csv.append(",").append("\t");
 		}
-		if(null != getCaptureDevice() && !"".equals(getCaptureDevice())){
+		if(MaponyUtil.tieneValor(getCaptureDevice())){
 			csv.append(",").append(getCaptureDevice());
 		} else {
 			csv.append(",").append("\t");
 		}
-		if(null != getCiudad() && !"".equals(getCiudad())){
+		if(MaponyUtil.tieneValor(getCiudad())){
 			csv.append(",").append(getCiudad());
 		} else {
 			csv.append(",").append("\t");
 		}
-		if(null != getPais() && !"".equals(getPais())){
+		if(MaponyUtil.tieneValor(getPais())){
 			csv.append(",").append(getPais());
 		} else {
 			csv.append(",").append("\t");
 		}
-		if(null != getContinente() && !"".equals(getContinente())){
+		if(MaponyUtil.tieneValor(getContinente())){
 			csv.append(",").append(getContinente());
 		} else {
 			csv.append(",").append("\t");
@@ -253,42 +255,51 @@ public class RawDataBean {
 		
 		sequenceFileInfo.append(getIdentifier());
 		
-		if(null != getDescription() && !"".equals(getDescription())){
-			sequenceFileInfo.append(",").append(getDescription());
+		if(MaponyUtil.tieneValor(getDescription())){
+			sequenceFileInfo.append("\t").append(cleanString(getDescription()));
 		} else {
-			sequenceFileInfo.append(",").append("\t");
+			sequenceFileInfo.append("\t");
 		}
-		if(null != getDownloadUrl() && !"".equals(getDownloadUrl())){
-			sequenceFileInfo.append(",").append(getDownloadUrl());
+		if(MaponyUtil.tieneValor(getDownloadUrl())){
+			sequenceFileInfo.append("\t").append(getDownloadUrl());
 		} else {
-			sequenceFileInfo.append(",").append("\t");
+			sequenceFileInfo.append("\t");
 		}
-		if(null != getDateTaken() && !"".equals(getDateTaken())){
-			sequenceFileInfo.append(",").append(getDateTaken());
+		if(MaponyUtil.tieneValor(getDateTaken())){
+			sequenceFileInfo.append("\t").append(getDateTaken());
 		} else {
-			sequenceFileInfo.append(",").append("\t");
+			sequenceFileInfo.append("\t");
 		}
-		if(null != getLongitude() && !"".equals(getLongitude())){
-			sequenceFileInfo.append(",").append(getLongitude());
+		if(MaponyUtil.tieneValor(getLongitude())){
+			sequenceFileInfo.append("\t").append(getLongitude());
 		} else {
-			sequenceFileInfo.append(",").append("\t");
+			sequenceFileInfo.append("\t");
 		}
-		if(null != getLatitude() && !"".equals(getLatitude())){
-			sequenceFileInfo.append(",").append(getLatitude());
+		if(MaponyUtil.tieneValor(getLatitude())){
+			sequenceFileInfo.append("\t").append(getLatitude());
 		} else {
-			sequenceFileInfo.append(",").append("\t");
+			sequenceFileInfo.append("\t");
 		}
-		if(null != getTitle() && !"".equals(getTitle())){
-			sequenceFileInfo.append(",").append(getTitle());
+		if(MaponyUtil.tieneValor(getTitle())){
+			sequenceFileInfo.append("\t").append(cleanString(getTitle()));
 		} else {
-			sequenceFileInfo.append(",").append("\t");
+			sequenceFileInfo.append("\t");
 		}
-		if(null != getCaptureDevice() && !"".equals(getCaptureDevice())){
-			sequenceFileInfo.append(",").append(getCaptureDevice());
+		if(MaponyUtil.tieneValor(getCaptureDevice())){
+			sequenceFileInfo.append("\t").append(cleanString(getCaptureDevice()));
 		} else {
-			sequenceFileInfo.append(",").append("\t");
+			sequenceFileInfo.append("\t");
 		}
-
+		if(MaponyUtil.tieneValor(getUserTags())){
+			sequenceFileInfo.append("\t").append(cleanString(getUserTags()));
+		} else {
+			sequenceFileInfo.append("\t");
+		}
+		if(MaponyUtil.tieneValor(getMachineTags())){
+			sequenceFileInfo.append("\t").append(cleanString(getMachineTags()));
+		} else {
+			sequenceFileInfo.append("\t");
+		}		
 		return sequenceFileInfo.toString();
 	}
 	
@@ -743,5 +754,11 @@ public class RawDataBean {
 	 */
 	public final void setContinente(String continente) {
 		this.continente = continente;
+	}
+	
+	private final String cleanString(String tags) {
+		String clean = tags.replaceAll("[\\d[^\\w\\s]]+", " ").replaceAll("(\\s{2,})", " ");
+		System.err.println(clean);
+		return clean;
 	}
 }

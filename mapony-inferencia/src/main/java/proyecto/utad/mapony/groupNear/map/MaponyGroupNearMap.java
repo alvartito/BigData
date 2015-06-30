@@ -27,7 +27,7 @@ public class MaponyGroupNearMap extends Mapper<LongWritable, Text, Text, Text> {
 
 		// Además, si no tiene informados los campos de longitud y latitud, también descartamos el registro.
 		if ("1".toString().compareTo(rdBean.getMarker()) != 0
-				&& ("".compareTo(rdBean.getLatitude()) != 0 && "".compareTo(rdBean.getLongitude()) != 0)) {
+				&& (MaponyCte.VACIO.compareTo(rdBean.getLatitude()) != 0 && MaponyCte.VACIO.compareTo(rdBean.getLongitude()) != 0)) {
 
 			double dLatitude = new Double(rdBean.getLatitude());
 			double dLongitude = new Double(rdBean.getLongitude());

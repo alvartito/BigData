@@ -2,57 +2,60 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.utad.proyecto</groupId>
-	<artifactId>mapony-inferencia</artifactId>
+	<artifactId>inferencia-mapony</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
-	<name>mapony-inferencia</name>
+	<name>inferencia-mapony</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<eshadoop.version>2.0.2</eshadoop.version>
-		<es.version>1.6.0</es.version>
 	</properties>
 
 	<dependencies>
-<dependency>
+		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
-			<version>2.3.0-cdh5.1.0</version>
+			<version>2.7.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-mapreduce-client-jobclient</artifactId>
-			<version>2.3.0-cdh5.1.0</version>
+			<version>2.7.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-mapreduce-client-shuffle</artifactId>
-			<version>2.3.0-cdh5.1.0</version>
+			<version>2.7.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-mapreduce-client-app</artifactId>
-			<version>2.3.0-cdh5.1.0</version>
+			<version>2.7.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
-			<version>2.3.0-cdh5.1.0</version>
+			<version>2.7.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch-hadoop-mr</artifactId>
-			<version>${eshadoop.version}</version>
+			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>1.5.2</version>
+			<version>1.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.hsr</groupId>
+			<artifactId>geohash</artifactId>
+			<version>1.0.13</version>
 		</dependency>
 	</dependencies>
 
@@ -72,7 +75,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>proyecto.utad.MainJob</mainClass>
+							<mainClass>util.driver.Driver</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

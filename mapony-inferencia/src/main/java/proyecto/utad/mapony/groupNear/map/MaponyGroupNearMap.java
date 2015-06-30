@@ -6,31 +6,26 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-import util.beans.RawDataBean;
+import util.beans.RawDataWritable;
 import util.constantes.MaponyCte;
-import ch.hsr.geohash.GeoHash;
 
-public class MaponyGroupNearMap extends Mapper<LongWritable, Text, Text, Text> {
+public class MaponyGroupNearMap extends Mapper<LongWritable, Text, Text, RawDataWritable> {
 
 	protected void map(LongWritable offset, Text line, Context context) throws IOException, InterruptedException {
-		String[] dato = line.toString().split("\t");
+		
+		String[] dato = line.toString().split(MaponyCte.PIPE);
+
 
 		// Comenzamos por limpiar las referencias de videos, por lo que el campo [22] del String[] ha de ser
 		// '0' para que lo procesemos.
-		final RawDataBean rdBean = new RawDataBean(dato[0], dato[1], dato[2], dato[3], dato[4], dato[5], dato[6], dato[7], dato[8], dato[9],
-				dato[10], dato[11], dato[12], dato[13], dato[14], dato[15], dato[16], dato[17], dato[18], dato[19], dato[20], dato[21], dato[22]);
-
 		// Además, si no tiene informados los campos de longitud y latitud, también descartamos el registro.
-		if ("1".toString().compareTo(rdBean.getMarker()) != 0
-				&& (MaponyCte.VACIO.compareTo(rdBean.getLatitude()) != 0 && MaponyCte.VACIO.compareTo(rdBean.getLongitude()) != 0)) {
+		if ("1".toString().compareTo(dato[22]) != 0
+				&& (MaponyCte.VACIO.compareTo(dato[10]) != 0 && MaponyCte.VACIO.compareTo(dato[11]) != 0)) {
 
-			double dLatitude = new Double(rdBean.getLatitude());
-			double dLongitude = new Double(rdBean.getLongitude());
+			final RawDataWritable rdBean = new RawDataWritable(new Text(dato[0]), new Text(dato[3]), new Text(dato[5]), new Text(dato[6]), new Text(dato[7]), new Text(dato[8]), new Text(dato[9]),
+					new Text(dato[10]), new Text(dato[11]), new Text(dato[14]));
 
-			String geoHash = GeoHash.geoHashStringWithCharacterPrecision(dLatitude, dLongitude, MaponyCte.precisionGeoHashAgrupar);
-			rdBean.setGeoHash(geoHash);
-
-			context.write(new Text(rdBean.getGeoHash()), new Text(rdBean.toSequenceFileString()));
+			context.write(rdBean.getGeoHash(), rdBean);
 		}
 	}
 }

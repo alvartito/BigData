@@ -21,7 +21,7 @@ public class MaponyInferenciaMap extends Mapper<Text, Text, Text, CustomWritable
 	private HashMap<String, GeoHashBean> ciudades;
 	private final Logger logger = LoggerFactory.getLogger(MaponyInferenciaMap.class);
 
-	protected void map(Text geoHash, Text line, Context context) throws IOException, InterruptedException {
+	protected void map(Text geoHash, Text rawDatWritable, Context context) throws IOException, InterruptedException {
 
 		try {
 			if (null == ciudades) {
@@ -31,7 +31,7 @@ public class MaponyInferenciaMap extends Mapper<Text, Text, Text, CustomWritable
 			getLogger().error(e.getMessage());
 		}
 
-		String[] dato = line.toString().split("\t");
+		String[] dato = rawDatWritable.toString().split(MaponyCte.PIPE);
 
 		InferenciaBean rdBean = new InferenciaBean(dato[0], dato[1], dato[2], dato[3], dato[4], dato[5], dato[6], dato[7], dato[8], dato[9]);
 

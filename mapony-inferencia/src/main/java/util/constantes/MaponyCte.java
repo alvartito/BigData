@@ -53,6 +53,7 @@ public final class MaponyCte {
 	}
 
 	public static final String VACIO = "";
+	public static final String PIPE = "|";
 	
 	public static final String propiedades = "job.properties";
 	

@@ -152,7 +152,7 @@ public class GeoHashBean {
 	/**
 	 * @return the name
 	 */
-	private final String getName() {
+	public final String getName() {
 		return name;
 	}
 
@@ -407,7 +407,7 @@ public class GeoHashBean {
 	/**
 	 * @return the pais
 	 */
-	private final String getPais() {
+	public final String getPais() {
 		return pais;
 	}
 
@@ -423,7 +423,7 @@ public class GeoHashBean {
 	/**
 	 * @return the continente
 	 */
-	private final String getContinente() {
+	public final String getContinente() {
 		return continente;
 	}
 

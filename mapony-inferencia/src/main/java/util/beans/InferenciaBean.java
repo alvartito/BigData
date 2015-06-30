@@ -28,6 +28,7 @@ public class InferenciaBean {
 	private String downloadUrl;
 	
 	private String geoHash;
+	private String geoHashCiudad;
 	private String pais;
 	private String ciudad;
 	private String continente;
@@ -107,15 +108,15 @@ public class InferenciaBean {
 		setMachineTags(machineTags);
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 * @return identifier + "|" + description + "|" + downloadUrl + "|" + longitude + "|" + latitude + "|" +
-	 *         title + "|" + machineTags + "|" + userTags + "|" + geoHash;
-	 */
-	public String toString() {
-		return getIdentifier() + "|" + getDescription() + "|" + getDownloadUrl() + "|" + getLongitude() + "|" + getLatitude() + "|" + getTitle()
-				+ "|" + getMachineTags() + "|" + getUserTags() + "|" + getGeoHash();
-	}
+//	/**
+//	 * @see java.lang.Object#toString()
+//	 * @return identifier + "|" + description + "|" + downloadUrl + "|" + longitude + "|" + latitude + "|" +
+//	 *         title + "|" + machineTags + "|" + userTags + "|" + geoHash;
+//	 */
+//	public String toString() {
+//		return getIdentifier() + "|" + getDescription() + "|" + getDownloadUrl() + "|" + getLongitude() + "|" + getLatitude() + "|" + getTitle()
+//				+ "|" + getMachineTags() + "|" + getUserTags() + "|" + getGeoHash();
+//	}
 
 	/**
 	 * @return the identifier
@@ -321,5 +322,19 @@ public class InferenciaBean {
 	 */
 	public final void setContinente(String continente) {
 		this.continente = continente;
+	}
+
+	/**
+	 * @return the geoHashCiudad
+	 */
+	public final String getGeoHashCiudad() {
+		return geoHashCiudad;
+	}
+
+	/**
+	 * @param geoHashCiudad the geoHashCiudad to set
+	 */
+	public final void setGeoHashCiudad(String geoHashCiudad) {
+		this.geoHashCiudad = geoHashCiudad;
 	}
 }

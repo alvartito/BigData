@@ -23,8 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import proyecto.utad.mapony.groupNear.map.MaponyGroupNearMap;
+import util.beans.RawDataWritable;
 import util.constantes.MaponyCte;
-import util.reducers.MaponyRed;
+import util.reducers.MaponyGroupNearRed;
 
 public class MaponyGroupNearJob extends Configured implements Tool {
 
@@ -50,7 +51,7 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 
 		Configuration config = getConf();
 
-		Path outPath = new Path("data/groupNearJobOut");
+		Path outPath = new Path(properties.getProperty(MaponyCte.salida_group_near));
 
 		// Borramos todos los directorios que puedan existir
 		FileSystem.get(outPath.toUri(), config).delete(outPath, true);
@@ -65,10 +66,10 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 		SequenceFileOutputFormat.setOutputCompressionType(jobMaponyGroupNear, CompressionType.BLOCK);
 
 		jobMaponyGroupNear.setMapOutputKeyClass(Text.class);
-		jobMaponyGroupNear.setMapOutputValueClass(Text.class);
+		jobMaponyGroupNear.setMapOutputValueClass(RawDataWritable.class);
 
 		jobMaponyGroupNear.setOutputKeyClass(Text.class);
-		jobMaponyGroupNear.setOutputValueClass(Text.class);
+		jobMaponyGroupNear.setOutputValueClass(RawDataWritable.class);
 
 		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-0.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
 		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-1.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
@@ -81,8 +82,8 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-8.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
 		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-9.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
 
-		jobMaponyGroupNear.setCombinerClass(MaponyRed.class);
-		jobMaponyGroupNear.setReducerClass(MaponyRed.class);
+		jobMaponyGroupNear.setCombinerClass(MaponyGroupNearRed.class);
+		jobMaponyGroupNear.setReducerClass(MaponyGroupNearRed.class);
 
 		FileOutputFormat.setOutputPath(jobMaponyGroupNear, outPath);
 

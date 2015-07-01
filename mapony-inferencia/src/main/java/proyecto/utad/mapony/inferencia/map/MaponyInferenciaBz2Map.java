@@ -40,43 +40,48 @@ public class MaponyInferenciaBz2Map extends Mapper<Text, Text, Text, CustomWrita
 		if ("1".toString().compareTo(dato[22]) != 0
 				&& (MaponyCte.VACIO.compareTo(dato[10]) != 0 && MaponyCte.VACIO.compareTo(dato[11]) != 0)) {
 
-			final RawDataWritable rdBean = new RawDataWritable(new Text(dato[0]), new Text(dato[3]), new Text(dato[5]), new Text(dato[6]), new Text(dato[7]), new Text(dato[8]), new Text(dato[9]),
-					new Text(dato[10]), new Text(dato[11]), new Text(dato[14]));
+			RawDataWritable rdBean;
+			try {
+				rdBean = new RawDataWritable(new Text(dato[0]), new Text(dato[3]), new Text(dato[5]), new Text(dato[6]), new Text(dato[7]), new Text(dato[8]), new Text(dato[9]),
+						new Text(dato[10]), new Text(dato[11]), new Text(dato[14]));
+				rdBean.setGeoHash(MaponyUtil.getGeoHashPorPrecision(rdBean.getLongitude(), rdBean.getLatitude(), MaponyCte.precisionGeoHashCiudad));
+				if (ciudades.containsKey(rdBean.getGeoHash().toString())) {
+//					GeoHashBean temp = ciudades.get(geoHashCiudad);
 
-			rdBean.setGeoHash(MaponyUtil.getGeoHashPorPrecision(rdBean.getLongitude(), rdBean.getLatitude(), MaponyCte.precisionGeoHashCiudad));
+//					getLogger().info("Dato Encontrado para " + rdBean.getIdentifier() + ": " + temp.toString());
+					
+					outKey = new Text(rdBean.getIdentifier());
 
-			if (ciudades.containsKey(rdBean.getGeoHash().toString())) {
-//				GeoHashBean temp = ciudades.get(geoHashCiudad);
+					CustomWritable cwDescripcion = new CustomWritable("descripcion");
+					cwDescripcion.setTexto(rdBean.getDescription().toString());
 
-//				getLogger().info("Dato Encontrado para " + rdBean.getIdentifier() + ": " + temp.toString());
-				
-				outKey = new Text(rdBean.getIdentifier());
+					CustomWritable cwFoto = new CustomWritable("foto");
+					String url = rdBean.getDownloadUrl().toString();
+					cwFoto.setTexto(url);
 
-				CustomWritable cwDescripcion = new CustomWritable("descripcion");
-				cwDescripcion.setTexto(rdBean.getDescription().toString());
+					CustomWritable cwGeo = new CustomWritable("location");
+					StringBuilder posicion = new StringBuilder();
+					posicion.append(rdBean.getLatitude());
+					posicion.append(",");
+					posicion.append(rdBean.getLongitude());
+					cwGeo.setTexto(posicion.toString());
 
-				CustomWritable cwFoto = new CustomWritable("foto");
-				String url = rdBean.getDownloadUrl().toString();
-				cwFoto.setTexto(url);
+					CustomWritable cwTags = new CustomWritable("tags");
+					cwTags.setTexto(rdBean.getMachineTags() + " " + rdBean.getUserTags());
 
-				CustomWritable cwGeo = new CustomWritable("location");
-				StringBuilder posicion = new StringBuilder();
-				posicion.append(rdBean.getLatitude());
-				posicion.append(",");
-				posicion.append(rdBean.getLongitude());
-				cwGeo.setTexto(posicion.toString());
+					CustomWritable cwTitulo = new CustomWritable("titulo");
+					cwTitulo.setTexto(rdBean.getTitle().toString());
 
-				CustomWritable cwTags = new CustomWritable("tags");
-				cwTags.setTexto(rdBean.getMachineTags() + " " + rdBean.getUserTags());
+					context.write(outKey, cwDescripcion);
+					context.write(outKey, cwFoto);
+					context.write(outKey, cwGeo);
+					context.write(outKey, cwTags);
+					context.write(outKey, cwTitulo);
+				}
 
-				CustomWritable cwTitulo = new CustomWritable("titulo");
-				cwTitulo.setTexto(rdBean.getTitle().toString());
-
-				context.write(outKey, cwDescripcion);
-				context.write(outKey, cwFoto);
-				context.write(outKey, cwGeo);
-				context.write(outKey, cwTags);
-				context.write(outKey, cwTitulo);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

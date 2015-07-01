@@ -14,10 +14,6 @@ import util.constantes.MaponyCte;
  * @author Álvaro Sánchez Blasco
  *
  */
-/**
- * @author cloudera
- *
- */
 public class RawDataWritable implements Writable {
 
 	/** Photo/Video Identifier */
@@ -77,21 +73,29 @@ public class RawDataWritable implements Writable {
 	 * @param longitude
 	 * @param latitude
 	 * @param downloadUrl
+	 * @throws Exception 
 	 */
 	public RawDataWritable(Text identifier, Text dateTaken, Text captureDevice, Text title, Text description, Text userTags, Text machineTags,
-			Text longitude, Text latitude, Text downloadUrl) {
+			Text longitude, Text latitude, Text downloadUrl) throws Exception {
 
 		this.identifier = identifier;
 		this.dateTaken = dateTaken;
+		
 		this.captureDevice = captureDevice;
 		this.title = title;
 		this.description = description;
 		this.userTags = userTags;
 		this.machineTags = machineTags;
+		
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.downloadUrl = downloadUrl;
-		this.geoHash = MaponyUtil.getGeoHashPorPrecision(longitude, latitude, MaponyCte.precisionGeoHashAgrupar);
+		try{
+			this.geoHash = MaponyUtil.getGeoHashPorPrecision(longitude, latitude, MaponyCte.precisionGeoHashAgrupar);
+		} catch (Exception e) {
+			String message = identifier + " long: '"+longitude+"' lat: '"+latitude+"' '"+e.getMessage();
+			throw new Exception(message);
+		}
 	}
 
 	/**
@@ -102,9 +106,8 @@ public class RawDataWritable implements Writable {
 	 */
 	public String toString() {
 		return identifier + MaponyCte.PIPE + dateTaken + MaponyCte.PIPE + captureDevice + MaponyCte.PIPE + title + MaponyCte.PIPE + description
-				+ MaponyCte.PIPE + userTags + MaponyCte.PIPE + machineTags + "|" + longitude + MaponyCte.PIPE + latitude + MaponyCte.PIPE
+				+ MaponyCte.PIPE + userTags + MaponyCte.PIPE + machineTags + MaponyCte.PIPE + longitude + MaponyCte.PIPE + latitude + MaponyCte.PIPE
 				+ downloadUrl;
-
 	}
 
 	public void write(DataOutput out) throws IOException {

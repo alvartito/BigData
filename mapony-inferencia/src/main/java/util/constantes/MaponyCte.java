@@ -54,11 +54,13 @@ public final class MaponyCte {
 
 	public static final String VACIO = "";
 	public static final String PIPE = "|";
+	public static final String TAB = "\t";
 	
 	public static final String propiedades = "job.properties";
 	
 	public static final String datos = "ruta_ficheros";
 	public static final String paises = "ruta_paises";
+	public static final String salida_group_near = "ruta_salida_group_near";
 	
 	public static final String indice = "index_name";
 	public static final String tipo = "type_name";

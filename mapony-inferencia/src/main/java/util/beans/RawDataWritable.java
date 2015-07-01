@@ -98,6 +98,21 @@ public class RawDataWritable implements Writable {
 		}
 	}
 
+	public RawDataWritable(RawDataWritable rdw) {
+		this.identifier = rdw.getIdentifier();
+		this.dateTaken = rdw.getDateTaken();
+		
+		this.captureDevice = rdw.getCaptureDevice();
+		this.title = rdw.getTitle();
+		this.description = rdw.getDescription();
+		this.userTags = rdw.getUserTags();
+		this.machineTags = rdw.getMachineTags();
+		
+		this.longitude = rdw.getLongitude();
+		this.latitude = rdw.getLatitude();
+		this.downloadUrl = rdw.getDownloadUrl();
+	}
+	
 	/**
 	 * @see java.lang.Object#toString()
 	 * @return 

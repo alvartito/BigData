@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import util.GeoHashCiudad;
 import util.beans.GeoHashBean;
-import util.beans.RawDataWritable;
 import util.constantes.MaponyCte;
+import util.writables.RawDataWritable;
 import ch.hsr.geohash.GeoHash;
 
 public class MaponyCsvMap extends Mapper<LongWritable, Text, Text, Text> {

@@ -9,23 +9,24 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.SequenceFile.CompressionType;
+import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.compress.BZip2Codec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import proyecto.utad.mapony.groupNear.map.MaponyGroupNearMap;
-import util.beans.RawDataWritable;
 import util.constantes.MaponyCte;
+import util.reducers.MaponyGNArrayComb;
+import util.reducers.MaponyGNArrayRed;
 import util.reducers.MaponyGroupNearRed;
+import util.writables.RawDataWritable;
 
 public class MaponyGroupNearJob extends Configured implements Tool {
 
@@ -56,38 +57,42 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 		// Borramos todos los directorios que puedan existir
 		FileSystem.get(outPath.toUri(), config).delete(outPath, true);
 		
-		Job jobMaponyGroupNear = Job.getInstance(config, MaponyCte.jobNameGroupNear);
-		jobMaponyGroupNear.setJarByClass(MaponyGroupNearJob.class);
+		Job job = Job.getInstance(config, MaponyCte.jobNameGroupNear);
+		job.setJarByClass(MaponyGroupNearJob.class);
 
-		jobMaponyGroupNear.setInputFormatClass(TextInputFormat.class);
-		jobMaponyGroupNear.setOutputFormatClass(SequenceFileOutputFormat.class);
-		SequenceFileOutputFormat.setCompressOutput(jobMaponyGroupNear, true);
-		SequenceFileOutputFormat.setOutputCompressorClass(jobMaponyGroupNear, BZip2Codec.class);
-		SequenceFileOutputFormat.setOutputCompressionType(jobMaponyGroupNear, CompressionType.BLOCK);
+		job.setInputFormatClass(TextInputFormat.class);
+		job.setOutputFormatClass(TextOutputFormat.class);
+//		jobMaponyGroupNear.setOutputFormatClass(SequenceFileOutputFormat.class);
+//		SequenceFileOutputFormat.setCompressOutput(jobMaponyGroupNear, true);
+//		SequenceFileOutputFormat.setOutputCompressorClass(jobMaponyGroupNear, BZip2Codec.class);
+//		SequenceFileOutputFormat.setOutputCompressionType(jobMaponyGroupNear, CompressionType.BLOCK);
 
-		jobMaponyGroupNear.setMapOutputKeyClass(Text.class);
-		jobMaponyGroupNear.setMapOutputValueClass(RawDataWritable.class);
+		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputValueClass(RawDataWritable.class);
 
-		jobMaponyGroupNear.setOutputKeyClass(Text.class);
-		jobMaponyGroupNear.setOutputValueClass(RawDataWritable.class);
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(RawDataWritable.class);
 
-		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-0.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-1.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-2.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-3.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-4.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-5.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-6.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-7.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-8.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-9.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+		MultipleInputs.addInputPath(job, new Path("data/sample"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-0.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-1.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-2.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-3.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-4.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-5.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-6.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-7.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-8.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-9.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
 
-		jobMaponyGroupNear.setCombinerClass(MaponyGroupNearRed.class);
-		jobMaponyGroupNear.setReducerClass(MaponyGroupNearRed.class);
+		job.setCombinerClass(MaponyGroupNearRed.class);
+		job.setReducerClass(MaponyGroupNearRed.class);
 
-		FileOutputFormat.setOutputPath(jobMaponyGroupNear, outPath);
+//		job.setNumReduceTasks(5);
+		
+		FileOutputFormat.setOutputPath(job, outPath);
 
-		jobMaponyGroupNear.waitForCompletion(true);
+		job.waitForCompletion(true);
 
 		getLogger().info(MaponyCte.getMsgFinJob(MaponyCte.jobNameGroupNear));
 

@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import util.GeoHashCiudad;
 import util.beans.GeoHashBean;
-import util.beans.InferenciaBean;
-import util.beans.RawDataWritable;
 import util.writables.CustomWritable;
+import util.writables.InferenciaWritable;
+import util.writables.RawDataWritable;
 
 public class MaponyInferenciaMap extends Mapper<Text, RawDataWritable, Text, CustomWritable> {
 
@@ -31,7 +31,7 @@ public class MaponyInferenciaMap extends Mapper<Text, RawDataWritable, Text, Cus
 		}
 
 		try {
-			InferenciaBean rdBean = new InferenciaBean(rawDataWritable);
+			InferenciaWritable rdBean = new InferenciaWritable(rawDataWritable);
 			Text ciudad = new Text();
 			Text pais = new Text();
 			Text continente = new Text();

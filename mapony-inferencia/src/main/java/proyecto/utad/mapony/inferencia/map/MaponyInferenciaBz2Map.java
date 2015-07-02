@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import util.GeoHashCiudad;
 import util.MaponyUtil;
 import util.beans.GeoHashBean;
-import util.beans.RawDataWritable;
 import util.constantes.MaponyCte;
 import util.writables.CustomWritable;
+import util.writables.RawDataWritable;
 import ch.hsr.geohash.GeoHash;
 
 public class MaponyInferenciaBz2Map extends Mapper<Text, Text, Text, CustomWritable> {

@@ -1,4 +1,4 @@
-package util.beans;
+package util.writables;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
@@ -9,21 +9,21 @@ import util.constantes.MaponyCte;
 /** @author Álvaro Sánchez Blasco
  *
  */
-public class InferenciaBean extends RawDataWritable implements Writable {
+public class InferenciaWritable extends RawDataWritable implements Writable {
 	
 	private Text geoHashCiudad;
 	private Text pais;
 	private Text ciudad;
 	private Text continente;
 
-	public InferenciaBean() {
+	public InferenciaWritable() {
 		super();
 		this.ciudad = new Text();
 		this.pais = new Text();
 		this.continente = new Text();
 	}
 
-	public InferenciaBean(RawDataWritable rdw) throws Exception {
+	public InferenciaWritable(RawDataWritable rdw) throws Exception {
 		super(rdw);
 		this.ciudad = new Text();
 		this.pais = new Text();

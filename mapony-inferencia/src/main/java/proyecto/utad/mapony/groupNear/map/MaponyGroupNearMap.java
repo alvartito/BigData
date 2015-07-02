@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import util.MaponyUtil;
-import util.beans.RawDataWritable;
 import util.constantes.MaponyCte;
+import util.writables.RawDataWritable;
 
 public class MaponyGroupNearMap extends Mapper<LongWritable, Text, Text, RawDataWritable> {
 

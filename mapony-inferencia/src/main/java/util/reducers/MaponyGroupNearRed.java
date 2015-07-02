@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import util.beans.RawDataWritable;
+import util.writables.RawDataWritable;
 
 public class MaponyGroupNearRed extends Reducer<Text, RawDataWritable, Text, RawDataWritable> {
 

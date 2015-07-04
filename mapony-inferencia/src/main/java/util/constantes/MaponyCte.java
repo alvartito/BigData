@@ -44,7 +44,7 @@ public final class MaponyCte {
 	 * <p>gcpuuz94kkp5 12 ~ 3.7cm x 1.8cm
 	 *
 	 */
-	public static final int precisionGeoHashAgrupar = 1;
+	public static final int precisionGeoHashAgrupar = 5;
 	
 	public static final String MSG_PROPIEDADES_CARGADAS = "\nPropiedades cargadas\n";
 

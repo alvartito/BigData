@@ -5,7 +5,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableComparable;
 
 import util.MaponyUtil;
 import util.constantes.MaponyCte;
@@ -14,7 +14,7 @@ import util.constantes.MaponyCte;
  * @author Álvaro Sánchez Blasco
  *
  */
-public class RawDataWritable implements Writable {
+public class RawDataWritable implements WritableComparable<RawDataWritable> {
 
 	/** Photo/Video Identifier */
 	private Text identifier;
@@ -111,6 +111,8 @@ public class RawDataWritable implements Writable {
 		this.longitude = rdw.getLongitude();
 		this.latitude = rdw.getLatitude();
 		this.downloadUrl = rdw.getDownloadUrl();
+		
+		this.geoHash = rdw.getGeoHash();
 	}
 	
 	/**
@@ -318,4 +320,7 @@ public class RawDataWritable implements Writable {
 		this.geoHash = geoHash;
 	}
 
+	public int compareTo(RawDataWritable o) {
+		return identifier.compareTo(o.identifier);
+	}
 }

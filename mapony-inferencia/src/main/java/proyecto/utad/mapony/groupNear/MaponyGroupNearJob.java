@@ -9,7 +9,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.MapWritable;
+import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
@@ -23,9 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import proyecto.utad.mapony.groupNear.map.MaponyGroupNearMap;
 import util.constantes.MaponyCte;
-import util.reducers.MaponyGNArrayComb;
 import util.reducers.MaponyGNArrayRed;
-import util.reducers.MaponyGroupNearRed;
 import util.writables.RawDataWritable;
 
 public class MaponyGroupNearJob extends Configured implements Tool {
@@ -71,7 +69,7 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 		job.setMapOutputValueClass(RawDataWritable.class);
 
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(RawDataWritable.class);
+		job.setOutputValueClass(ArrayWritable.class);
 
 		MultipleInputs.addInputPath(job, new Path("data/sample"), TextInputFormat.class, MaponyGroupNearMap.class);
 //		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-0.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
@@ -85,8 +83,8 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 //		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-8.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
 //		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-9.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
 
-		job.setCombinerClass(MaponyGroupNearRed.class);
-		job.setReducerClass(MaponyGroupNearRed.class);
+//		job.setCombinerClass(MaponyGroupNearRed.class);
+		job.setReducerClass(MaponyGNArrayRed.class);
 
 //		job.setNumReduceTasks(5);
 		

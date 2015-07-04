@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
-import util.MaponyUtil;
 import util.constantes.MaponyCte;
 
 /**
@@ -38,19 +37,30 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 	private Text downloadUrl;
 
 	private Text geoHash;
+	
+	private Text geoHashCiudad;
+	private Text pais;
+	private Text ciudad;
+	private Text continente;
+
 
 	public RawDataWritable() {
-		identifier = new Text();
-		dateTaken = new Text();
-		captureDevice = new Text();
-		title = new Text();
-		description = new Text();
-		userTags = new Text();
-		machineTags = new Text();
-		longitude = new Text();
-		latitude = new Text();
-		downloadUrl = new Text();
-		geoHash = new Text();
+		this.identifier = new Text();
+		this.dateTaken = new Text();
+		this.captureDevice = new Text();
+		this.title = new Text();
+		this.description = new Text();
+		this.userTags = new Text();
+		this.machineTags = new Text();
+		this.longitude = new Text();
+		this.latitude = new Text();
+		this.downloadUrl = new Text();
+		this.geoHash = new Text();
+		this.geoHashCiudad = new Text();
+		this.ciudad = new Text();
+		this.pais = new Text();
+		this.continente = new Text();
+
 	}
 
 	public int hashCode() {
@@ -73,58 +83,60 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 	 * @param longitude
 	 * @param latitude
 	 * @param downloadUrl
-	 * @throws Exception 
+	 * @param geoHash
+	 * @param geoHashCiudad
+	 * @param continente
+	 * @param pais
+	 * @param ciudad
 	 */
 	public RawDataWritable(Text identifier, Text dateTaken, Text captureDevice, Text title, Text description, Text userTags, Text machineTags,
-			Text longitude, Text latitude, Text downloadUrl) throws Exception {
+			Text longitude, Text latitude, Text downloadUrl, Text geoHash, Text geoHashCiudad, Text continente, Text pais, Text ciudad) {
 
 		this.identifier = identifier;
 		this.dateTaken = dateTaken;
-		
 		this.captureDevice = captureDevice;
 		this.title = title;
 		this.description = description;
 		this.userTags = userTags;
 		this.machineTags = machineTags;
-		
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.downloadUrl = downloadUrl;
-		try{
-			this.geoHash = MaponyUtil.getGeoHashPorPrecision(longitude, latitude, MaponyCte.precisionGeoHashAgrupar);
-		} catch (Exception e) {
-			String message = identifier + " long: '"+longitude+"' lat: '"+latitude+"' '"+e.getMessage();
-			throw new Exception(message);
-		}
+		this.geoHash = geoHash;
+		this.geoHashCiudad = geoHashCiudad;
+		this.continente = continente;
+		this.pais = pais;
+		this.ciudad = ciudad;
 	}
 
 	public RawDataWritable(RawDataWritable rdw) {
 		this.identifier = rdw.getIdentifier();
 		this.dateTaken = rdw.getDateTaken();
-		
 		this.captureDevice = rdw.getCaptureDevice();
 		this.title = rdw.getTitle();
 		this.description = rdw.getDescription();
 		this.userTags = rdw.getUserTags();
 		this.machineTags = rdw.getMachineTags();
-		
 		this.longitude = rdw.getLongitude();
 		this.latitude = rdw.getLatitude();
 		this.downloadUrl = rdw.getDownloadUrl();
-		
 		this.geoHash = rdw.getGeoHash();
+		this.geoHashCiudad = rdw.getGeoHashCiudad();
+		this.continente = rdw.getContinente();
+		this.pais = rdw.getPais();
+		this.ciudad = rdw.getCiudad();
 	}
 	
 	/**
 	 * @see java.lang.Object#toString()
 	 * @return 
 	 *         identifier+"|"+dateTaken+"|"+captureDevice+"|"+title+"|"+description+"|"+userTags+"|"+machineTags
-	 *         +"|"+longitude+"|"+latitude+"|"+downloadUrl
+	 *         +"|"+longitude+"|"+latitude+"|"+downloadUrl+"|["+continente+"|"+pais+"|"+ciudad]
 	 */
 	public String toString() {
 		return identifier + MaponyCte.PIPE + dateTaken + MaponyCte.PIPE + captureDevice + MaponyCte.PIPE + title + MaponyCte.PIPE + description
 				+ MaponyCte.PIPE + userTags + MaponyCte.PIPE + machineTags + MaponyCte.PIPE + longitude + MaponyCte.PIPE + latitude + MaponyCte.PIPE
-				+ downloadUrl;
+				+ downloadUrl + MaponyCte.PIPE + continente + MaponyCte.PIPE + pais + MaponyCte.PIPE + ciudad;
 	}
 
 	public void write(DataOutput out) throws IOException {
@@ -139,6 +151,10 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 		latitude.write(out);
 		downloadUrl.write(out);
 		geoHash.write(out);
+		geoHashCiudad.write(out);
+		continente.write(out);
+		pais.write(out);
+		ciudad.write(out);
 	}
 
 	public void readFields(DataInput in) throws IOException {
@@ -153,6 +169,10 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 		latitude.readFields(in);
 		downloadUrl.readFields(in);
 		geoHash.readFields(in);
+		geoHashCiudad.readFields(in);
+		continente.readFields(in);
+		pais.readFields(in);
+		ciudad.readFields(in);
 	}
 
 	/**
@@ -320,6 +340,62 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 		this.geoHash = geoHash;
 	}
 
+	/**
+	 * @return the geoHashCiudad
+	 */
+	public final Text getGeoHashCiudad() {
+		return geoHashCiudad;
+	}
+
+	/**
+	 * @param geoHashCiudad the geoHashCiudad to set
+	 */
+	public final void setGeoHashCiudad(Text geoHashCiudad) {
+		this.geoHashCiudad = geoHashCiudad;
+	}
+
+	/**
+	 * @return the pais
+	 */
+	public final Text getPais() {
+		return pais;
+	}
+
+	/**
+	 * @param pais the pais to set
+	 */
+	public final void setPais(Text pais) {
+		this.pais = pais;
+	}
+
+	/**
+	 * @return the ciudad
+	 */
+	public final Text getCiudad() {
+		return ciudad;
+	}
+
+	/**
+	 * @param ciudad the ciudad to set
+	 */
+	public final void setCiudad(Text ciudad) {
+		this.ciudad = ciudad;
+	}
+
+	/**
+	 * @return the continente
+	 */
+	public final Text getContinente() {
+		return continente;
+	}
+
+	/**
+	 * @param continente the continente to set
+	 */
+	public final void setContinente(Text continente) {
+		this.continente = continente;
+	}
+	
 	public int compareTo(RawDataWritable o) {
 		return identifier.compareTo(o.identifier);
 	}

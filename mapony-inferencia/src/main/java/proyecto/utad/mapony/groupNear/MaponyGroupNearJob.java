@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import proyecto.utad.mapony.groupNear.map.MaponyGroupNearMap;
+import util.GeoHashCiudad;
 import util.constantes.MaponyCte;
 import util.reducers.MaponyGNArrayRed;
 import util.writables.RawDataWritable;
@@ -42,6 +43,7 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		new GeoHashCiudad(properties.getProperty(MaponyCte.paises));
 	}
 	
 	
@@ -72,21 +74,21 @@ public class MaponyGroupNearJob extends Configured implements Tool {
 		job.setOutputValueClass(ArrayWritable.class);
 
 		MultipleInputs.addInputPath(job, new Path("data/sample"), TextInputFormat.class, MaponyGroupNearMap.class);
-//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-0.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-1.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-2.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-3.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-4.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-5.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-6.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-7.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-8.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
-//		MultipleInputs.addInputPath(jobMaponyGroupNear, new Path("data/yfcc100m_dataset-9.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(job, new Path("data/yfcc100m_dataset-0.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(job, new Path("data/yfcc100m_dataset-1.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(job, new Path("data/yfcc100m_dataset-2.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(job, new Path("data/yfcc100m_dataset-3.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(job, new Path("data/yfcc100m_dataset-4.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(job, new Path("data/yfcc100m_dataset-5.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(job, new Path("data/yfcc100m_dataset-6.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(job, new Path("data/yfcc100m_dataset-7.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(job, new Path("data/yfcc100m_dataset-8.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
+//		MultipleInputs.addInputPath(job, new Path("data/yfcc100m_dataset-9.bz2"), TextInputFormat.class, MaponyGroupNearMap.class);
 
 //		job.setCombinerClass(MaponyGroupNearRed.class);
 		job.setReducerClass(MaponyGNArrayRed.class);
 
-//		job.setNumReduceTasks(5);
+		job.setNumReduceTasks(6);
 		
 		FileOutputFormat.setOutputPath(job, outPath);
 

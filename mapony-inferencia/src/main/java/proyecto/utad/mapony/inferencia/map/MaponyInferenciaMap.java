@@ -1,51 +1,25 @@
 package proyecto.utad.mapony.inferencia.map;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import util.GeoHashCiudad;
-import util.beans.GeoHashBean;
 import util.writables.CustomWritable;
-import util.writables.InferenciaWritable;
 import util.writables.RawDataWritable;
 
 public class MaponyInferenciaMap extends Mapper<Text, RawDataWritable, Text, CustomWritable> {
 
 	private Text outKey;
-	private HashMap<String, GeoHashBean> ciudades;
 	private final Logger logger = LoggerFactory.getLogger(MaponyInferenciaMap.class);
 
 	protected void map(Text geoHash, RawDataWritable rawDataWritable, Context context) throws IOException, InterruptedException {
 
 		try {
-			if (null == ciudades) {
-				ciudades = GeoHashCiudad.getDatos();
-			}
-		} catch (Exception e) {
-			getLogger().error(e.getMessage());
-		}
+			RawDataWritable rdBean = new RawDataWritable(rawDataWritable);
 
-		try {
-			InferenciaWritable rdBean = new InferenciaWritable(rawDataWritable);
-			Text ciudad = new Text();
-			Text pais = new Text();
-			Text continente = new Text();
-			if (ciudades.containsKey(rdBean.getGeoHashCiudad())) {
-				GeoHashBean temp = ciudades.get(rdBean.getGeoHashCiudad());
-				ciudad = new Text(temp.getName());
-				pais = new Text(temp.getPais());
-				continente = new Text(temp.getContinente());
-			}
-
-			rdBean.setCiudad(ciudad);
-			rdBean.setPais(pais);
-			rdBean.setContinente(continente);
-			
 			outKey = new Text(rdBean.getIdentifier());
 
 			CustomWritable cwDescripcion = new CustomWritable("descripcion");

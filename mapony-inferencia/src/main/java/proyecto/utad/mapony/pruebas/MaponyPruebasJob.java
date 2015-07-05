@@ -9,13 +9,14 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.BZip2Codec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
@@ -23,8 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import proyecto.utad.mapony.csv.MaponyCsvJob;
 import proyecto.utad.mapony.pruebas.map.MaponyPruebasMap;
-import util.ElasticSearchClient;
-import util.GeoHashCiudad;
 import util.constantes.MaponyCte;
 import util.reducers.MaponyRed;
 
@@ -48,19 +47,19 @@ public class MaponyPruebasJob extends Configured implements Tool {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		indexES = properties.getProperty(MaponyCte.indice);
-		typeES = properties.getProperty(MaponyCte.tipo);
-		clusterName = properties.getProperty(MaponyCte.cluster);
-
-		new GeoHashCiudad(properties.getProperty(MaponyCte.paises));
+//		indexES = properties.getProperty(MaponyCte.indice);
+//		typeES = properties.getProperty(MaponyCte.tipo);
+//		clusterName = properties.getProperty(MaponyCte.cluster);
+//
+//		new GeoHashCiudad(properties.getProperty(MaponyCte.paises));
 	}
 
 	public int run(String[] args) throws Exception {
-		setRutaFicheros(properties.getProperty(MaponyCte.datos));
+//		setRutaFicheros(properties.getProperty(MaponyCte.datos));
 
 		Configuration config = getConf();
 
-		Path pathOrigen = new Path(getRutaFicheros());
+		Path pathOrigen = new Path("data/allCountries.txt");
 		Path outPath = new Path("data/pruebas");
 
 		// Borramos todos los directorios que puedan existir
@@ -70,7 +69,11 @@ public class MaponyPruebasJob extends Configured implements Tool {
 		job.setJarByClass(MaponyCsvJob.class);
 
 		job.setInputFormatClass(TextInputFormat.class);
-		job.setOutputFormatClass(TextOutputFormat.class);
+//		job.setOutputFormatClass(TextOutputFormat.class);
+		job.setOutputFormatClass(SequenceFileOutputFormat.class);
+		SequenceFileOutputFormat.setCompressOutput(job, true);
+		SequenceFileOutputFormat.setOutputCompressorClass(job, BZip2Codec.class);
+		SequenceFileOutputFormat.setOutputCompressionType(job, CompressionType.BLOCK);
 		
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
@@ -78,9 +81,10 @@ public class MaponyPruebasJob extends Configured implements Tool {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 
-//		MultipleInputs.addInputPath(job, pathOrigen, TextInputFormat.class, MaponyPruebasMap.class);
-		MultipleInputs.addInputPath(job, pathOrigen, SequenceFileInputFormat.class, MaponyPruebasMap.class);
+		MultipleInputs.addInputPath(job, pathOrigen, TextInputFormat.class, MaponyPruebasMap.class);
+//		MultipleInputs.addInputPath(job, pathOrigen, SequenceFileInputFormat.class, MaponyPruebasMap.class);
 		
+		job.setCombinerClass(MaponyRed.class);
 		job.setReducerClass(MaponyRed.class);
 		FileOutputFormat.setOutputPath(job, outPath);
 
@@ -101,7 +105,7 @@ public class MaponyPruebasJob extends Configured implements Tool {
 		loadProperties(MaponyCte.propiedades);
 
 		getLogger().info(MaponyCte.MSG_PROPIEDADES_CARGADAS);
-		new ElasticSearchClient(indexES, typeES, clusterName);
+//		new ElasticSearchClient(indexES, typeES, clusterName);
 		ToolRunner.run(new MaponyPruebasJob(), args);
 		System.exit(1);
 	}

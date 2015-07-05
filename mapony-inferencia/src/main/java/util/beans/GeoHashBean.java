@@ -3,6 +3,7 @@ package util.beans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import util.MaponyUtil;
 import util.constantes.MaponyCte;
 import ch.hsr.geohash.GeoHash;
 
@@ -113,13 +114,18 @@ public class GeoHashBean {
 		setDem(datos[16]);
 		setTimezone(datos[17]);
 		setModificationdate(datos[18]);
-
-		String[] continentePais = getTimezone().split("/");
-		setContinente(continentePais[0]);
-		setPais(continentePais[1]);
-		setGeoHash(GeoHash.geoHashStringWithCharacterPrecision(getLatitude(), getLongitude(), MaponyCte.precisionGeoHashCiudad));
-		
-//		getLogger().info(toString());
+		if (null != getTimezone() && getTimezone().compareTo(MaponyCte.VACIO) != 0) {
+			try {
+				String[] continentePais = getTimezone().split("/");
+				if (null != continentePais[0] && null != continentePais[1]) {
+					setContinente(continentePais[0]);
+					setPais(continentePais[1]);
+					setGeoHash(GeoHash.geoHashStringWithCharacterPrecision(getLatitude(), getLongitude(), MaponyCte.precisionGeoHashCiudad));
+				}
+			} catch (Exception e) {
+				getLogger().error(toStringError());
+			}
+		}
 	}
 	
 	
@@ -128,8 +134,17 @@ public class GeoHashBean {
 	 * @see java.lang.Object#toString()
 	 * @return getGeoHash() + "|" + getName() + "|" + getPais() + "|" + getContinente();
 	 */
+	@Override
 	public String toString() {
-		return getGeoHash() + "|" + getName() + "|" + getPais() + "|" + getContinente();
+		return "getGeoHash()" + "|" + "getName()" + "|" + "getPais()" + "|" + "getContinente() "+getGeoHash() + "|" + getName() + "|" + getPais() + "|" + getContinente();
+	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 * @return getGeoHash() + "|" + getName() + "|" + getPais() + "|" + getContinente();
+	 */
+	public String toStringError() {
+		return "getTimezone()"+"|"+"getGeoHash()" + "|" + "getName()" + "|" + "getPais()" + "|" + "getContinente() '"+getTimezone()+"'|"+getGeoHash() + "|" + getName() + "|" + getPais() + "|" + getContinente();
 	}
 
 
